@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QColor, QKeySequence, QShortcut
-from PySide6.QtWidgets import (QComboBox, QFrame, QHBoxLayout, QInputDialog, QLabel, QListWidget, QListWidgetItem, QMessageBox,
+from PySide6.QtWidgets import (QCheckBox, QComboBox, QFrame, QHBoxLayout, QInputDialog, QLabel, QListWidget, QListWidgetItem, QMessageBox,
                                QPushButton, QSplitter, QTableWidget, QTableWidgetItem, QTabWidget, QVBoxLayout, QWidget)
 
 from ...application.context import AppContext
@@ -84,14 +84,17 @@ class ReviewPage(QWidget):
         self.lines = LineTable(); self.lines.cell_edited.connect(self._edit_cell); self.lines.jump.connect(self.viewer.go_to_page_number)
         lb = QHBoxLayout(); self.add_line = QPushButton("Add line"); self.del_line = QPushButton("Remove selected line")
         self.add_line.clicked.connect(self._add_line); self.del_line.clicked.connect(self._del_line)
-        lb.addWidget(self.add_line); lb.addWidget(self.del_line); lb.addStretch()
+        self.show_all = QCheckBox("Show all columns"); self.show_all.setToolTip("Show discount and tax columns even when empty")
+        self.show_all.toggled.connect(lambda on: (setattr(self.lines, "show_all", on), self.lines.set_record(self.rec, self._editable())))
+        lb.addWidget(self.add_line); lb.addWidget(self.del_line); lb.addStretch(); lb.addWidget(self.show_all)
         lv.addWidget(self.lines, 1); lv.addLayout(lb)
         self.tabs.addTab(lw, "Line items")
         self.checks = QListWidget(); self.checks.setAccessibleName("Validation checks")
+        self.checks.setWordWrap(True); self.checks.setTextElideMode(Qt.ElideNone); self.checks.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.checks.itemActivated.connect(self._check_clicked); self.checks.itemClicked.connect(self._check_clicked)
         self.tabs.addTab(self.checks, "Checks")
         self.audit = QTableWidget(0, 5); self.audit.setHorizontalHeaderLabels(["When", "Who", "Action", "Field", "Change"])
-        self.audit.horizontalHeader().setStretchLastSection(True); self.audit.verticalHeader().setVisible(False)
+        self.audit.horizontalHeader().setStretchLastSection(True); self.audit.horizontalHeader().setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter); self.audit.verticalHeader().setVisible(False)
         self.audit.setEditTriggers(QTableWidget.NoEditTriggers); self.audit.setAccessibleName("Audit history")
         self.tabs.addTab(self.audit, "History")
         act = QHBoxLayout()
@@ -110,13 +113,21 @@ class ReviewPage(QWidget):
             act.addWidget(b)
         rl.addLayout(act)
         self.split.addWidget(right)
-        self.split.setSizes([240, 420, 600]); self.split.setStretchFactor(0, 0); self.split.setStretchFactor(1, 2); self.split.setStretchFactor(2, 3)
+        self.split.setChildrenCollapsible(False); self._sized = False
+        self.split.setStretchFactor(0, 0); self.split.setStretchFactor(1, 2); self.split.setStretchFactor(2, 3)
         self.empty = EmptyState("Nothing to review yet", "Import documents and they appear here once extraction finishes.")
         self.empty.hide(); root.addWidget(self.empty)
         QShortcut(QKeySequence("Ctrl+Return"), self, activated=self.approve)
         QShortcut(QKeySequence("Alt+Down"), self, activated=lambda: self.step(1))
         QShortcut(QKeySequence("Alt+Up"), self, activated=lambda: self.step(-1))
         self._show(None)
+
+    def showEvent(self, e) -> None:
+        super().showEvent(e)
+        if not self._sized:  # first time visible: give the editor the most room
+            self._sized = True
+            w = max(self.split.width(), 900)
+            self.split.setSizes([int(w * 0.17), int(w * 0.30), int(w * 0.53)])
 
     def on_theme(self, t: dict[str, str]) -> None:
         self.tokens = t

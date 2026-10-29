@@ -47,10 +47,9 @@ def test_resizing_to_minimum_and_large_does_not_break_layout(win, qtbot):
     for key, *_ in NAV:
         win.show_page(key)
         for size in ((960, 620), (1920, 1080), (1100, 700)):
-            win.resize(*size); qtbot.wait(20)
+            win.resize(*size)
+            qtbot.waitUntil(lambda: win.stack.currentWidget().width() > 400, timeout=3000)   # layout settles asynchronously
             assert win.width() >= 960 and win.height() >= 620
-            page = win.stack.currentWidget()
-            assert page.width() > 400
 
 
 def test_keyboard_shortcuts_navigate(win, qtbot):

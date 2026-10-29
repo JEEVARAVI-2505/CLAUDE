@@ -28,7 +28,7 @@ class DropZone(QFrame):
         lay.setAlignment(Qt.AlignCenter)
         lay.setSpacing(6)
         self.icon = QLabel()
-        self.icon.setPixmap(icon_pixmap("import", "#8B5CF6", 44))
+        self.icon.setPixmap(icon_pixmap("import", "#1F5FBF", 36))
         self.icon.setAlignment(Qt.AlignCenter)
         self.title = label("Drop invoices or purchase orders here", "h2")
         self.title.setAlignment(Qt.AlignCenter)
@@ -36,6 +36,9 @@ class DropZone(QFrame):
         self.sub.setAlignment(Qt.AlignCenter)
         for w in (self.icon, self.title, self.sub):
             lay.addWidget(w)
+
+    def set_icon_color(self, color: str) -> None:
+        self.icon.setPixmap(icon_pixmap("import", color, 36))
 
     def set_limits_text(self, mb: int) -> None:
         self.sub.setText(f"or click to browse  ·  PDF, PNG, JPG, TIFF  ·  up to {mb} MB each")

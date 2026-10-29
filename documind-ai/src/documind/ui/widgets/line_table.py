@@ -11,13 +11,17 @@ from ...domain.schemas import LINE_FIELDS
 from .field_form import display_value
 
 
+SHORT = {"description": "Description", "quantity": "Qty", "unit_price": "Price", "discount_pct": "Disc %", "discount_amount": "Disc",
+         "tax_rate": "Tax %", "tax_amount": "Tax", "line_total": "Total"}
+
+
 class LineTable(QTableWidget):
     cell_edited = Signal(int, str, str)
     jump = Signal(int)
 
     def __init__(self) -> None:
         super().__init__(0, len(LINE_FIELDS) + 1)
-        self.setHorizontalHeaderLabels(["#"] + [f.label for f in LINE_FIELDS])
+        self.setHorizontalHeaderLabels(["#"] + [SHORT.get(f.name, f.label) for f in LINE_FIELDS])
         self.verticalHeader().setVisible(False)
         self.setAlternatingRowColors(True)
         self.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -25,7 +29,9 @@ class LineTable(QTableWidget):
         self.horizontalHeader().setStretchLastSection(False)
         self.setColumnWidth(0, 36)
         for i, f in enumerate(LINE_FIELDS, 1):
-            self.setColumnWidth(i, 230 if f.name == "description" else 92)
+            self.setColumnWidth(i, 150 if f.name == "description" else 68)
+        self.horizontalHeader().setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+        self.show_all = False
         self.itemChanged.connect(self._changed)
         self.cellDoubleClicked.connect(lambda r, c: None)
         self._busy = False
@@ -46,6 +52,10 @@ class LineTable(QTableWidget):
     def set_record(self, rec: DocumentRecord | None, editable: bool) -> None:
         self._busy = True
         self._editable = editable
+        optional = ("discount_pct", "discount_amount", "tax_rate", "tax_amount")
+        for i, f in enumerate(LINE_FIELDS, 1):  # hide rarely used columns unless a row actually has a value in them
+            used = rec is not None and any(it.get(f.name) is not None and it[f.name].value not in (None, "", "0") for it in rec.items)
+            self.setColumnHidden(i, f.name in optional and not (self.show_all or used))
         self.setRowCount(0)
         self.pages = {}
         if rec:

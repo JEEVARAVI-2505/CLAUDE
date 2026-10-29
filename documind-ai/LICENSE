@@ -1,0 +1,14 @@
+DocuMind AI Professional - Proprietary Software Licence (summary notice)
+
+Copyright (c) the licensor named in your licence agreement. All rights reserved.
+
+This software is licensed, not sold. Your rights are defined by the End User Licence Agreement
+and Customer Installation Agreement you accepted (see docs/EULA_DRAFT.md for the draft text).
+Nothing in this file grants rights beyond that agreement.
+
+Third-party components are licensed under their own terms and are NOT covered by the proprietary
+licence above. See THIRD_PARTY_NOTICES.md and the licenses/ folder shipped with the program.
+In particular, Qt for Python (PySide6) is used under the GNU Lesser General Public License v3.0;
+you may replace the Qt libraries shipped in the program folder with a compatible version.
+
+This file is a notice, not legal advice. Have the final agreement reviewed by a qualified lawyer.

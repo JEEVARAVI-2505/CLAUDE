@@ -13,7 +13,7 @@ from ...application.context import AppContext
 from ...application.document_service import ImportResult
 from ...domain.models import DocStatus
 from ...infrastructure.repositories import SearchFilter
-from ..widgets.common import label
+from ..widgets.common import EmptyState, label
 from ..widgets.dropzone import DropZone, expand_paths
 from ..workers import run_async
 
@@ -43,9 +43,12 @@ class ImportPage(QWidget):
         self.table.verticalHeader().setVisible(False); self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers); self.table.setAlternatingRowColors(True)
         h = self.table.horizontalHeader(); h.setSectionResizeMode(0, QHeaderView.Stretch); h.setSectionResizeMode(4, QHeaderView.Stretch)
-        self.table.setColumnWidth(1, 60); self.table.setColumnWidth(2, 170); self.table.setColumnWidth(3, 150)
+        self.table.setColumnWidth(1, 60); self.table.setColumnWidth(2, 150); self.table.setColumnWidth(3, 150)
+        h.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.table.setAccessibleName("Processing queue"); self.table.itemDoubleClicked.connect(lambda _i: self.open_selected())
         lay.addWidget(self.table, 1)
+        self.empty = EmptyState("No files yet", "Files you add appear here with their progress. A file that cannot be read is listed with the reason.")
+        lay.addWidget(self.empty, 1)
         bar = QHBoxLayout()
         self.summary = label("Queue is empty.", "muted")
         self.b_pause = QPushButton("Pause"); self.b_cancel = QPushButton("Cancel selected"); self.b_cancel_all = QPushButton("Cancel all")
@@ -138,8 +141,12 @@ class ImportPage(QWidget):
     def _statuses(self) -> list[str]:
         return [self.table.item(r, 2).data(Qt.UserRole) for r in range(self.table.rowCount())]
 
+    def on_theme(self, t: dict[str, str]) -> None:
+        self.drop.set_icon_color(t["primary"])
+
     def _summary(self) -> None:
         s = self._statuses()
+        self.table.setVisible(bool(s)); self.empty.setVisible(not s)
         if not s:
             self.summary.setText("Queue is empty. Drop files above to begin."); return
         done = s.count("done"); fail = s.count("failed") + s.count("rejected"); act = s.count("queued") + s.count("started") + s.count("progress")

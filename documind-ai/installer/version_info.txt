@@ -1,0 +1,16 @@
+# UTF-8
+VSVersionInfo(
+  ffi=FixedFileInfo(filevers=(0, 9, 0, 0), prodvers=(0, 9, 0, 0), mask=0x3f, flags=0x0, OS=0x40004, fileType=0x1, subtype=0x0, date=(0, 0)),
+  kids=[
+    StringFileInfo([StringTable('040904B0', [
+      StringStruct('CompanyName', 'DocuMind (installer: see licence)'),
+      StringStruct('FileDescription', 'DocuMind AI Professional'),
+      StringStruct('FileVersion', '0.9.0.0'),
+      StringStruct('InternalName', 'DocuMind'),
+      StringStruct('LegalCopyright', 'Proprietary. Third-party notices in THIRD_PARTY_NOTICES.md'),
+      StringStruct('OriginalFilename', 'DocuMind.exe'),
+      StringStruct('ProductName', 'DocuMind AI Professional'),
+      StringStruct('ProductVersion', '0.9.0.0')])]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])])
+  ]
+)

@@ -48,7 +48,7 @@ class HistoryPage(QWidget):
         self.table.verticalHeader().setVisible(False); self.table.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.table.setEditTriggers(QAbstractItemView.NoEditTriggers); self.table.setAlternatingRowColors(True)
         self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.Stretch); self.table.horizontalHeader().setSectionResizeMode(3, QHeaderView.Stretch)
-        self.table.setAccessibleName("Processing history")
+        self.table.setAccessibleName("Processing history"); self.table.horizontalHeader().setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.table.itemDoubleClicked.connect(lambda _i: self.open())
         lay.addWidget(self.table, 1)
         self.empty = EmptyState("No matching documents", "Documents you process are kept here until you delete them or the retention policy removes them.")
