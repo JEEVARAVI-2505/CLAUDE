@@ -48,7 +48,7 @@ class LimitSettings(BaseModel):
     max_file_mb: int = Field(50, ge=1, le=500)
     max_pages: int = Field(100, ge=1, le=1000)
     max_batch_files: int = Field(500, ge=1, le=5000)
-    max_image_megapixels: int = Field(80, ge=5, le=500)
+    max_image_megapixels: int = Field(50, ge=5, le=500)
 
 
 class ExportSettings(BaseModel):

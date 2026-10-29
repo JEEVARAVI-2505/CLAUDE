@@ -285,8 +285,8 @@ class ScalarExtractor:
         if self.kind == DocKind.PURCHASE_ORDER:
             if customer is None and head and (supplier is None or head.value != supplier.value):
                 customer = fv("customer_name", head.value, head.raw, head.page, ["heuristic"])
-        elif supplier is None:
-            supplier = head
+        elif supplier is None and self.kind != DocKind.UNKNOWN:
+            supplier = head  # letterhead guesses only for recognised invoices / credit notes
         if self.template and self.template.supplier_name:
             supplier = fv("supplier_name", self.template.supplier_name, None, None, ["template_fixed"])
         if supplier and customer and supplier.value and supplier.value == customer.value:

@@ -13,7 +13,7 @@ def estimate_skew_deg(gray: Image.Image, max_angle: float = 6.0) -> float:
 
     def score(angle: float) -> float:
         rot = ink.rotate(angle, resample=Image.Resampling.NEAREST, fillcolor=0)
-        rows = list(rot.resize((1, rot.height), Image.Resampling.BOX).getdata())
+        rows = list(rot.resize((1, rot.height), Image.Resampling.BOX).tobytes())
         mean = sum(rows) / len(rows)
         return sum((v - mean) ** 2 for v in rows)
 

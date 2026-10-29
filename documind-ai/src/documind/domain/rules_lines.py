@@ -149,28 +149,36 @@ def extract_items(lines: list[Line], pack: RulePack) -> tuple[list[dict[str, Fie
         if len(got) == 1 and not any(c.isalpha() for t in desc_tokens for c in t):
             continue
         flags: list[str] = []
+        req = [c for c in cols if c not in OPTIONAL]
+        opt = [c for c in cols if c in OPTIONAL]
+        row = None
         if len(got) == len(cols):
             row = _assign(cols, got, ln.page, flags)
-        else:
-            flags = ["alignment_uncertain"]
-            row = None
-            req = [c for c in cols if c not in OPTIONAL]
-            opt = [c for c in cols if c in OPTIONAL]
-            k = len(got)
+            if opt and not _arith_ok(row):
+                row = None  # maybe an optional cell is empty and a code (HSN) was swallowed: try narrower assignments
+        for k in range(min(len(got), len(cols)) if row is None else 0, len(req) - 1, -1):
             for n_opt in range(0, len(opt) + 1):
                 if len(req) + n_opt != k:
                     continue
+                tail = got[-k:]
                 for keep in itertools.combinations(opt, n_opt):
                     sub = [c for c in cols if c in req or c in keep]
-                    cand = _assign(sub, got, ln.page, flags)
+                    cand = _assign(sub, tail, ln.page, ["alignment_uncertain"])
                     if _arith_ok(cand):
-                        row = cand
+                        row, got = cand, tail
                         break
                 if row:
                     break
-            if row is None:
-                sub = cols[-k:]
-                row = _assign(sub, got, ln.page, flags + ["partial_row"])
+            if row:
+                break
+        if row is None:
+            k = len(got)
+            if k == len(cols):
+                row = _assign(cols, got, ln.page, [])
+            else:
+                row = _assign(cols[-k:], got, ln.page, ["alignment_uncertain", "partial_row"])
+        cut = got[0][0] if got else cut
+        desc_tokens = tokens[:cut]
         if desc_tokens and re.fullmatch(r"\d{1,3}[.)]?", desc_tokens[0]) and len(desc_tokens) > 1:
             desc_tokens = desc_tokens[1:]
         if has_hsn and len(desc_tokens) > 1 and re.fullmatch(r"\d{4,8}", desc_tokens[-1]):
