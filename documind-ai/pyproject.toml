@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "documind-ai"
+version = "0.9.0"
+description = "DocuMind AI Professional - local-first invoice and purchase-order processing for Windows"
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = { text = "Proprietary - see LICENSE" }
+dependencies = [
+  "PySide6-Essentials==6.12.0",
+  "pydantic==2.14.2",
+  "pypdf==6.21.4",
+  "pypdfium2==5.14.0",
+  "Pillow==13.0.0",
+  "openpyxl==3.1.5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0", "pytest-qt==4.5.0", "pyinstaller==6.22.3"]
+
+[project.scripts]
+documind = "documind.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+documind = ["resources/**/*", "infrastructure/migrations/*.sql"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+pythonpath = ["src"]
+markers = [
+  "needs_tesseract: requires a real Tesseract installation",
+  "benchmark: accuracy benchmark on synthetic documents",
+]

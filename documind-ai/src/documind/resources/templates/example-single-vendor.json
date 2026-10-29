@@ -1,0 +1,12 @@
+{
+  "name": "Example: Kaveri Hardware layout",
+  "description": "Shows how a Professional-package template adds supplier-specific labels and defaults. Copy and edit; files placed in <data>/templates are loaded automatically.",
+  "match_keywords": ["kaveri hardware traders"],
+  "document_kind": "invoice",
+  "date_order": "DMY",
+  "default_currency": "INR",
+  "extra_labels": {
+    "invoice_number": ["challan no", "bill ref"],
+    "po_number": ["indent no"]
+  }
+}
