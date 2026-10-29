@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{865DAAAD-8728-44B8-92E1-E523974BDCF3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Geometry", "src\Core.Geometry\Core.Geometry.csproj", "{F735B001-C5CB-4441-8B3E-D13EF8A87620}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Model", "src\Core.Model\Core.Model.csproj", "{A7D801DD-4D2A-4195-89A7-38233DE3FC93}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Rules", "src\Core.Rules\Core.Rules.csproj", "{C4935BCA-D539-45DE-BEB4-70A7186A13FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{C792F91F-F786-42C6-A819-C4B4D17D29E6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Geometry.Tests", "tests\Core.Geometry.Tests\Core.Geometry.Tests.csproj", "{3DD1FF74-36AB-4F67-8257-906C7810AC57}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Model.Tests", "tests\Core.Model.Tests\Core.Model.Tests.csproj", "{17F0EF55-42E5-4D25-820A-ADE3714060E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core.Rules.Tests", "tests\Core.Rules.Tests\Core.Rules.Tests.csproj", "{A4BB4E29-A560-49A4-8341-B1B1D03EEE26}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F735B001-C5CB-4441-8B3E-D13EF8A87620}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F735B001-C5CB-4441-8B3E-D13EF8A87620}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F735B001-C5CB-4441-8B3E-D13EF8A87620}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F735B001-C5CB-4441-8B3E-D13EF8A87620}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7D801DD-4D2A-4195-89A7-38233DE3FC93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7D801DD-4D2A-4195-89A7-38233DE3FC93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7D801DD-4D2A-4195-89A7-38233DE3FC93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7D801DD-4D2A-4195-89A7-38233DE3FC93}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4935BCA-D539-45DE-BEB4-70A7186A13FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4935BCA-D539-45DE-BEB4-70A7186A13FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4935BCA-D539-45DE-BEB4-70A7186A13FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4935BCA-D539-45DE-BEB4-70A7186A13FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DD1FF74-36AB-4F67-8257-906C7810AC57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DD1FF74-36AB-4F67-8257-906C7810AC57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DD1FF74-36AB-4F67-8257-906C7810AC57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DD1FF74-36AB-4F67-8257-906C7810AC57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17F0EF55-42E5-4D25-820A-ADE3714060E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17F0EF55-42E5-4D25-820A-ADE3714060E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17F0EF55-42E5-4D25-820A-ADE3714060E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17F0EF55-42E5-4D25-820A-ADE3714060E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4BB4E29-A560-49A4-8341-B1B1D03EEE26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4BB4E29-A560-49A4-8341-B1B1D03EEE26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4BB4E29-A560-49A4-8341-B1B1D03EEE26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4BB4E29-A560-49A4-8341-B1B1D03EEE26}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F735B001-C5CB-4441-8B3E-D13EF8A87620} = {865DAAAD-8728-44B8-92E1-E523974BDCF3}
+		{A7D801DD-4D2A-4195-89A7-38233DE3FC93} = {865DAAAD-8728-44B8-92E1-E523974BDCF3}
+		{C4935BCA-D539-45DE-BEB4-70A7186A13FB} = {865DAAAD-8728-44B8-92E1-E523974BDCF3}
+		{3DD1FF74-36AB-4F67-8257-906C7810AC57} = {C792F91F-F786-42C6-A819-C4B4D17D29E6}
+		{17F0EF55-42E5-4D25-820A-ADE3714060E1} = {C792F91F-F786-42C6-A819-C4B4D17D29E6}
+		{A4BB4E29-A560-49A4-8341-B1B1D03EEE26} = {C792F91F-F786-42C6-A819-C4B4D17D29E6}
+	EndGlobalSection
+EndGlobal

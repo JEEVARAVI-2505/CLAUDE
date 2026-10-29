@@ -1,0 +1,35 @@
+{
+  "id": "vastu.default",
+  "name": "Default Vastu pack (common South Indian residential practice)",
+  "source": "Compiled from MASTER_PLAN section 6.2 (common Vastu Shastra guidance). Vastu has regional schools; edit this pack to match the practitioner you follow.",
+  "penalties": { "acceptable": 3, "neutral": 6, "avoid": 12 },
+  "strictness": { "strict": 1.5, "moderate": 1.0, "flexible": 0.5 },
+  "rooms": {
+    "Living":        { "preferred": ["N", "NE", "E"], "acceptable": ["NW"], "avoid": ["SW"], "weight": 1.0 },
+    "Lounge":        { "preferred": ["N", "NE", "E"], "acceptable": ["NW"], "avoid": ["SW"], "weight": 0.6 },
+    "Kitchen":       { "preferred": ["SE"], "acceptable": ["NW"], "avoid": ["NE", "SW", "Centre"], "weight": 1.2, "note": "Fire element belongs to the south-east (Agni)." },
+    "MasterBedroom": { "preferred": ["SW"], "acceptable": ["S", "W"], "avoid": ["NE", "SE"], "weight": 1.2, "note": "South-west gives stability to the head of the family." },
+    "Bedroom":       { "preferred": ["W", "NW"], "acceptable": ["N", "E", "S"], "avoid": ["SE"], "weight": 0.8 },
+    "Pooja":         { "preferred": ["NE"], "acceptable": ["E", "N"], "avoid": ["S", "SW", "Centre"], "weight": 1.2, "note": "North-east (Ishanya) is the most sacred corner." },
+    "Dining":        { "preferred": ["W", "E"], "acceptable": ["S", "N", "Centre"], "avoid": ["SW"], "weight": 0.6 },
+    "Study":         { "preferred": ["W", "NE", "N"], "acceptable": ["E"], "avoid": ["SW"], "weight": 0.6 },
+    "Bath":          { "preferred": ["NW", "W"], "acceptable": ["S", "SE"], "avoid": ["NE", "SW", "Centre"], "weight": 0.8 },
+    "Staircase":     { "preferred": ["S", "SW", "W"], "acceptable": ["NW", "SE"], "avoid": ["NE", "Centre"], "weight": 1.0 },
+    "Store":         { "preferred": ["NW", "SW"], "acceptable": ["W", "S"], "avoid": ["NE"], "weight": 0.4 },
+    "Parking":       { "preferred": ["NW", "SE"], "acceptable": ["N", "E"], "avoid": ["SW"], "weight": 0.5 },
+    "Utility":       { "preferred": ["NW", "SE"], "acceptable": ["W", "S"], "avoid": ["NE"], "weight": 0.4 },
+    "Balcony":       { "preferred": ["N", "E", "NE"], "acceptable": ["NW", "SE"], "avoid": ["SW"], "weight": 0.4 }
+  },
+  "entrance": { "preferred": ["N", "NE", "E"], "acceptable": ["NW"], "avoid": ["SW"], "weight": 1.2, "note": "Main door: north or east padas preferred." },
+  "siteItems": {
+    "Sump":          { "preferred": ["NE"], "acceptable": ["N", "E"], "avoid": ["SW", "SE"], "weight": 0.6, "note": "Underground water tank" },
+    "OverheadTank":  { "preferred": ["SW"], "acceptable": ["S", "W"], "avoid": ["NE"], "weight": 0.6, "note": "Heavy mass in the south-west" },
+    "Septic":        { "preferred": ["NW"], "acceptable": ["W", "S"], "avoid": ["NE", "N", "E"], "weight": 0.6 }
+  },
+  "extraRules": [
+    { "id": "V-X01", "description": "Pooja room should not share a wall with a toilet.", "penalty": 8 },
+    { "id": "V-X02", "description": "Larger openings on north and east walls than on south and west walls.", "penalty": 4 },
+    { "id": "V-X03", "description": "Brahmasthan (centre) kept free of toilet, kitchen and staircase.", "penalty": 0 },
+    { "id": "V-X04", "description": "Main entrance should not open directly onto a staircase or toilet.", "penalty": 5 }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "bylaws.tn",
+  "name": "Tamil Nadu / Puducherry residential template",
+  "source": "Structure follows Tamil Nadu Combined Development and Building Rules 2019 and NBC 2016 Part 3 (minimum room sizes). Numbers are a starting template.",
+  "disclaimer": "TEMPLATE VALUES. Setbacks, FAR and coverage depend on road width, plot use and local body. Verify every value with the local planning authority before submission.",
+  "setbacks": [
+    { "maxPlotAreaSqm": 100, "frontM": 1.5, "rearM": 0.0, "sideM": 0.0 },
+    { "maxPlotAreaSqm": 250, "frontM": 1.5, "rearM": 1.0, "sideM": 0.75 },
+    { "maxPlotAreaSqm": 500, "frontM": 3.0, "rearM": 1.5, "sideM": 1.0 },
+    { "maxPlotAreaSqm": 100000, "frontM": 3.0, "rearM": 3.0, "sideM": 1.5 }
+  ],
+  "maxFar": 2.0,
+  "maxCoverage": 0.75,
+  "maxHeightM": 12.0,
+  "minFloorHeightM": 2.75,
+  "minCorridorWidthM": 1.0,
+  "minOpeningToFloorRatio": 0.1,
+  "carSpaceAreaSqm": 12.5,
+  "carsPerDwelling": 1,
+  "minRoomSizes": {
+    "Living":        { "areaSqm": 9.5, "widthM": 2.4 },
+    "Lounge":        { "areaSqm": 7.5, "widthM": 2.1 },
+    "MasterBedroom": { "areaSqm": 9.5, "widthM": 2.4 },
+    "Bedroom":       { "areaSqm": 7.5, "widthM": 2.1 },
+    "Study":         { "areaSqm": 7.5, "widthM": 2.1 },
+    "Dining":        { "areaSqm": 7.5, "widthM": 2.1 },
+    "Kitchen":       { "areaSqm": 5.0, "widthM": 1.8 },
+    "Bath":          { "areaSqm": 2.8, "widthM": 1.2 },
+    "Staircase":     { "areaSqm": 5.0, "widthM": 2.0 }
+  },
+  "stair": { "minWidthM": 0.9, "maxRiserMm": 190, "minTreadMm": 250 }
+}

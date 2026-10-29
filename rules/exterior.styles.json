@@ -1,0 +1,33 @@
+{
+  "id": "exterior.styles",
+  "styles": {
+    "Modern": {
+      "description": "Modern box: flat roof, deep frames, large glazing, minimal ornament.",
+      "wallColor": "#f4f4f2", "accentColor": "#2f3437", "trimColor": "#1c1c1c", "glassColor": "#5f8fae",
+      "cladding": "Grey stone cladding on front piers", "parapetHeight": 1100, "chajjaDepth": 450,
+      "roof": "Flat", "corniceBand": false,
+      "materials": ["Weather-proof acrylic emulsion (white)", "Grey sandstone cladding", "Black powder-coated aluminium frames"]
+    },
+    "Contemporary": {
+      "description": "Contemporary mixed: flat roof with pergola, wood-look accents, warm neutral palette.",
+      "wallColor": "#efe8dc", "accentColor": "#8a5a3c", "trimColor": "#3a3a3a", "glassColor": "#7fb3d5",
+      "cladding": "Wood-look HPL panels on the entrance bay", "parapetHeight": 1000, "chajjaDepth": 600,
+      "roof": "Pergola", "corniceBand": false,
+      "materials": ["Texture plaster in warm beige", "HPL wood-look cladding (exterior grade)", "MS pergola on terrace"]
+    },
+    "Traditional": {
+      "description": "Traditional South Indian / Chettinad: sloped Mangalore-tile roof, deep eaves, earthy red and lime.",
+      "wallColor": "#f3e6c8", "accentColor": "#9c3b22", "trimColor": "#5a3a1a", "glassColor": "#8fb0a0",
+      "cladding": "Athangudi-tile plinth band", "parapetHeight": 600, "chajjaDepth": 750,
+      "roof": "SlopedTile", "corniceBand": true,
+      "materials": ["Lime-finish plaster", "Mangalore clay roof tiles over RCC", "Teak doors and window frames", "Athangudi tiles"]
+    },
+    "Colonial": {
+      "description": "Colonial: symmetrical facade, cornice bands, white walls with dark green or grey trims.",
+      "wallColor": "#fbfaf6", "accentColor": "#2e4a3a", "trimColor": "#2e4a3a", "glassColor": "#9cb8c8",
+      "cladding": "Moulded cornice and window surrounds", "parapetHeight": 900, "chajjaDepth": 500,
+      "roof": "Flat", "corniceBand": true,
+      "materials": ["Smooth plaster with white emulsion", "GRC cornice mouldings", "Painted timber shutters"]
+    }
+  }
+}
