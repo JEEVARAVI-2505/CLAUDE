@@ -72,7 +72,7 @@ def main() -> int:
     results = defaultdict(lambda: defaultdict(lambda: {f: [0, 0, 0] for f in FIELDS}))     # cond -> layout -> field -> counts
     lines = defaultdict(lambda: defaultdict(lambda: [0, 0, 0]))
     docs_n = defaultdict(lambda: defaultdict(int))
-    arith = {"consistent_docs": 0, "false_error_docs": 0, "injected": 0, "detected": 0}
+    arith = {"consistent_docs": 0, "false_error_docs": 0, "false_warning_docs": 0, "injected": 0, "detected": 0, "detected_error": 0}
     t0 = time.time()
     for layout_i, layout in enumerate(LAYOUTS):
         for k in range(a.per_layout):
@@ -100,12 +100,15 @@ def main() -> int:
                     issues = validate(res.kind, res.fields, res.items)
                     arith["consistent_docs"] += 1
                     arith["false_error_docs"] += any(i.severity.value == "error" for i in issues)
+                    arith["false_warning_docs"] += any(i.code == "MULTIPLE_CANDIDATES" for i in issues)
                     # inject a one-digit error into the printed grand total / a line total and check it is flagged
                     bad = [(l[:-4] + str((int(l[-4]) + 3) % 10) + l[-3:]) if ("Total" in l and l.rstrip()[-4:-3].isdigit() and "Sub" not in l and "Qty" not in l) else l for l in doc.lines]
                     if bad != doc.lines:
                         r2 = extract_with_rules([PageText(page=1, text="\n".join(bad))], pack)
                         arith["injected"] += 1
-                        arith["detected"] += any(i.severity.value == "error" or i.code == "ROUND_OFF" and False for i in validate(r2.kind, r2.fields, r2.items))
+                        iss2 = validate(r2.kind, r2.fields, r2.items)
+                        arith["detected_error"] += any(i.severity.value == "error" for i in iss2)
+                        arith["detected"] += any(i.severity.value == "error" or i.code == "MULTIPLE_CANDIDATES" for i in iss2)
     dt = time.time() - t0
 
     def prf(c):
@@ -150,7 +153,9 @@ def main() -> int:
         out.append("")
     out += ["## Arithmetic validation", "",
             f"* Internally consistent synthetic invoices flagged with an ERROR (false alarms): **{arith['false_error_docs']} of {arith['consistent_docs']}**.",
-            f"* Invoices where one digit of a printed total was altered: error detected in **{arith['detected']} of {arith['injected']}**.", "",
+            f"* Consistent invoices that got a 'several different values for the total' warning: **{arith['false_warning_docs']} of {arith['consistent_docs']}**.",
+            f"* Invoices where one digit of one printed total was altered: flagged (error, or warning that the document shows two different totals) in **{arith['detected']} of {arith['injected']}**; flagged as a hard ERROR in {arith['detected_error']}.",
+            "* Not tested: errors that are internally consistent (e.g. wrong quantity and wrong line total together), swapped digits in values never cross-checked (invoice number, dates), and real-world rounding conventions other than those listed.", "",
             "## Known limitations", "",
             "* Scores depend on layout vocabulary in `resources/rules/labels_default.json`; unseen vocabularies need templates (Professional package).",
             "* Dates like 03/04/2025 are *flagged* as ambiguous rather than counted as errors; the benchmark resolves them with the configured day-first default.",

@@ -12,7 +12,7 @@ from collections import Counter
 from datetime import date
 
 from .dates import find_dates, iso
-from .money import CURRENCY_SYMBOLS, format_decimal
+from .money import CURRENCY_SYMBOLS, format_decimal, to_decimal
 from .models import DocKind, FieldValue
 from .validation import gstin_checksum_ok
 from .rules_text import (Line, after_label, amounts_in, find_label, first_id, first_segment, pct_in)
@@ -101,6 +101,8 @@ class ScalarExtractor:
         return None
 
     def money_field(self, name: str, exclude_words: list[str] | None = None) -> FieldValue | None:
+        found: FieldValue | None = None
+        other_values: set = set()
         for label, hits in self._hits(name, max_start=25):
             cands = []
             for i, (s, e) in hits:
@@ -114,18 +116,30 @@ class ScalarExtractor:
                     am = amounts_in(self.lines[i + 1].text)
                 if am:
                     cands.append((i, am[-1], ln.page))
-            if cands:
-                _, a, page = cands[-1]
-                flags: list[str] = []
-                distinct = {c[1].parsed.value for c in cands}
-                alt = None
-                if len(distinct) > 1:
-                    flags.append("multiple_candidates")
-                    alt = ", ".join(sorted({format_decimal(v) or "" for v in distinct if v != a.parsed.value}))
-                if a.parsed.ambiguous:
-                    flags.append("ambiguous_number")
-                return fv(name, format_decimal(a.parsed.value), a.raw, page, flags, alt)
-        return None
+            if not cands:
+                continue
+            if found is not None:  # a lower-priority label (e.g. "Total" after "Balance Due"): only used to detect disagreement
+                other_values |= {c[1].parsed.value for c in cands}
+                continue
+            _, a, page = cands[-1]
+            flags: list[str] = []
+            distinct = {c[1].parsed.value for c in cands}
+            alt = None
+            if len(distinct) > 1:
+                flags.append("multiple_candidates")
+                alt = ", ".join(sorted({format_decimal(v) or "" for v in distinct if v != a.parsed.value}))
+            if a.parsed.ambiguous:
+                flags.append("ambiguous_number")
+            found = fv(name, format_decimal(a.parsed.value), a.raw, page, flags, alt)
+            other_values.add(a.parsed.value)
+            if name != "total":
+                break
+        if found is not None and name == "total" and len(other_values) > 1 and "multiple_candidates" not in found.flags:
+            mine = to_decimal(found.value)
+            diff = sorted({format_decimal(v) or "" for v in other_values if v != mine})
+            found.flags.append("multiple_candidates")
+            found.alt = ", ".join(diff)
+        return found
 
     # ------------------------------------------------------------------ specials
     def currency(self) -> FieldValue | None:

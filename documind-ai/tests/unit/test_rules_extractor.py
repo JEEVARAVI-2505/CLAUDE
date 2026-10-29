@@ -128,3 +128,12 @@ def test_synthetic_layouts_regression(layout, seed):
         else:
             assert (r.fields[k].value if k in r.fields else None) == t, (layout, seed, k)
     assert len(r.items) == len(d.items)
+
+
+def test_two_different_totals_in_one_document_are_flagged():
+    """Regression: 'Balance Due' and 'Total' disagreeing used to pass silently (found by the benchmark's error-injection step)."""
+    r = extract("Invoice No: 1\nSub Total 100.00\nTotal 118.00\nBalance Due 119.00\n")
+    f = r.fields["total"]
+    assert f.value == "119" and "multiple_candidates" in f.flags and f.alt == "118"
+    ok = extract("Invoice No: 1\nSub Total 100.00\nTotal 118.00\nBalance Due 118.00\n")
+    assert "multiple_candidates" not in ok.fields["total"].flags
