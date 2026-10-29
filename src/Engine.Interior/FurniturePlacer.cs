@@ -93,7 +93,7 @@ public sealed class FurniturePlacer(Storey storey, Room room, double northAngle)
                     foreach (var rotated in new[] { false, true })
                     {
                         var (w, d) = rotated ? (item.Depth, item.Width) : (item.Width, item.Depth);
-                        if (item.Id == "car" && rotated == (Inner.Width > Inner.Height)) continue;
+                        if (item.Id == "car" && rotated == (Inner.Height > Inner.Width)) continue; // keep the car along the long side
                         var r = new Rect2(c.X + dx * Step - w / 2, c.Y + dy * Step - d / 2, w, d);
                         yield return (r, default, rotated ? Math.PI / 2 : 0, Math.Abs(dx) + Math.Abs(dy) + (rotated ? 0.5 : 0));
                     }
