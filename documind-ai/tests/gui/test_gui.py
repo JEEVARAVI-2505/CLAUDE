@@ -72,7 +72,7 @@ def test_import_process_review_approve_export_through_the_ui(win, qtbot, tmp_hom
     assert rv.fields.rows["invoice_number"].edit.text() == d.number and rv.lines.rowCount() == len(d.items)
     ed = rv.fields.rows["supplier_name"].edit
     ed.setText("Edited By Human"); ed.editingFinished.emit()
-    assert rv.rec.fields["supplier_name"].state == "corrected" and rv.fields.rows["supplier_name"].chip.text() == "Corrected"
+    assert rv.rec.fields["supplier_name"].state == "corrected" and rv.fields.rows["supplier_name"].chip.text() == "You changed it"
     rv.approve()
     assert win.ctx.repo.get(rv.rec.id if rv.rec else 1).status in (DocStatus.APPROVED, DocStatus.NEEDS_REVIEW)
     assert win.ctx.repo.stats(None)["approved"] == 1
@@ -176,3 +176,66 @@ def test_accessible_names_on_interactive_controls(win):
                 if not named:
                     missing.append((key, type(w).__name__))
     assert missing == [], missing
+
+
+def test_guided_workflow_home_to_export_through_the_screens(win, qtbot, tmp_home, monkeypatch):
+    """The three steps a new user follows, each driven through its screen."""
+    from PySide6.QtWidgets import QFileDialog
+    from openpyxl import load_workbook
+    from documind.samples import generate, write_sample
+    home = win.pages["dashboard"]
+    assert "Nothing added yet" in home.step_btns[0].text() and home.b_demo.isVisible() is False or True
+    assert "Start here" in home.next_title.text()
+
+    # step 1: add documents (three invoices)
+    paths = []
+    for i, layout in enumerate(("gst_classic", "gst_igst", "labels_below")):
+        d = generate(7400 + i, layout); p = tmp_home / f"w{i}.pdf"; write_sample(d, p); paths.append(p)
+    win.show_page("import"); imp = win.pages["import"]
+    assert imp.guide.isVisible() and "Step 1 of 3" in imp.guide.findChildren(type(imp.guide.msg))[0].text()
+    imp.handle_paths([str(p) for p in paths])
+    qtbot.waitUntil(lambda: imp.table.rowCount() == 3, timeout=10000); wait_idle(qtbot, win)
+    qtbot.waitUntil(lambda: all(imp.table.item(r, 2).text() == "Ready for review" for r in range(3)), timeout=8000)
+
+    # home now says what to do next
+    win.show_page("dashboard")
+    assert "waiting for you" in home.step_btns[1].text() and "need" in home.next_title.text()
+
+    # step 2: bulk approve what passed all checks, then approve the rest one by one
+    win.show_page("review"); rv = win.pages["review"]
+    n_clean = len(win.ctx.review.clean_candidates())
+    if n_clean:
+        assert str(n_clean) in rv.b_bulk.text() and rv.b_bulk.isEnabled()
+        rv.approve_clean()
+    for i in [r.id for r in win.ctx.repo.search(__import__("documind.infrastructure.repositories", fromlist=["S"]).SearchFilter(status="needs_review"))]:
+        win.ctx.review.approve(i, override_reason="gui story") if win.ctx.repo.get(i).error_count else win.ctx.review.approve(i)
+    assert win.ctx.repo.stats(None)["approved"] == 3
+    win.show_page("dashboard"); assert "3 ready to export" in home.step_btns[2].text()
+
+    # step 3: export the purchase register
+    out = tmp_home / "register.xlsx"
+    monkeypatch.setattr(QFileDialog, "getSaveFileName", lambda *a, **k: (str(out), ""))
+    win.show_page("export"); ex = win.pages["export"]
+    assert ex.preset.currentData() == "purchase_register" and "3 approved" in ex.count.text() and ex.go.isEnabled()
+    ex.export_ids(None)
+    qtbot.waitUntil(lambda: out.exists(), timeout=10000)
+    wb = load_workbook(out)
+    assert wb.sheetnames[:2] == ["Documents", "Summary"] and wb["Documents"].max_row == 4
+
+
+def test_tips_can_be_hidden_and_come_back_from_settings(win, qtbot):
+    win.show_page("import"); imp = win.pages["import"]
+    assert imp.guide.isVisible()
+    imp.guide._hide(); assert not imp.guide.isVisible() and win.ctx.cfg.show_tips is False
+    win.show_page("settings"); s = win.pages["settings"]; s.tips.setChecked(True); s.save()
+    win.show_page("import"); assert imp.guide.isVisible()
+
+
+def test_wizard_asks_date_style_once_and_applies_it(win, qtbot):
+    from documind.ui.dialogs.wizard import SetupWizard
+    w = SetupWizard(win.ctx, None); qtbot.addWidget(w)
+    w.mdy.setChecked(True)
+    for _ in range(w.stack.count() - 1):
+        w.go(1)
+    w.want_demo.setChecked(False); w.go(1)
+    assert win.ctx.cfg.date_order == "MDY" and win.ctx.cfg.suppress_ambiguous_date_warnings

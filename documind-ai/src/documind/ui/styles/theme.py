@@ -78,6 +78,8 @@ QPushButton[variant="danger"] {{ color: {t['danger']}; border-color: {t['danger'
 QPushButton[variant="danger"]:hover {{ background: {t['danger_soft']}; }}
 QPushButton[variant="link"] {{ background: transparent; border: none; color: {t['primary_text']}; padding: 4px 6px; }}
 QPushButton[variant="link"]:hover {{ text-decoration: underline; background: transparent; }}
+QPushButton[step="true"] {{ text-align: left; padding: 12px 16px; font-size: 11pt; font-weight: 600; background: {t['surface']}; border: 1px solid {t['border']}; border-left: 4px solid {t['primary']}; border-radius: 6px; }}
+QPushButton[step="true"]:hover {{ background: {t['primary_soft']}; }}
 QToolButton {{ background: {t['surface']}; border: 1px solid {t['border']}; border-radius: 5px; padding: 3px 8px; color: {t['text']}; }}
 QToolButton:hover {{ background: {t['surface2']}; }}
 

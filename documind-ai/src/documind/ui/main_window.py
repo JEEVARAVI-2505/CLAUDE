@@ -15,9 +15,9 @@ from .icons import app_icon, icon_pixmap, logo_pixmap
 from .styles.theme import apply_theme
 from .workers import run_async
 
-NAV = [("dashboard", "Overview", "dashboard", "Ctrl+1"), ("import", "Import & Queue", "import", "Ctrl+2"),
-       ("review", "Review", "review", "Ctrl+3"), ("history", "History", "history", "Ctrl+4"),
-       ("export", "Export", "export", "Ctrl+5"), ("settings", "Settings", "settings", "Ctrl+6"), ("help", "Help & About", "help", "F1")]
+NAV = [("dashboard", "Home", "dashboard", "Ctrl+1"), ("import", "1  Add documents", "import", "Ctrl+2"),
+       ("review", "2  Check and approve", "review", "Ctrl+3"), ("export", "3  Export to Excel", "export", "Ctrl+4"),
+       ("history", "All documents", "history", "Ctrl+5"), ("settings", "Settings", "settings", "Ctrl+6"), ("help", "Help", "help", "F1")]
 
 
 class BatchBridge(QObject):
@@ -56,7 +56,7 @@ class MainWindow(QMainWindow):
         root = QWidget(); self.setCentralWidget(root)
         h = QHBoxLayout(root); h.setContentsMargins(0, 0, 0, 0); h.setSpacing(0)
 
-        self.side = QFrame(); self.side.setObjectName("Sidebar"); self.side.setFixedWidth(208)
+        self.side = QFrame(); self.side.setObjectName("Sidebar"); self.side.setFixedWidth(232)
         sv = QVBoxLayout(self.side); sv.setContentsMargins(0, 14, 0, 12); sv.setSpacing(0)
         brand = QHBoxLayout(); brand.setContentsMargins(16, 0, 12, 0); brand.setSpacing(10)
         logo = QLabel(); logo.setPixmap(logo_pixmap(28)); logo.setAccessibleName("DocuMind logo")
@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
             self.nav_buttons[key] = b
             sv.addWidget(b)
         sv.addStretch()
-        self.st_ocr = QLabel("OCR: checking…"); self.st_ai = QLabel("AI: checking…")
+        self.st_ocr = QLabel("Scans: checking…"); self.st_ai = QLabel("AI helper: checking…")
         for lb in (self.st_ocr, self.st_ai):
             lb.setProperty("role", "small"); lb.setContentsMargins(16, 0, 8, 2); lb.setWordWrap(True); sv.addWidget(lb)
         sv.addSpacing(6)
@@ -107,7 +107,7 @@ class MainWindow(QMainWindow):
             "settings": mk("settings_page", "SettingsPage", self), "help": mk("help_page", "HelpPage", self)})
         self.pages.on_create = self._page_created
         d = self.pages["dashboard"]
-        d.import_requested.connect(self.go_import); d.demo_requested.connect(self.load_demo)
+        d.import_requested.connect(self.go_import); d.demo_requested.connect(self.load_demo); d.go_requested.connect(self.show_page)
         d.review_requested.connect(lambda i: self.open_review(i) if i else self.show_page("review"))
         bridge.event.connect(self.on_batch_event)
         QShortcut(QKeySequence("Ctrl+O"), self, activated=self.go_import)
@@ -192,10 +192,10 @@ class MainWindow(QMainWindow):
 
         def done(res):
             o, kind, text, note = res
-            self.st_ocr.setText("OCR: " + ("ready" if o.available else "not installed")); self.st_ocr.setToolTip(o.message)
-            self.st_ai.setText("AI: " + text); self.st_ai.setToolTip(note)
+            self.st_ocr.setText("Scans (OCR): " + ("ready" if o.available else "not installed")); self.st_ocr.setToolTip(o.message)
+            self.st_ai.setText("AI helper: " + text.replace("off (rules-only)", "off")); self.st_ai.setToolTip(note)
             self.pages["dashboard"].set_readiness(o.available, "ready" + (f" ({o.version})" if o.version else "") if o.available else "not installed", kind, text)
-        run_async(probe, done, lambda m: self.st_ai.setText("AI: check failed"), parent=self)
+        run_async(probe, done, lambda m: self.st_ai.setText("AI helper: check failed"), parent=self)
 
     # ---- batch + demo ---------------------------------------------------------------------------
     def on_batch_event(self, ev: BatchEvent) -> None:
@@ -204,7 +204,7 @@ class MainWindow(QMainWindow):
         if ev.kind in ("done", "failed"):
             self.pages["dashboard"].refresh()
             if ev.kind == "done" and self.ctx.batch.wait_idle(0):
-                self.notify("All documents processed. They are ready for review.")
+                self.notify("All documents have been read. Open step 2 to check them.")
 
     def load_demo(self) -> None:
         from ..samples import write_demo_set

@@ -30,7 +30,7 @@ class DropZone(QFrame):
         self.icon = QLabel()
         self.icon.setPixmap(icon_pixmap("import", "#1F5FBF", 36))
         self.icon.setAlignment(Qt.AlignCenter)
-        self.title = label("Drop invoices or purchase orders here", "h2")
+        self.title = label("Drop your invoices or purchase orders here", "h2")
         self.title.setAlignment(Qt.AlignCenter)
         self.sub = label("or click to browse  ·  PDF, PNG, JPG, TIFF  ·  scanned or digital", "muted")
         self.sub.setAlignment(Qt.AlignCenter)

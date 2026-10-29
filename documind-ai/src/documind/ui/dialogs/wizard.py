@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import (QCheckBox, QDialog, QHBoxLayout, QLineEdit, QPushButton, QStackedWidget, QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QCheckBox, QDialog, QHBoxLayout, QLineEdit, QPushButton, QRadioButton, QStackedWidget, QVBoxLayout, QWidget)
 
 from ...application.context import AppContext
 from ...infrastructure.ollama_client import OllamaClient
@@ -42,8 +42,15 @@ class SetupWizard(QDialog):
         page(logo, t, d)
         self.dir_lbl = label(f"Data folder:\n{ctx.paths.root}", "muted", wrap=True)
         page(label("Where your data is kept", "h2"), self.dir_lbl,
-             label("Documents, the database, logs and backups are stored here. Anyone who can use this Windows account can read them, so protect the account "
+             label("Your documents, the database, logs and backups are stored here. Anyone who can use this Windows account can read them, so protect the account "
                    "(and consider BitLocker). You can change the folder later in Settings › Data & backup, and make backups there.", "muted", wrap=True))
+        self.dmy = QRadioButton("Day first: 03/04/2025 means 3 April 2025   (India, UK, Europe, most countries)")
+        self.mdy = QRadioButton("Month first: 03/04/2025 means March 4, 2025   (USA)")
+        (self.dmy if ctx.cfg.date_order == "DMY" else self.mdy).setChecked(True)
+        page(label("How are dates written on your invoices?", "h2"),
+             label("Many invoices write dates like 03/04/2025, which could mean two different days. Tell DocuMind once and it will stop asking you to "
+                   "confirm every date. If a date is clearly in the other style (for example 25/04/2025), DocuMind still reads it correctly.", "muted", wrap=True),
+             self.dmy, self.mdy, label("You can change this later in Settings > General.", "small"))
         self.ocr_chip = Chip("Checking…", "neutral"); self.ocr_msg = label("", "muted", wrap=True)
         b = QPushButton("Check again"); b.clicked.connect(self.check_ocr)
         page(label("Scanned documents (OCR)", "h2"), self.ocr_chip, self.ocr_msg, b,
@@ -52,7 +59,7 @@ class SetupWizard(QDialog):
         b2 = QPushButton("Check Ollama and model"); b2.clicked.connect(self.check_ai)
         page(label("Local AI (optional)", "h2"), self.ai_enable, self.ai_model, b2, self.ai_chip, self.ai_msg,
              label("Skipping this is fine - rules-only mode extracts typical invoices and purchase orders without AI.", "small", wrap=True))
-        page(label("Setup complete", "title"), label("Drop documents on the Import page, review them, approve, and export to Excel. Press F1 any time for help.", "muted", wrap=True), self.want_demo)
+        page(label("Setup complete", "title"), label("The whole job is three steps: 1 Add documents, 2 Check and approve, 3 Export to Excel. Press F1 any time for help.", "muted", wrap=True), self.want_demo)
         self.i = 0
         self.update_nav()
         self.check_ocr()
@@ -91,6 +98,9 @@ class SetupWizard(QDialog):
     def finish(self) -> None:
         cfg = self.ctx.cfg.model_copy(deep=True)
         cfg.first_run_done = True
+        if self.stack.currentIndex() >= 2 or self.i >= 2:  # they reached the date question
+            cfg.date_order = "DMY" if self.dmy.isChecked() else "MDY"
+            cfg.suppress_ambiguous_date_warnings = True
         if self.ai_enable.isChecked():
             cfg.ai.enabled = True
             cfg.ai.model = self.ai_model.text().strip() or cfg.ai.model

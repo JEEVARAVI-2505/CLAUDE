@@ -3,18 +3,19 @@
 DocuMind reads **invoices, purchase orders and credit notes** (PDF, PNG, JPG, TIFF), shows what it found next to the page, checks the arithmetic, and
 lets you approve and export clean data. **A person must check every document before it is relied on.**
 
+> New here? Read **USE_CASE.md** first (who it is for and a month-end walkthrough). Screen names: **Home**, **1 Add documents**, **2 Check and approve**, **3 Export to Excel**, **All documents**.
+
 ## The flow
-1. **Import & Queue** (Ctrl+2): drop files or folders. Wrong file types, damaged, password-protected, empty or oversized files are refused with a reason; a bad file
+1. **1 Add documents** (Ctrl+2): drop files or folders. Wrong file types, damaged, password-protected, empty or oversized files are refused with a reason; a bad file
    never stops the others. Files with identical content are skipped by default. Pause, cancel, retry from the queue.
-2. **Review** (Ctrl+3): left = documents, middle = page preview (zoom, rotate, page numbers), right = values. Each value shows **Extracted** (read by the
-   software), **Corrected** (you changed it), **Validated** (you approved the document) or **Missing**. Click **p.N** to jump to the page it came from; the
+2. **2 Check and approve** (Ctrl+3): left = documents, middle = page preview (zoom, rotate, page numbers), right = values. Each value shows **Read by software**, **You changed it**, **You approved it** or **Not found**. Click **p.N** to jump to the page it came from; the
    small grey line shows the exact source text, and anything uncertain (ambiguous date, OCR repair, two competing values) is highlighted amber.
 3. **Checks tab**: recomputed line totals, subtotal, tax and total; missing required fields; due date before invoice date; possible duplicate; GSTIN check
    digit. DocuMind **never changes a value to make the maths work** - you decide. Errors must be fixed or approved with a written reason (saved in History).
-4. **Approve** (Ctrl+Enter) / **Reject** / **Re-open** / **Re-run** (discards your corrections after asking).
-5. **Export** (Ctrl+5): choose and reorder columns, Excel or CSV. By default only approved documents are exported, dates and numbers are real
+4. **Approve** (Ctrl+Enter), or **Approve all with no warnings** for every document that passed all checks (asks you first) / **Reject** / **Re-open** / **Re-run** (discards your corrections after asking).
+5. **3 Export to Excel** (Ctrl+4): choose *what you want* (purchase register, everything with line items, PO list, payments due) and the period (this month, last month, all). The purchase register also adds a Summary sheet. Columns can be customised under Advanced. By default only approved documents are exported, dates and numbers are real
    dates/numbers, and cells starting with `= + - @` are neutralised so a spreadsheet cannot run them.
-6. **History** (Ctrl+4): search/filter, open, export selected, delete permanently.
+6. **All documents** (Ctrl+5): search/filter, open, export selected, delete permanently.
 
 ## Reading the warnings
 | Message | Meaning | What to do |

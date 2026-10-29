@@ -90,6 +90,7 @@ class EmptyState(QWidget):
         lay = QVBoxLayout(self)
         lay.setAlignment(Qt.AlignCenter)
         lay.setSpacing(6)
+        self.setMinimumHeight(150)
         t = label(title, "h2")
         t.setAlignment(Qt.AlignCenter)
         d = label(text, "muted", wrap=True)

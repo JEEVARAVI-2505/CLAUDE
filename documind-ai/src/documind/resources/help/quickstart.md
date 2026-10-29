@@ -1,14 +1,15 @@
-# Quick start
+# Quick start: the whole job is three steps
 
-1. **Import** – open *Import & Queue* (Ctrl+2) and drop PDF, PNG, JPG or TIFF files, or click the drop area. Folders are accepted too.
-2. **Wait for processing** – each file shows its progress. You can pause, cancel or retry. A failed file never affects the others.
-3. **Review** – open *Review* (Ctrl+3). The page preview is on the left of the form. Every value shows whether it is *Extracted* (machine), *Corrected* (you changed it) or *Validated* (you approved the document). Click **p.N** next to a field to jump to the page it came from.
-4. **Check the warnings** – the *Checks* tab lists arithmetic differences (line totals, subtotal, tax, total), ambiguous dates, missing fields and possible duplicates. DocuMind never changes a value to “fix” a difference; you decide.
-5. **Approve** – Ctrl+Enter. Approved documents are what the export uses.
-6. **Export** – *Export* (Ctrl+5) writes Excel or CSV with real dates and numbers.
+**Who it is for:** anyone who re-types supplier invoices and purchase orders into Excel or accounting software.
 
-**Keyboard**: Ctrl+1…6 pages · Ctrl+O import · Ctrl+Enter approve · Alt+↑/↓ previous/next document · PgUp/PgDn page · Ctrl+wheel zoom · F1 help.
+1. **Add documents** (Ctrl+2): drag PDFs, photos or scans into the big box. Reading starts by itself. Files that cannot be used are listed with the reason.
+2. **Check and approve** (Ctrl+3): the page is shown next to what was read. Amber = look here. Type over anything wrong, then Approve (Ctrl+Enter). Documents with **no warnings** can be approved together with one button.
+3. **Export to Excel** (Ctrl+4): choose *Purchase register for my accountant* (or another type), choose the month, save. Only approved documents are included.
 
-**Try it safely**: *Dashboard › Try demo documents* creates fictional sample invoices so you can practise. Delete them from *History* afterwards.
+**Try it safely:** Home > *Try it with sample documents* creates fictional invoices. Delete them afterwards from *All documents*.
 
-**Important**: values are read by software and can be wrong, especially from poor scans. A person must check them before they are used for payment or accounting.
+**Colours and words:** *Read by software* = nobody has touched it. *You changed it* = you edited it (shown, never hidden). *You approved it* = you approved the whole document. Red or "does not add up" means the document's own numbers disagree; DocuMind shows it and never changes a number for you.
+
+**Always:** software can misread, especially poor scans. A person must check before the data is used for payment or accounts.
+
+**Keyboard:** Ctrl+1 Home · Ctrl+2 Add · Ctrl+3 Check · Ctrl+4 Export · Ctrl+5 All documents · Ctrl+6 Settings · F1 Help · Alt+Up/Down previous/next document.

@@ -53,8 +53,9 @@ class SettingsPage(QWidget):
         self.theme = QComboBox(); self.theme.addItem("Light", "light"); self.theme.addItem("Dark", "dark")
         self.date_order = QComboBox(); self.date_order.addItem("Day first (31/12/2025) - India, UK, EU", "DMY"); self.date_order.addItem("Month first (12/31/2025) - USA", "MDY")
         self.quiet = QCheckBox("I have confirmed this is right - stop warning about ambiguous dates such as 03/04/2025")
+        self.tips = QCheckBox("Show short how-to tips at the top of each step")
         self.cur = QLineEdit(); self.cur.setPlaceholderText("e.g. INR - used only if a document shows no currency"); self.cur.setMaxLength(3)
-        for k, w in (("Theme", self.theme), ("Date order", self.date_order), ("", self.quiet), ("Default currency", self.cur)):
+        for k, w in (("Theme", self.theme), ("Date order", self.date_order), ("", self.quiet), ("Default currency", self.cur), ("", self.tips)):
             f.addRow(k, w)
         # OCR
         f = tab("OCR (scans)")
@@ -133,7 +134,7 @@ class SettingsPage(QWidget):
     def load(self) -> None:
         c = self.ctx.cfg
         self.theme.setCurrentIndex(self.theme.findData(c.theme)); self.date_order.setCurrentIndex(self.date_order.findData(c.date_order))
-        self.quiet.setChecked(c.suppress_ambiguous_date_warnings); self.cur.setText(c.default_currency or "")
+        self.quiet.setChecked(c.suppress_ambiguous_date_warnings); self.cur.setText(c.default_currency or ""); self.tips.setChecked(c.show_tips)
         self.ocr_mode.setCurrentIndex(self.ocr_mode.findData(c.ocr.mode)); self.ocr_langs.setText(c.ocr.languages); self.ocr_path.setText(c.ocr.tesseract_path or "")
         self.ocr_dpi.setValue(c.ocr.dpi)
         self.ai_on.setChecked(c.ai.enabled); self.ai_host.setText(c.ai.host); self.ai_model.setText(c.ai.model); self.ai_timeout.setValue(c.ai.timeout_s)
@@ -151,7 +152,7 @@ class SettingsPage(QWidget):
     def collect(self) -> AppConfig:
         d = self.ctx.cfg.model_dump()
         d.update(theme=self.theme.currentData(), date_order=self.date_order.currentData(), suppress_ambiguous_date_warnings=self.quiet.isChecked(),
-                 default_currency=(self.cur.text().strip().upper() or None))
+                 default_currency=(self.cur.text().strip().upper() or None), show_tips=self.tips.isChecked())
         d["ocr"].update(mode=self.ocr_mode.currentData(), languages=self.ocr_langs.text().strip() or "eng", tesseract_path=self.ocr_path.text().strip() or None, dpi=self.ocr_dpi.value())
         d["ai"].update(enabled=self.ai_on.isChecked(), host=self.ai_host.text().strip(), model=self.ai_model.text().strip(), timeout_s=self.ai_timeout.value(),
                        allow_remote_host=self.ai_remote.isChecked())

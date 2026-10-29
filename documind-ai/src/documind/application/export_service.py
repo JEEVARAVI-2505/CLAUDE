@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from decimal import Decimal
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -11,11 +12,34 @@ from .. import __version__
 from ..config import AppConfig, Paths
 from ..domain.exceptions import ExportError
 from ..domain.models import DocStatus
-from ..infrastructure.export_common import (LINE_COLUMNS, available_columns, doc_row, line_rows)
+from ..domain.money import to_decimal
+from ..infrastructure.export_common import (LINE_COLUMNS, PRESETS, available_columns, doc_row, line_rows)
 from ..infrastructure.export_csv import write_csv
 from ..infrastructure.export_xlsx import write_xlsx
 from ..infrastructure.file_storage import safe_filename
 from ..infrastructure.repositories import DocumentRepository, SearchFilter
+
+
+ZERO = Decimal(0)
+
+
+def build_summary(recs) -> list[dict[str, Any]]:
+    """Totals by month and by supplier. Currencies are never mixed: every row carries its own currency."""
+    by_month: dict[tuple[str, str], list] = {}
+    by_supplier: dict[tuple[str, str], list] = {}
+    for r in recs:
+        cur = r.get("currency") or "(no currency)"
+        sub, tax, tot = (to_decimal(r.get(k)) or ZERO for k in ("subtotal", "tax_total", "total"))
+        month = (r.get("invoice_date") or "")[:7] or "(no date)"
+        supplier = r.get("supplier_name") or "(no supplier)"
+        for table, key in ((by_month, (month, cur)), (by_supplier, (supplier, cur))):
+            acc = table.setdefault(key, [0, ZERO, ZERO, ZERO])
+            acc[0] += 1; acc[1] += sub; acc[2] += tax; acc[3] += tot
+    rows: list[dict[str, Any]] = []
+    for title, table in (("By month", by_month), ("By supplier", by_supplier)):
+        for (name, cur), (n, sub, tax, tot) in sorted(table.items()):
+            rows.append({"view": title, "name": name, "currency": cur, "documents": n, "subtotal": sub, "tax": tax, "total": tot})
+    return rows
 
 
 @dataclass
@@ -37,8 +61,15 @@ class ExportService:
 
     def export(self, dest: Path, *, fmt: str | None = None, columns: list[str] | None = None, doc_ids: list[int] | None = None,
                approved_only: bool | None = None, include_lines: bool | None = None, date_from: str | None = None,
-               date_to: str | None = None) -> ExportResult:
+               date_to: str | None = None, preset: str | None = None, include_summary: bool | None = None) -> ExportResult:
         ex = self.cfg.export
+        if preset:
+            if preset not in PRESETS:
+                raise ExportError("Unknown export type.")
+            _l, _d, pcols, plines, psummary = PRESETS[preset]
+            columns = columns or pcols
+            include_lines = plines if include_lines is None else include_lines
+            include_summary = psummary if include_summary is None else include_summary
         fmt = fmt or ex.format
         approved_only = ex.approved_only if approved_only is None else approved_only
         include_lines = ex.include_line_items if include_lines is None else include_lines
@@ -73,6 +104,10 @@ class ExportService:
             issues = [{"document_id": r.id, "source_file": r.file_name, "severity": i.severity.value, "code": i.code, "message": i.message}
                       for r in recs for i in r.issues]
             sheets = [("Documents", headers, keys, kinds, rows)]
+            if include_summary and recs:
+                sheets.append(("Summary", ["View", "Name", "Currency", "Documents", "Taxable value", "Tax", "Total"],
+                               ["view", "name", "currency", "documents", "subtotal", "tax", "total"],
+                               ["text", "text", "text", "int", "money", "money", "money"], build_summary(recs)))
             if include_lines:
                 sheets.append(("Line items", lheaders, lkeys, lkinds, lines))
             sheets.append(("Validation", ["Document ID", "Source file", "Severity", "Code", "Message"],

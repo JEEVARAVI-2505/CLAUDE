@@ -138,6 +138,20 @@ class ReviewService:
         self.repo.audit(doc_id, actor, "approved", note=(f"override: {override_reason.strip()}" if errors else None))
         return self.repo.get(doc_id)
 
+    def clean_candidates(self) -> list[int]:
+        """Documents waiting for review with no errors and no warnings (only informational notes)."""
+        from ..infrastructure.repositories import SearchFilter
+        return [r.id for r in self.repo.search(SearchFilter(status=DocStatus.NEEDS_REVIEW.value, limit=5000)) if r.errors == 0 and r.warnings == 0]
+
+    def approve_clean(self, actor: str = "user") -> int:
+        """Approve every document that passed all checks. The person is still the one deciding: the UI asks first."""
+        n = 0
+        for doc_id in self.clean_candidates():
+            self.approve(doc_id, actor)
+            self.repo.audit(doc_id, actor, "bulk_approved", note="approved together with other documents that had no warnings")
+            n += 1
+        return n
+
     def reject(self, doc_id: int, reason: str, actor: str = "user") -> DocumentRecord:
         rec = self.repo.get(doc_id)
         self.repo.set_status(doc_id, DocStatus.REJECTED)

@@ -83,6 +83,7 @@ class AppConfig(BaseModel):
     suppress_ambiguous_date_warnings: bool = False
     default_currency: str | None = Field(None, pattern=r"^[A-Z]{3}$")
     first_run_done: bool = False
+    show_tips: bool = True  # short how-to banner at the top of each workflow screen
     ai: AiSettings = Field(default_factory=AiSettings)
     ocr: OcrSettings = Field(default_factory=OcrSettings)
     limits: LimitSettings = Field(default_factory=LimitSettings)

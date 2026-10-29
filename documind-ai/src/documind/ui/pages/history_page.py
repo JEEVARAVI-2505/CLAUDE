@@ -20,7 +20,7 @@ class HistoryPage(QWidget):
         self.setObjectName("Page")
         self.ctx, self.win = ctx, win
         lay = QVBoxLayout(self); lay.setContentsMargins(28, 22, 28, 22); lay.setSpacing(10)
-        lay.addWidget(label("History", "title"))
+        lay.addWidget(label("All documents", "title"))
         f = QHBoxLayout()
         self.q = QLineEdit(); self.q.setPlaceholderText("Search file name, supplier or invoice number…"); self.q.setClearButtonEnabled(True)
         self.q.setAccessibleName("Search history"); self.q.textChanged.connect(lambda _t: self.refresh())
@@ -55,9 +55,9 @@ class HistoryPage(QWidget):
         lay.addWidget(self.empty)
         bar = QHBoxLayout()
         self.count = label("", "muted")
-        b_open = QPushButton("Open in Review"); b_open.setProperty("variant", "primary"); b_open.clicked.connect(self.open)
+        b_open = QPushButton("Open this document"); b_open.setProperty("variant", "primary"); b_open.clicked.connect(self.open)
         b_exp = QPushButton("Export selected…"); b_exp.clicked.connect(self.export_selected)
-        b_del = QPushButton("Delete permanently…"); b_del.setProperty("variant", "danger"); b_del.clicked.connect(self.delete)
+        b_del = QPushButton("Delete for good…"); b_del.setProperty("variant", "danger"); b_del.clicked.connect(self.delete)
         bar.addWidget(self.count, 1)
         for b in (b_exp, b_del, b_open):
             bar.addWidget(b)

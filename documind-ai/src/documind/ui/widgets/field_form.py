@@ -13,8 +13,8 @@ from ...domain.money import to_decimal
 from ...domain.schemas import SCALAR_FIELDS, CustomFieldDef
 from .common import Chip, label, repolish
 
-STATE_CHIP = {"extracted": ("Extracted", "info"), "corrected": ("Corrected", "primary"), "validated": ("Validated", "success"),
-              "missing": ("Missing", "neutral")}
+STATE_CHIP = {"extracted": ("Read by software", "info"), "corrected": ("You changed it", "primary"), "validated": ("You approved it", "success"),
+              "missing": ("Not found", "neutral")}
 
 
 def display_value(value: str | None, ftype: str) -> str:
@@ -38,10 +38,10 @@ class FieldRow(QWidget):
         v = QVBoxLayout(self); v.setContentsMargins(0, 4, 0, 4); v.setSpacing(3)
         head = QHBoxLayout(); head.setSpacing(6)
         self.lbl = label(text, "muted")
-        self.chip = Chip("Missing", "neutral"); self.chip.setMinimumWidth(78)
+        self.chip = Chip("Not found", "neutral"); self.chip.setMinimumWidth(104)
         self.page = QToolButton(); self.page.setText("p.–"); self.page.setToolTip("Show the page this value came from")
         self.page.clicked.connect(lambda: self._page and on_page(self._page))
-        self.rev = QToolButton(); self.rev.setText("↶ Revert"); self.rev.setToolTip("Revert to the extracted value"); self.rev.setAccessibleName(f"Revert {text}")
+        self.rev = QToolButton(); self.rev.setText("Undo my change"); self.rev.setToolTip("Go back to what the software read"); self.rev.setAccessibleName(f"Revert {text}")
         self.rev.clicked.connect(lambda: on_revert(name))
         head.addWidget(self.lbl, 1); head.addWidget(self.rev); head.addWidget(self.page); head.addWidget(self.chip)
         self.edit = QLineEdit(); self.edit.setPlaceholderText(hint); self.edit.setAccessibleName(text)

@@ -14,11 +14,12 @@ from ...domain.schemas import SCALAR_BY_NAME
 from ...infrastructure.repositories import SearchFilter
 from ..icons import make_icon
 from ..widgets.common import Chip, EmptyState, label
+from ..widgets.guide import GuideBar
 from ..widgets.field_form import FieldsPanel
 from ..widgets.line_table import LineTable
 from ..widgets.preview import PageViewer
 
-FILTERS = [("Needs review", "needs_review"), ("Failed", "failed"), ("Approved", "approved"), ("Rejected", "rejected"), ("All", "")]
+FILTERS = [("Waiting for my check", "needs_review"), ("Could not be read", "failed"), ("Approved", "approved"), ("Rejected", "rejected"), ("All", "")]
 DOT = {"needs_review": "#D97706", "approved": "#16A34A", "failed": "#DC2626", "rejected": "#94A3B8", "queued": "#6366F1", "processing": "#6366F1"}
 SEV_ICON = {"error": "error", "warning": "warn", "info": "help"}
 
@@ -32,10 +33,11 @@ class ReviewPage(QWidget):
         self.tokens: dict[str, str] = {}
         root = QVBoxLayout(self); root.setContentsMargins(20, 16, 20, 16); root.setSpacing(10)
         top = QHBoxLayout()
-        top.addWidget(label("Review", "title")); top.addStretch()
-        self.safety = label("Machine-extracted values can be wrong. Check every field against the page before approving.", "small")
+        top.addWidget(label("Check and approve", "title")); top.addStretch()
+        self.safety = label("Software can misread. Compare with the page before you approve.", "small")
         top.addWidget(self.safety)
         root.addLayout(top)
+        self.guide = GuideBar(ctx, "review"); root.addWidget(self.guide)
 
         self.split = QSplitter(Qt.Horizontal)
         root.addWidget(self.split, 1)
@@ -49,6 +51,9 @@ class ReviewPage(QWidget):
         self.list.setTextElideMode(Qt.ElideRight); self.list.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.list.currentItemChanged.connect(self._picked)
         ll.addWidget(self.filter); ll.addWidget(self.list, 1)
+        self.b_bulk = QPushButton("Approve all with no warnings"); self.b_bulk.setToolTip("Approves every document that passed all checks, after you confirm")
+        self.b_bulk.clicked.connect(self.approve_clean)
+        ll.addWidget(self.b_bulk)
         self.split.addWidget(left)
         # -- middle: preview
         mid = QWidget(); ml = QVBoxLayout(mid); ml.setContentsMargins(4, 0, 4, 0)
@@ -115,7 +120,7 @@ class ReviewPage(QWidget):
         self.split.addWidget(right)
         self.split.setChildrenCollapsible(False); self._sized = False
         self.split.setStretchFactor(0, 0); self.split.setStretchFactor(1, 2); self.split.setStretchFactor(2, 3)
-        self.empty = EmptyState("Nothing to review yet", "Import documents and they appear here once extraction finishes.")
+        self.empty = EmptyState("Nothing to check yet", "Add documents in step 1. They appear here as soon as they have been read.", )
         self.empty.hide(); root.addWidget(self.empty)
         QShortcut(QKeySequence("Ctrl+Return"), self, activated=self.approve)
         QShortcut(QKeySequence("Alt+Down"), self, activated=lambda: self.step(1))
@@ -137,6 +142,7 @@ class ReviewPage(QWidget):
 
     # ---- list ---------------------------------------------------------------------
     def refresh(self) -> None:
+        self.guide.refresh(); self.update_bulk()
         keep = self.rec.id if self.rec else None
         self.reload_list(select=keep)
 
@@ -171,6 +177,24 @@ class ReviewPage(QWidget):
             if self.list.item(i).data(Qt.UserRole) == doc_id:
                 self.list.setCurrentRow(i)
                 return
+
+    def update_bulk(self) -> None:
+        n = len(self.ctx.review.clean_candidates())
+        self.b_bulk.setText(f"Approve the {n} with no warnings" if n else "Approve all with no warnings")
+        self.b_bulk.setEnabled(n > 0)
+
+    def approve_clean(self) -> None:
+        ids = self.ctx.review.clean_candidates()
+        if not ids:
+            return
+        ans = QMessageBox.question(self, "Approve these documents?", f"{len(ids)} document(s) passed every check: all required fields were found and every "
+                                   "total adds up.\n\nDo you want to approve them all now? You can still re-open any of them later.\n\n"
+                                   "Tip: open one or two first if you have not seen this supplier's invoices before.")
+        if ans != QMessageBox.Yes:
+            return
+        n = self.ctx.review.approve_clean()
+        self.win.notify(f"Approved {n} document(s). Step 3 is ready when you are.")
+        self.reload_list(); self.win.pages["dashboard"].refresh()
 
     def step(self, d: int) -> None:
         r = self.list.currentRow() + d
@@ -207,13 +231,13 @@ class ReviewPage(QWidget):
         if load_preview:
             self.viewer.load(rec.stored_path, rec.mime, self.ctx.cfg.limits)
         self.title.setText(f"{rec.get('supplier_name') or rec.file_name}  ·  {rec.get('invoice_number') or rec.get('po_number') or 'no number'}")
-        txt, kind = {"needs_review": ("Needs review", "warning"), "approved": ("Approved", "success"), "failed": ("Failed", "danger"),
-                     "rejected": ("Rejected", "neutral"), "queued": ("Queued", "neutral"), "processing": ("Processing", "info")}[rec.status.value]
+        txt, kind = {"needs_review": ("Waiting for your check", "warning"), "approved": ("Approved", "success"), "failed": ("Could not be read", "danger"),
+                     "rejected": ("Rejected", "neutral"), "queued": ("Waiting to be read", "neutral"), "processing": ("Being read", "info")}[rec.status.value]
         self.chip_status.set(txt, kind); self.chip_status.show()
         e, w = rec.error_count, rec.warning_count
-        self.chip_issues.set("No issues" if not (e or w) else f"{e} error(s) · {w} warning(s)", "success" if not (e or w) else "danger" if e else "warning")
+        self.chip_issues.set("All checks passed" if not (e or w) else (f"{e} problem(s)" if e else "") + (" · " if e and w else "") + (f"{w} to look at" if w else ""), "success" if not (e or w) else "danger" if e else "warning")
         self.chip_issues.show()
-        self.chip_mode.set("AI-assisted" if rec.info.mode == "rules+ai" else "Rules-only", "primary"); self.chip_mode.show()
+        self.chip_mode.set("AI helper used" if rec.info.mode == "rules+ai" else "Standard reading", "neutral"); self.chip_mode.show()
         self.kind.setCurrentIndex(max(0, self.kind.findData(rec.kind.value)))
         self.fail_banner.setVisible(rec.status == DocStatus.FAILED)
         self.fail_text.setText(f"This file could not be processed: {rec.error or 'unknown error'}")

@@ -14,6 +14,7 @@ from ...application.document_service import ImportResult
 from ...domain.models import DocStatus
 from ...infrastructure.repositories import SearchFilter
 from ..widgets.common import EmptyState, label
+from ..widgets.guide import GuideBar
 from ..widgets.dropzone import DropZone, expand_paths
 from ..workers import run_async
 
@@ -29,12 +30,13 @@ class ImportPage(QWidget):
         self.ctx, self.win = ctx, win
         self.rows: dict[int, int] = {}
         lay = QVBoxLayout(self); lay.setContentsMargins(28, 22, 28, 22); lay.setSpacing(12)
-        lay.addWidget(label("Import & Queue", "title"))
+        lay.addWidget(label("Add documents", "title"))
+        self.guide = GuideBar(ctx, "import"); lay.addWidget(self.guide)
         self.drop = DropZone(); self.drop.set_limits_text(ctx.cfg.limits.max_file_mb)
         self.drop.files_dropped.connect(self.handle_paths); self.drop.browse_requested.connect(self.browse)
         lay.addWidget(self.drop)
         opts = QHBoxLayout()
-        self.skip_dups = QCheckBox("Skip files I have already imported (same content)"); self.skip_dups.setChecked(True)
+        self.skip_dups = QCheckBox("Skip files I have already added (same content)"); self.skip_dups.setChecked(True)
         b_files = QPushButton("Add files…"); b_files.clicked.connect(self.browse)
         b_dir = QPushButton("Add folder…"); b_dir.clicked.connect(self.browse_folder)
         opts.addWidget(self.skip_dups); opts.addStretch(); opts.addWidget(b_files); opts.addWidget(b_dir)
@@ -47,12 +49,12 @@ class ImportPage(QWidget):
         h.setDefaultAlignment(Qt.AlignLeft | Qt.AlignVCenter)
         self.table.setAccessibleName("Processing queue"); self.table.itemDoubleClicked.connect(lambda _i: self.open_selected())
         lay.addWidget(self.table, 1)
-        self.empty = EmptyState("No files yet", "Files you add appear here with their progress. A file that cannot be read is listed with the reason.")
+        self.empty = EmptyState("No files yet", "Files you add appear here while they are read. If a file cannot be used, the reason is shown next to it.")
         lay.addWidget(self.empty, 1)
         bar = QHBoxLayout()
         self.summary = label("Queue is empty.", "muted")
         self.b_pause = QPushButton("Pause"); self.b_cancel = QPushButton("Cancel selected"); self.b_cancel_all = QPushButton("Cancel all")
-        self.b_retry = QPushButton("Retry failed / cancelled"); self.b_clear = QPushButton("Clear finished"); self.b_open = QPushButton("Open in Review")
+        self.b_retry = QPushButton("Retry failed / cancelled"); self.b_clear = QPushButton("Clear finished"); self.b_open = QPushButton("Check these now")
         self.b_open.setProperty("variant", "primary")
         for b, fn in ((self.b_pause, self.toggle_pause), (self.b_cancel, self.cancel_selected), (self.b_cancel_all, self.cancel_all),
                       (self.b_retry, self.retry), (self.b_clear, self.clear_finished), (self.b_open, self.open_selected)):
@@ -65,6 +67,7 @@ class ImportPage(QWidget):
 
     # ---- loading existing queue -------------------------------------------------------
     def refresh(self) -> None:
+        self.guide.refresh()
         if not self._loaded:
             self._loaded = True
             for st in ("queued", "failed"):
@@ -148,7 +151,7 @@ class ImportPage(QWidget):
         s = self._statuses()
         self.table.setVisible(bool(s)); self.empty.setVisible(not s)
         if not s:
-            self.summary.setText("Queue is empty. Drop files above to begin."); return
+            self.summary.setText("Nothing added yet. Drop files above to begin."); return
         done = s.count("done"); fail = s.count("failed") + s.count("rejected"); act = s.count("queued") + s.count("started") + s.count("progress")
         self.summary.setText(f"{done} ready for review · {act} in progress/waiting · {fail} failed or not imported · {len(s)} total")
         self.b_pause.setText("Resume" if self.ctx.batch.paused else "Pause")

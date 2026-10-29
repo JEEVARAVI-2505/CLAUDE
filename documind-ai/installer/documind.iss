@@ -1,6 +1,6 @@
 ; Inno Setup 6 script. Per-user install by default (no administrator rights needed), data stays in %LOCALAPPDATA%\DocuMindAI.
 #define AppName "DocuMind AI Professional"
-#define AppVersion "0.9.0"
+#define AppVersion "0.9.1"
 
 [Setup]
 AppId={{6F3B3C1E-5C41-4B0B-9C57-2E3E0C7B9A11}

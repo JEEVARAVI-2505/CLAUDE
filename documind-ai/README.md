@@ -8,6 +8,9 @@ paid AI API, no telemetry. A local AI model (Ollama) is optional; the product is
 > Linux (offscreen Qt, real Tesseract 5.3.4). **Not yet verified:** a Windows installer build, clean-machine install, a real Ollama model, real customer
 > documents. See `docs/RELEASE_CHECKLIST.md` and `PROGRESS.md`. Extraction results are not guaranteed correct; a person must review every document.
 
+## Just want to try it? (Windows)
+Double-click **`START_DOCUMIND.bat`**. First time it installs what it needs (internet once; installs Python 3.12 if missing), then opens the app. On Home press **Try it with sample documents**. `CHECK_THAT_IT_WORKS.bat` prints SMOKE OK if everything is fine. Read **`README_FIRST.txt`** and **`docs/USE_CASE.md`**. These launchers have not been run on Windows by the author.
+
 ## Quick start (development)
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\setup_dev.ps1     # venv + pinned dependencies

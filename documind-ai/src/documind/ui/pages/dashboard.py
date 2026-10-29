@@ -15,14 +15,15 @@ from ..widgets.charts import BarChart, StackedBar
 from ..widgets.common import Card, EmptyState, MetricStrip, label
 
 PERIODS = [("Last 7 days", 7), ("Last 30 days", 30), ("Last 90 days", 90), ("All time", 0)]
-STATUS_ORDER = [("approved", "Approved", "success"), ("needs_review", "Needs review", "warning"), ("failed", "Failed", "danger"),
-                ("queued", "Queued or processing", "info"), ("rejected", "Rejected", "muted")]
+STATUS_ORDER = [("approved", "Approved", "success"), ("needs_review", "Waiting for your check", "warning"), ("failed", "Failed", "danger"),
+                ("queued", "Being read", "info"), ("rejected", "Rejected", "muted")]
 
 
 class DashboardPage(QWidget):
     import_requested = Signal()
     demo_requested = Signal()
     review_requested = Signal(object)
+    go_requested = Signal(str)
 
     def __init__(self, ctx: AppContext) -> None:
         super().__init__()
@@ -35,7 +36,7 @@ class DashboardPage(QWidget):
         lay = QVBoxLayout(body); lay.setContentsMargins(24, 20, 24, 24); lay.setSpacing(14)
 
         head = QHBoxLayout()
-        head.addWidget(label("Overview", "title")); head.addStretch()
+        head.addWidget(label("Welcome to DocuMind", "title")); head.addStretch()
         head.addWidget(label("Period", "muted"))
         self.period = QComboBox(); self.period.setAccessibleName("Summary period")
         for t, d in PERIODS:
@@ -45,34 +46,45 @@ class DashboardPage(QWidget):
         head.addWidget(self.period)
         lay.addLayout(head)
 
-        # next action
+        # the 4-step workflow, with live counts; each box is a button to that step
+        sub = label("Supplier invoices and purchase orders in, a checked purchase register out. Everything stays on this computer.", "muted", wrap=True)
+        lay.addWidget(sub)
+        steps = QHBoxLayout(); steps.setSpacing(10)
+        self.step_btns: list[QPushButton] = []
+        for n, (key, title) in enumerate((("import", "Add documents"), ("review", "Check and approve"), ("export", "Export to Excel")), 1):
+            b = QPushButton(); b.setProperty("step", "true"); b.setMinimumHeight(86); b.setCursor(Qt.PointingHandCursor)
+            b.setAccessibleName(f"Step {n}: {title}")
+            b.clicked.connect(lambda _c=False, k=key: self.go_requested.emit(k))
+            self.step_btns.append(b); steps.addWidget(b, 1)
+        lay.addLayout(steps)
         self.next_card = Card()
         row = QHBoxLayout(); row.setSpacing(14)
         col = QVBoxLayout(); col.setSpacing(2)
         self.next_title = label("", "h2"); self.next_text = label("", "muted", wrap=True)
         col.addWidget(self.next_title); col.addWidget(self.next_text)
         row.addLayout(col, 1)
-        self.b_demo = QPushButton("Load sample documents"); self.b_demo.setProperty("variant", "link")
-        self.b_import = QPushButton("Import documents…"); self.b_import.setToolTip("Import documents (Ctrl+O)")
-        self.b_review = QPushButton("Start reviewing"); self.b_review.setProperty("variant", "primary")
+        self.b_demo = QPushButton("Try it with sample documents"); self.b_demo.setProperty("variant", "link")
+        self.b_demo.setToolTip("Creates fictional invoices so you can practise. Nothing real is touched.")
+        self.b_import = QPushButton("Add documents…"); self.b_import.setToolTip("Add documents (Ctrl+O)")
+        self.b_review = QPushButton("Start checking"); self.b_review.setProperty("variant", "primary")
         for b in (self.b_demo, self.b_import, self.b_review):
             row.addWidget(b)
         self.next_card.lay.addLayout(row)
         lay.addWidget(self.next_card)
 
-        self.metrics = MetricStrip([("review", "Pending review"), ("approved", "Approved"), ("failed", "Extraction failures"),
-                                    ("disc", "With validation discrepancies"), ("processed", "Processed in period")])
+        self.metrics = MetricStrip([("review", "Waiting for your check"), ("approved", "Approved"), ("failed", "Could not be read"),
+                                    ("disc", "With numbers that do not add up"), ("processed", "Read in this period")])
         lay.addWidget(self.metrics)
 
         mid = QHBoxLayout(); mid.setSpacing(14)
-        c1 = Card(title="Documents imported per day"); self.bar = BarChart(); c1.lay.addWidget(self.bar)
-        c2 = Card(title="Status of documents"); self.stack = StackedBar(); c2.lay.addWidget(self.stack)
+        c1 = Card(title="Documents added per day"); self.bar = BarChart(); c1.lay.addWidget(self.bar)
+        c2 = Card(title="Where your documents are"); self.stack = StackedBar(); c2.lay.addWidget(self.stack)
         self.legend = QGridLayout(); self.legend.setHorizontalSpacing(12); self.legend.setVerticalSpacing(4); c2.lay.addLayout(self.legend); c2.lay.addStretch()
         mid.addWidget(c1, 3); mid.addWidget(c2, 2)
         lay.addLayout(mid)
 
         bot = QHBoxLayout(); bot.setSpacing(14)
-        c3 = Card(title="Needs attention")
+        c3 = Card(title="Needs your attention")
         self.attn = QListWidget(); self.attn.setMinimumHeight(150); self.attn.setAccessibleName("Documents needing attention")
         self.attn.itemActivated.connect(lambda it: self.review_requested.emit(it.data(Qt.UserRole)))
         self.attn.itemClicked.connect(lambda it: self.review_requested.emit(it.data(Qt.UserRole)))
@@ -80,7 +92,7 @@ class DashboardPage(QWidget):
                                 "Everything is processed on this computer.", "Import documents…")
         self.empty.button.clicked.connect(self.import_requested.emit)
         c3.lay.addWidget(self.attn); c3.lay.addWidget(self.empty)
-        c4 = Card(title="This computer")
+        c4 = Card(title="Is this computer ready?")
         self.ready_ocr = label("", "muted", wrap=True); self.ready_ai = label("", "muted", wrap=True); self.ready_hint = label("", "small", wrap=True)
         for w in (self.ready_ocr, self.ready_ai, self.ready_hint):
             c4.lay.addWidget(w)
@@ -103,20 +115,37 @@ class DashboardPage(QWidget):
         s = self.ctx.repo.stats(since)
         every = self.ctx.repo.stats(None)
         pend = every["needs_review"]
+        ready = every["approved"]
+        waiting = every["queued"] + every["processing"]
+        step_txt = [
+            (f"1   Add documents", f"{waiting} being read" if waiting else (f"{every['total']} added so far" if every["total"] else "Nothing added yet")),
+            (f"2   Check and approve", f"{pend} waiting for you" if pend else ("Starts when reading is done" if waiting else ("All checked" if every["total"] else "Starts after step 1"))),
+            (f"3   Export to Excel", f"{ready} ready to export" if ready else "Approve something first"),
+        ]
+        for b, (t1, t2) in zip(self.step_btns, step_txt):
+            b.setText(f"{t1}\n{t2}")
         if every["total"] == 0:
-            self.next_title.setText("Start by importing a few documents")
-            self.next_text.setText("Drop PDF or image files on the Import page. You can also load fictional sample invoices to try the workflow.")
+            self.next_title.setText("Start here: add a few invoices")
+            self.next_text.setText("Click 'Add documents' or drag files onto the Add documents page. Want to see how it works first? Try the sample documents.")
+        elif waiting:
+            self.next_title.setText("Reading your documents…")
+            self.next_text.setText("This takes a few seconds per page. You can keep working.")
         elif pend:
-            self.next_title.setText(f"{pend} document{'s' if pend != 1 else ''} to review")
-            self.next_text.setText("Check each value against the page, fix anything wrong, then approve.")
+            self.next_title.setText(f"{pend} document{'s' if pend != 1 else ''} need{'s' if pend == 1 else ''} your check")
+            self.next_text.setText("Look at each value next to the page, fix anything wrong, then approve. Documents with no warnings can be approved all at once.")
         elif every["failed"]:
             self.next_title.setText(f"{every['failed']} document{'s' if every['failed'] != 1 else ''} could not be read")
-            self.next_text.setText("Open the Import page to see why and retry, or review them manually.")
+            self.next_text.setText("Open 'Add documents' to see the reason for each one. A common cause is a scanned file when text recognition (OCR) is not installed.")
+        elif ready:
+            self.next_title.setText("Everything is checked. Export when you are ready")
+            self.next_text.setText("Open 'Export to Excel' and choose 'Purchase register' to send the approved invoices to your accountant.")
         else:
-            self.next_title.setText("All caught up")
-            self.next_text.setText("Nothing is waiting for review. Export approved documents from the Export page.")
+            self.next_title.setText("Nothing to do right now")
+            self.next_text.setText("Add more documents whenever you have them.")
         self.b_review.setVisible(pend > 0)
         self.b_demo.setVisible(every["total"] == 0)
+        self.b_import.setProperty("variant", "primary" if every["total"] == 0 else "")
+        self.b_import.style().unpolish(self.b_import); self.b_import.style().polish(self.b_import)
         self.metrics.set_value("review", s["needs_review"]); self.metrics.set_value("approved", s["approved"])
         self.metrics.set_value("failed", s["failed"]); self.metrics.set_value("disc", s["with_discrepancies"]); self.metrics.set_value("processed", s["processed"])
         self.bar.set_data(self.ctx.repo.per_day(30 if days in (0, 90) else days))
@@ -145,11 +174,11 @@ class DashboardPage(QWidget):
         self.attn.setVisible(has); self.empty.setVisible(not has)
 
     def set_readiness(self, ocr_ok: bool, ocr_text: str, ai_kind: str, ai_text: str) -> None:
-        self.ready_ocr.setText(f"Text recognition (OCR): {ocr_text}")
-        self.ready_ai.setText(f"AI assistant: {ai_text}")
+        self.ready_ocr.setText(f"Reading scans and photos (OCR): {ocr_text}")
+        self.ready_ai.setText(f"AI helper (optional): {ai_text}")
         hints = []
         if not ocr_ok:
-            hints.append("Scanned PDFs and photos need Tesseract OCR (Help › Install OCR). Digital PDFs work without it.")
+            hints.append("Scanned PDFs and photos need a free add-on called Tesseract OCR (Help > Install OCR). Normal digital PDFs work without it.")
         if ai_kind != "success":
-            hints.append("Rules-only mode is on. Fields are found by labels and layout.")
+            hints.append("Standard reading is on (no AI add-on). That is fine for most invoices.")
         self.ready_hint.setText(" ".join(hints) or "Everything is available. No data leaves this computer.")

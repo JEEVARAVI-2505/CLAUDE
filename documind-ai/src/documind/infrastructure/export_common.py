@@ -113,3 +113,26 @@ def fmt_csv(v: Any) -> str:
     if isinstance(v, str):
         return neutralize_formula(v)
     return str(v)
+
+
+# What people actually want from an export, in their words. (key -> label, description, columns, include line items, include summary)
+PRESETS: dict[str, tuple[str, str, list[str], bool, bool]] = {
+    "purchase_register": (
+        "Purchase register (for my accountant)",
+        "One row per invoice: date, number, supplier, GSTIN, taxable value, tax, total, due date. Plus a Summary sheet with totals by month and by supplier.",
+        ["invoice_date", "invoice_number", "supplier_name", "tax_id", "currency", "subtotal", "discount_total", "tax_total", "total", "due_date",
+         "payment_terms", "source_file", "review_status"], False, True),
+    "full_detail": (
+        "Everything, with line items",
+        "All fields for every document and a second sheet with each line item (description, quantity, price, tax).",
+        ["source_file", "document_kind", "supplier_name", "customer_name", "invoice_number", "po_number", "invoice_date", "due_date", "currency", "tax_id",
+         "subtotal", "discount_total", "tax_rate", "tax_total", "total", "payment_terms", "validation_status", "review_status"], True, True),
+    "po_list": (
+        "Purchase order list",
+        "One row per purchase order: PO number, date, vendor, buyer and value.",
+        ["po_number", "invoice_date", "supplier_name", "customer_name", "currency", "subtotal", "tax_total", "total", "source_file", "review_status"], False, False),
+    "payables_due": (
+        "Payments due (who do I owe, and when)",
+        "Supplier, invoice number, due date, payment terms and amount, so you can plan payments.",
+        ["due_date", "supplier_name", "invoice_number", "currency", "total", "payment_terms", "invoice_date", "source_file"], False, False),
+}
