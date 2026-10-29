@@ -22,7 +22,7 @@
     { "id": "fridge",       "name": "Refrigerator",      "width": 700,  "depth": 700,  "height": 1800, "color": "#ecf0f1", "placement": "Corner",  "frontClearance": 900 },
     { "id": "study-desk",   "name": "Study desk",        "width": 1200, "depth": 600,  "height": 750,  "color": "#8d6e4f", "placement": "Wall",    "frontClearance": 900 },
     { "id": "bookshelf",    "name": "Bookshelf",         "width": 900,  "depth": 350,  "height": 1800, "color": "#6e5440", "placement": "Wall",    "frontClearance": 600 },
-    { "id": "pooja-unit",   "name": "Pooja unit",        "width": 900,  "depth": 450,  "height": 1500, "color": "#b9770e", "placement": "Wall",    "frontClearance": 900 },
+    { "id": "pooja-unit",   "name": "Pooja unit",        "width": 900,  "depth": 450,  "height": 1500, "color": "#b9770e", "placement": "Wall",    "frontClearance": 600 },
     { "id": "wc",           "name": "WC",                "width": 450,  "depth": 700,  "height": 400,  "color": "#fdfefe", "placement": "Wall",    "frontClearance": 600 },
     { "id": "washbasin",    "name": "Wash basin",        "width": 550,  "depth": 450,  "height": 850,  "color": "#fdfefe", "placement": "Wall",    "frontClearance": 600 },
     { "id": "shower",       "name": "Shower area",       "width": 900,  "depth": 900,  "height": 50,   "color": "#aed6f1", "placement": "Corner",  "frontClearance": 0 },
