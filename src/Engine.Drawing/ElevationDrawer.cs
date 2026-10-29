@@ -76,7 +76,7 @@ public static class ElevationDrawer
     {
         var ext = model.Exterior;
         var env = model.Storeys[0].Envelope;
-        if (model.Storeys.Count > 1 || ext.Roof != RoofForm.SlopedTile)
+        if (model.Storeys.Count > 1 && ext.Roof != RoofForm.SlopedTile)
         {
             var stair = model.Storeys[^1].Rooms.FirstOrDefault(r => r.Type == RoomType.Staircase);
             if (stair is not null)

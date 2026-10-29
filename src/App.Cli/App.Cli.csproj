@@ -2,9 +2,9 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>buildingstudio</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Engine.Layout\Engine.Layout.csproj" />
-    <ProjectReference Include="..\Engine.Drawing\Engine.Drawing.csproj" />
+    <ProjectReference Include="..\Studio.Pipeline\Studio.Pipeline.csproj" />
   </ItemGroup>
 </Project>

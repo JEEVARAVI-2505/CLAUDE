@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Engine.Layout\Engine.Layout.csproj" />
+    <ProjectReference Include="..\Engine.Compliance\Engine.Compliance.csproj" />
+    <ProjectReference Include="..\Engine.Structure\Engine.Structure.csproj" />
+    <ProjectReference Include="..\Engine.Interior\Engine.Interior.csproj" />
+    <ProjectReference Include="..\Engine.Exterior\Engine.Exterior.csproj" />
+    <ProjectReference Include="..\Engine.Quantity\Engine.Quantity.csproj" />
+    <ProjectReference Include="..\Engine.Drawing\Engine.Drawing.csproj" />
+    <ProjectReference Include="..\Engine.Model3D\Engine.Model3D.csproj" />
+    <ProjectReference Include="..\IO.Gltf\IO.Gltf.csproj" />
+    <ProjectReference Include="..\IO.Dxf\IO.Dxf.csproj" />
+    <ProjectReference Include="..\IO.Excel\IO.Excel.csproj" />
+    <ProjectReference Include="..\IO.Pdf\IO.Pdf.csproj" />
+    <ProjectReference Include="..\AI.Services\AI.Services.csproj" />
+  </ItemGroup>
+</Project>

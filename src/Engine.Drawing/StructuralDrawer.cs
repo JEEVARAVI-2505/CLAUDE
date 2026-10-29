@@ -43,17 +43,24 @@ public static class StructuralDrawer
         var y0 = env.MinY - 3000;
         e.Add(new TextEntity(Layers.Title, new Vec2(env.MinX, y0), Banner, 220, TextAlign.Left, true));
         var colRows = st.Columns.GroupBy(c => (c.B, c.D, c.Reinforcement, c.Ties))
-            .Select(g => (IReadOnlyList<string>)[string.Join(",", g.Select(c => c.Mark)), $"{g.Key.B:0}x{g.Key.D:0}", g.Key.Reinforcement, g.Key.Ties, $"{g.Max(c => c.Pu):0}"])
+            .Select(g => (IReadOnlyList<string>)[Marks(g.Select(c => c.Mark)), $"{g.Key.B:0}x{g.Key.D:0}", g.Key.Reinforcement, g.Key.Ties, $"{g.Max(c => c.Pu):0}"])
             .ToList();
         var table = new TableEntity(Layers.Text, new Vec2(env.MinX, y0 - 600), ["Columns", "Size (mm)", "Main bars", "Ties", "Max Pu (kN)"], colRows, [5200, 1800, 2200, 2400, 1800], 170);
         e.Add(table);
         var ftRows = st.Footings.GroupBy(f => (f.L, f.B, f.Depth, f.Reinforcement))
-            .Select(g => (IReadOnlyList<string>)[string.Join(",", g.Select(f => f.Mark)), $"{g.Key.L:0}x{g.Key.B:0}", $"{g.Key.Depth:0}", g.Key.Reinforcement])
+            .Select(g => (IReadOnlyList<string>)[Marks(g.Select(f => f.Mark)), $"{g.Key.L:0}x{g.Key.B:0}", $"{g.Key.Depth:0}", g.Key.Reinforcement])
             .ToList();
         e.Add(new TableEntity(Layers.Text, new Vec2(env.MinX, y0 - 900 - table.Height), ["Footings", "L x B (mm)", "Depth", "Bottom mesh"], ftRows, [5200, 1800, 1200, 3000], 170));
         sheet.Notes.Add(Banner);
         sheet.Notes.AddRange(st.Notes);
         return sheet;
+    }
+
+    /// <summary>Compact mark list for schedules: "C1,C2,C3 … (+12)".</summary>
+    public static string Marks(IEnumerable<string> marks)
+    {
+        var list = marks.ToList();
+        return list.Count <= 5 ? string.Join(",", list) : $"{string.Join(",", list.Take(4))} … (+{list.Count - 4})";
     }
 
     public static string GridLetter(int i) => i < 26 ? ((char)('A' + i)).ToString() : $"A{i - 25}";

@@ -6,9 +6,10 @@ using BuildingStudio.Engine.Vastu;
 namespace BuildingStudio.Engine.Layout;
 
 /// <summary>A ranked plan option ready to apply to the model.</summary>
+/// <param name="VastuScore">Full Vastu score of the detailed plan (includes entrance and opening rules).</param>
 public sealed record LayoutOption(
     string Name, int Rank, LayoutMetrics Metrics, IReadOnlyList<Storey> Storeys, string Summary,
-    IReadOnlyList<string> TradeOffs, LayoutConfig Config, int Seed);
+    IReadOnlyList<string> TradeOffs, LayoutConfig Config, int Seed, double VastuScore);
 
 public sealed class LayoutSettings
 {
@@ -49,20 +50,29 @@ public sealed class LayoutGenerator(VastuEngine vastu, BylawRulePack bylaws, Lay
                     candidates.Add((best, storeys, m, s));
             }
 
-        var picked = candidates
-            .OrderByDescending(c => c.M.Fitness)
-            .GroupBy(c => Signature(c.Storeys, brief.Site))
-            .Select(gr => gr.First())
-            .Take(count)
-            .ToList();
+        var ordered = candidates.OrderByDescending(c => c.M.Fitness).ToList();
+        var zones = ordered.Select(c => Zones(c.Storeys, brief.Site)).ToList();
+        var picked = new List<(Genome G, List<Storey> Storeys, LayoutMetrics M, int Seed)>();
+        var pickedZones = new List<List<string>>();
+        // Options must differ: at least 2 real rooms in other zones, relaxed if the brief allows few variants.
+        foreach (var minDiff in new[] { 2, 1 })
+            for (var i = 0; i < ordered.Count && picked.Count < count; i++)
+            {
+                if (picked.Contains(ordered[i])) continue;
+                if (pickedZones.Any(z => Differences(z, zones[i]) < minDiff)) continue;
+                picked.Add(ordered[i]);
+                pickedZones.Add(zones[i]);
+            }
+        picked = picked.OrderByDescending(c => c.M.Fitness).ToList();
 
         return picked.Select((c, i) =>
         {
             foreach (var st in c.Storeys) PlanDetailer.Detail(st, brief);
             var name = $"Option {(char)('A' + i)}";
             var stairNote = brief.Floors > 1 ? $", stair {StairZone(c.Storeys[0], brief.Site)}" : "";
-            var summary = $"Vastu {c.M.Vastu:0} · area match {c.M.AreaMatch:P0} · adjacency {c.M.Adjacency:P0} · {c.G.Config.Describe()}{stairNote}";
-            return new LayoutOption(name, i + 1, c.M, c.Storeys, summary, TradeOffs(c.Storeys, brief, c.M), c.G.Config, c.Seed);
+            var full = vastu.Evaluate(new BuildingModel { Brief = brief, Storeys = c.Storeys }).Score;
+            var summary = $"Vastu {full:0} · area match {c.M.AreaMatch:P0} · adjacency {c.M.Adjacency:P0} · {c.G.Config.Describe()}{stairNote}";
+            return new LayoutOption(name, i + 1, c.M, c.Storeys, summary, TradeOffs(c.Storeys, brief, c.M), c.G.Config, c.Seed, full);
         }).ToList();
     }
 
@@ -184,6 +194,27 @@ public sealed class LayoutGenerator(VastuEngine vastu, BylawRulePack bylaws, Lay
             var grid = new ZoneGrid(s.Envelope, site.NorthAngle);
             return s.Rooms.Where(r => r.Type != RoomType.Passage).Select(r => $"{s.Level}{r.Name}{grid.ZoneOf(r.Bounds)}").OrderBy(x => x, StringComparer.Ordinal);
         }));
+
+    /// <summary>Multiset of "level:type:zone" for real rooms (identical rooms swapped count as the same plan).</summary>
+    private static List<string> Zones(IReadOnlyList<Storey> storeys, Site site)
+    {
+        var list = new List<string>();
+        foreach (var s in storeys)
+        {
+            var grid = new ZoneGrid(s.Envelope, site.NorthAngle);
+            list.AddRange(s.Rooms.Where(r => r.TargetArea > 0).Select(r => $"{s.Level}:{r.Type}:{grid.ZoneOf(r.Bounds)}"));
+        }
+        return list;
+    }
+
+    private static int Differences(List<string> a, List<string> b)
+    {
+        var rest = b.ToList();
+        var diff = 0;
+        foreach (var x in a)
+            if (!rest.Remove(x)) diff++;
+        return diff;
+    }
 
     private static Direction StairZone(Storey s, Site site) =>
         s.Rooms.Where(r => r.Type == RoomType.Staircase).Select(r => new ZoneGrid(s.Envelope, site.NorthAngle).ZoneOf(r.Bounds)).FirstOrDefault(Direction.Centre);
