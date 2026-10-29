@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Engine.Structure\Engine.Structure.csproj" />
+    <ProjectReference Include="..\..\src\Engine.Layout\Engine.Layout.csproj" />
+  </ItemGroup>
+</Project>
