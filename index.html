@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>3D Building MVP</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0b1020; font-family: system-ui, sans-serif; }
+    canvas { display: block; }
+    #ui {
+      position: fixed; top: 16px; left: 16px; width: 220px; padding: 14px;
+      background: rgba(15, 20, 40, .85); color: #e8ecf8; border-radius: 10px;
+      font-size: 14px; backdrop-filter: blur(6px);
+    }
+    #ui h1 { font-size: 16px; margin: 0 0 10px; }
+    #ui button {
+      display: block; width: 100%; margin: 6px 0 0; padding: 8px; border: 0; border-radius: 6px;
+      background: #2c3a6b; color: #fff; cursor: pointer; font-size: 13px;
+    }
+    #ui button:hover, #ui button.active { background: #4a63c7; }
+    #ui .row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    #ui .row button { width: auto; flex: 1 0 40px; margin: 0; }
+    #info { margin-top: 10px; font-size: 12px; opacity: .8; line-height: 1.4; }
+  </style>
+  <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.js", "three/addons/": "./vendor/addons/" } }
+  </script>
+</head>
+<body>
+  <div id="ui">
+    <h1>Tower MVP</h1>
+    <div>Floors</div>
+    <div class="row" id="floors"></div>
+    <button id="roof">Toggle roof (cutaway)</button>
+    <button id="daynight">Toggle day / night</button>
+    <button id="rotate" class="active">Auto-rotate: on</button>
+    <button id="reset">Reset view</button>
+    <div id="info">Drag to orbit, scroll to zoom, right-drag to pan. Click a floor number to isolate it.</div>
+  </div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
