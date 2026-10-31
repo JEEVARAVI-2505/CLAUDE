@@ -26,4 +26,19 @@ public sealed class AppSettings
     public int PageSize { get; set; } = 100;
     public bool FirstRunCompleted { get; set; }
     public DateTime? FirstRunUtc { get; set; }
+
+    public AppSettings Clone()
+    {
+        var c = (AppSettings)MemberwiseClone();
+        c.RequiredFields = new List<string>(RequiredFields);
+        return c;
+    }
+
+    /// <summary>Converts the stored required-field names into quality options.</summary>
+    public CRM_Master.Core.BusinessRules.QualityOptions ToQualityOptions()
+    {
+        var fields = RequiredFields.Select(n => Enum.TryParse<CRM_Master.Core.Entities.ContactField>(n, out var f) ? (CRM_Master.Core.Entities.ContactField?)f : null)
+            .Where(f => f.HasValue).Select(f => f!.Value).Distinct().ToList();
+        return new CRM_Master.Core.BusinessRules.QualityOptions(fields, DefaultCountryCode);
+    }
 }
