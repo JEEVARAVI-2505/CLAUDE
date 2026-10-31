@@ -10,6 +10,14 @@
     <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>
+    <Using Include="System.IO" />
+    <Resource Include="Assets\app.png" />
+    <Resource Include="Assets\app.ico" />
+    <Content Include="Assets\SampleData\*.csv" CopyToOutputDirectory="PreserveNewest" LinkBase="SampleData" />
+    <Content Include="..\THIRD_PARTY.md" Link="THIRD_PARTY_NOTICES.txt" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="branding.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('branding.json')" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Serilog" />

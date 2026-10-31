@@ -1,0 +1,26 @@
+<UserControl x:Class="CRM_Master.App.Views.MappingGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Expects a DataContext with a MappingRows collection (Import and Bulk Update view-models). -->
+    <DataGrid ItemsSource="{Binding MappingRows}" MaxHeight="360" CanUserSortColumns="False" SelectionMode="Single">
+        <DataGrid.Columns>
+            <DataGridTextColumn Header="Column in your file" Binding="{Binding Header}" Width="1.3*"/>
+            <DataGridTextColumn Header="Sample values" Binding="{Binding Samples}" Width="2*"/>
+            <DataGridTemplateColumn Header="Maps to" Width="1.6*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <ComboBox ItemsSource="{Binding Options}" SelectedItem="{Binding Selected, Mode=TwoWay}" DisplayMemberPath="Label" Margin="0,3"/>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTemplateColumn Header="Custom field name" Width="1.2*">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBox Text="{Binding CustomName, UpdateSourceTrigger=PropertyChanged}" Margin="0,3" Visibility="{Binding IsCustom, Converter={StaticResource BoolToVis}}"/>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn Header="Match" Binding="{Binding ConfidenceText}" Width="1*"/>
+        </DataGrid.Columns>
+    </DataGrid>
+</UserControl>
