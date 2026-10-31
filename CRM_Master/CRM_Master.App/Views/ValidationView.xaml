@@ -1,3 +1,67 @@
-<UserControl x:Class="CRM_Master.App.Views.ValidationView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <TextBlock Text="Validation (stub)" Margin="24"/>
+<UserControl x:Class="CRM_Master.App.Views.ValidationView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,18,24,28">
+            <Border Style="{StaticResource Banner.Info}" Margin="0,0,0,14">
+                <TextBlock TextWrapping="Wrap" FontSize="12.5">
+                    <Run FontWeight="SemiBold">What this checks.</Run>
+                    <Run Text="Email results are syntax checks only - a valid-looking address is not proof that the mailbox exists or is active. Phone checks cover format and length, not whether a line is in service."/>
+                </TextBlock>
+            </Border>
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="Validation rules" Style="{StaticResource Text.H2}"/>
+                    <TextBlock Text="Required fields and the default country code come from Settings." Style="{StaticResource Text.Caption}" Margin="0,2,0,10"/>
+                    <WrapPanel>
+                        <CheckBox Content="Email" IsChecked="{Binding CheckEmail}" Margin="0,0,20,8"/><CheckBox Content="Phone" IsChecked="{Binding CheckPhone}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Website" IsChecked="{Binding CheckWebsite}" Margin="0,0,20,8"/><CheckBox Content="Names" IsChecked="{Binding CheckNames}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Company" IsChecked="{Binding CheckCompany}" Margin="0,0,20,8"/><CheckBox Content="Dates" IsChecked="{Binding CheckDates}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Country" IsChecked="{Binding CheckCountry}" Margin="0,0,20,8"/><CheckBox Content="Duplicate identifiers" IsChecked="{Binding CheckDuplicates}" Margin="0,0,20,8"/>
+                    </WrapPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                        <Button Content="Validate all contacts" Style="{StaticResource Button.Primary}" Command="{Binding RunCommand}"/>
+                        <Button Content="Cancel" Command="{Binding CancelCommand}" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                        <Button Content="Refresh stored quality flags" Command="{Binding RefreshStoredFlagsCommand}" ToolTip="Recomputes the valid / invalid / incomplete flags used by the dashboard and filters" Margin="0"/>
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding ProgressText, Converter={StaticResource NullToVis}}" Margin="0,10,0,0"><ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}"/><TextBlock Text="{Binding ProgressText}" Style="{StaticResource Text.Caption}" Margin="0,4,0,0"/></StackPanel>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
+                <WrapPanel Margin="0,0,0,10">
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="150" Padding="14,10"><StackPanel><TextBlock Text="Contacts checked" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding Total, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="150" Padding="14,10"><StackPanel><TextBlock Text="Valid records" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding Valid, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}" Foreground="{DynamicResource Brush.Success}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="150" Padding="14,10"><StackPanel><TextBlock Text="Invalid (errors)" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding WithErrors, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}" Foreground="{DynamicResource Brush.Error}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="150" Padding="14,10"><StackPanel><TextBlock Text="With warnings" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding WithWarnings, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}" Foreground="{DynamicResource Brush.Warning}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="150" Padding="14,10"><StackPanel><TextBlock Text="Missing required fields" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding MissingRequired, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}"/></StackPanel></Border>
+                </WrapPanel>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,10">
+                            <Button DockPanel.Dock="Right" Content="Apply all suggested corrections" Command="{Binding ApplyAllVisibleCommand}" Margin="0"/>
+                            <ComboBox DockPanel.Dock="Left" ItemsSource="{Binding SeverityOptions}" SelectedItem="{Binding SelectedSeverity}" DisplayMemberPath="Label" Width="170" Margin="0,0,10,0"/>
+                            <TextBox Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,10,0" ToolTip="Filter by contact, message or code"/>
+                        </DockPanel>
+                        <TextBlock Text="{Binding Note}" Style="{StaticResource Text.Caption}" Margin="0,0,0,6"/>
+                        <DataGrid ItemsSource="{Binding Issues}" MaxHeight="520">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding ContactId}" Width="60"/>
+                                <DataGridTextColumn Header="Contact" Binding="{Binding ContactName}" Width="1.2*"/>
+                                <DataGridTextColumn Header="Field" Binding="{Binding Field}" Width="*"/>
+                                <DataGridTextColumn Header="Level" Binding="{Binding Severity}" Width="80"/>
+                                <DataGridTextColumn Header="Finding" Binding="{Binding Message}" Width="2*"/>
+                                <DataGridTextColumn Header="Suggested correction" Binding="{Binding Suggestion}" Width="1.5*"/>
+                                <DataGridTemplateColumn Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate><Button Content="Apply" Style="{StaticResource Button.Link}" Command="{Binding DataContext.ApplySuggestionCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}" CommandParameter="{Binding}" Margin="0" Visibility="{Binding Suggestion, Converter={StaticResource NullToVis}}"/></DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

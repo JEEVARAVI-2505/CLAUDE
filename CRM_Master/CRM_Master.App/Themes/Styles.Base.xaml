@@ -6,10 +6,8 @@
     <CornerRadius x:Key="Radius.Control">6</CornerRadius>
 
     <!-- ===== Typography ===== -->
-    <Style TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{DynamicResource Brush.Text}"/>
-        <Setter Property="TextTrimming" Value="None"/>
-    </Style>
+    <!-- NOTE: no implicit TextBlock style on purpose - it would override the Foreground of text inside buttons.
+         Windows set Foreground="{DynamicResource Brush.Text}" and text inherits it. -->
     <Style x:Key="Text.H1" TargetType="TextBlock">
         <Setter Property="FontSize" Value="22"/><Setter Property="FontWeight" Value="SemiBold"/>
         <Setter Property="Foreground" Value="{DynamicResource Brush.Text}"/>

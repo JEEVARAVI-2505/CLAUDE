@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ctl="clr-namespace:CRM_Master.App.Controls">
 
     <!-- ===== DataGrid ===== -->
     <Style TargetType="DataGridColumnHeader">
@@ -41,6 +42,7 @@
         <Setter Property="SelectionUnit" Value="FullRow"/><Setter Property="RowHeaderWidth" Value="0"/><Setter Property="AlternationCount" Value="2"/>
         <Setter Property="EnableRowVirtualization" Value="True"/><Setter Property="FontSize" Value="13"/>
         <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+        <Setter Property="ctl:ScrollBubbling.Enabled" Value="True"/>
     </Style>
 
     <!-- ===== Lists ===== -->

@@ -1,3 +1,112 @@
-<UserControl x:Class="CRM_Master.App.Views.BulkUpdateView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <TextBlock Text="BulkUpdate (stub)" Margin="24"/>
+<UserControl x:Class="CRM_Master.App.Views.BulkUpdateView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:v="clr-namespace:CRM_Master.App.Views">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,18,24,28">
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="1. Where do the updated values come from?" Style="{StaticResource Text.H2}"/>
+                    <TextBlock Text="Choose a spreadsheet with the updated contacts, or review update proposals that an import stored. Nothing is changed until you approve it." Style="{StaticResource Text.Caption}" Margin="0,2,0,10"/>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Content="Choose file..." Style="{StaticResource Button.Primary}" Command="{Binding BrowseCommand}"/>
+                        <TextBlock Text="{Binding FileInfoText}" VerticalAlignment="Center" FontWeight="SemiBold" Margin="4,0,24,0"/>
+                        <TextBlock Text="or import proposals:" VerticalAlignment="Center" Foreground="{DynamicResource Brush.TextSecondary}" Margin="0,0,8,0"/>
+                        <ComboBox ItemsSource="{Binding ProposalSources}" SelectedItem="{Binding SelectedSource}" Width="280" Margin="0,0,8,0" DisplayMemberPath="FileName"/>
+                        <Button Content="Load proposals" Command="{Binding LoadFromImportCommand}" Margin="0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14" Visibility="{Binding HasFile, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="Map the columns" Style="{StaticResource Text.H2}" Margin="0,0,0,8"/>
+                    <v:MappingGrid/>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="2. Update policy and fields" Style="{StaticResource Text.H2}"/>
+                    <Grid Margin="0,10,0,0">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,16,0">
+                            <TextBlock Text="Policy" Style="{StaticResource Text.Label}"/>
+                            <ComboBox ItemsSource="{Binding Policies}" SelectedItem="{Binding SelectedPolicy}" DisplayMemberPath="Label"/>
+                            <TextBlock Text="{Binding SelectedPolicy.Description}" Style="{StaticResource Text.Caption}" Margin="0,6,0,12"/>
+                            <TextBlock Text="Match records by" Style="{StaticResource Text.Label}"/>
+                            <ComboBox ItemsSource="{Binding Matches}" SelectedItem="{Binding SelectedMatch}" DisplayMemberPath="Label"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Text="Fields to update" Style="{StaticResource Text.Label}"/>
+                            <ItemsControl ItemsSource="{Binding FieldOptions}">
+                                <ItemsControl.ItemsPanel><ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate><DataTemplate><CheckBox Content="{Binding Label}" IsChecked="{Binding IsSelected}" Margin="0,0,16,8"/></DataTemplate></ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Grid>
+                    <Button Content="Compare and propose updates" Style="{StaticResource Button.Primary}" Command="{Binding BuildProposalCommand}" Margin="0,6,0,0" HorizontalAlignment="Left"/>
+                    <StackPanel Visibility="{Binding ProgressText, Converter={StaticResource NullToVis}}" Margin="0,10,0,0"><ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}"/><TextBlock Text="{Binding ProgressText}" Style="{StaticResource Text.Caption}" Margin="0,4,0,0"/></StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Banner.Info}" Margin="0,0,0,14" Visibility="{Binding ResultText, Converter={StaticResource NullToVis}}">
+                <DockPanel>
+                    <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="12,0,0,0">
+                        <Button Content="Undo this update" Command="{Binding UndoLastCommand}" Visibility="{Binding CanUndo, Converter={StaticResource BoolToVis}}"/>
+                        <Button Content="Update report (Excel)" Command="{Binding ExportReportCommand}" CommandParameter="Excel" Margin="0"/>
+                    </StackPanel>
+                    <TextBlock Text="{Binding ResultText}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Visibility="{Binding HasPlan, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Text="3. Review and approve" Style="{StaticResource Text.H2}"/>
+                    <TextBlock Text="{Binding Summary}" Style="{StaticResource Text.Caption}" Margin="0,4,0,10"/>
+                    <DockPanel Margin="0,0,0,8">
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                            <Button Content="Approve all" Command="{Binding ApproveAllCommand}"/>
+                            <Button Content="Reject all" Command="{Binding RejectAllCommand}" Margin="0"/>
+                        </StackPanel>
+                        <CheckBox Content="Also show unchanged and empty fields" IsChecked="{Binding ShowAll}" VerticalAlignment="Center"/>
+                    </DockPanel>
+                    <TabControl>
+                        <TabItem Header="Proposed changes">
+                            <DataGrid ItemsSource="{Binding Proposals}" MaxHeight="460" IsReadOnly="False">
+                                <DataGrid.Columns>
+                                    <DataGridTemplateColumn Header="Apply" Width="64">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate><CheckBox IsChecked="{Binding Approved, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsActionable}" Margin="0" HorizontalAlignment="Center"/></DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    <DataGridTextColumn Header="Row" Binding="{Binding RowNumber}" Width="50" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Contact" Binding="{Binding ContactName}" Width="1.2*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Field" Binding="{Binding Field}" Width="*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Current value" Binding="{Binding Current}" Width="1.4*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Incoming value" Binding="{Binding Incoming}" Width="1.4*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Action" Binding="{Binding Kind}" Width="1.1*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Note" Binding="{Binding Reason}" Width="1.4*" IsReadOnly="True"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Not matched">
+                            <DataGrid ItemsSource="{Binding Unmatched}" MaxHeight="360">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Row" Binding="{Binding RowNumber}" Width="60"/>
+                                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                                    <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                                    <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                    </TabControl>
+                    <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+                        <Button Content="Apply approved changes" Style="{StaticResource Button.Primary}" Command="{Binding ApplyCommand}" IsEnabled="{Binding CanApply}" Padding="22,8"/>
+                        <TextBlock Text="{Binding ApprovedText}" VerticalAlignment="Center" Style="{StaticResource Text.Caption}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

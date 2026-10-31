@@ -8,6 +8,7 @@
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="FluentAssertions" />
+    <Content Include="..\CRM_Master.App\Assets\SampleData\*.csv" LinkBase="SampleData" CopyToOutputDirectory="PreserveNewest" />
     <Using Include="Xunit" />
     <Using Include="FluentAssertions" />
     <ProjectReference Include="..\CRM_Master.Core\CRM_Master.Core.csproj" />

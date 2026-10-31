@@ -1,3 +1,87 @@
-<UserControl x:Class="CRM_Master.App.Views.CleaningView" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <TextBlock Text="Cleaning (stub)" Margin="24"/>
+<UserControl x:Class="CRM_Master.App.Views.CleaningView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="24,18,24,28">
+            <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                <StackPanel>
+                    <TextBlock Text="Cleaning steps" Style="{StaticResource Text.H2}"/>
+                    <TextBlock Text="Choose what to tidy, then analyse. Nothing changes until you review the before/after preview and press Apply. Customer data is never silently deleted." Style="{StaticResource Text.Caption}" Margin="0,2,0,10"/>
+                    <WrapPanel>
+                        <CheckBox Content="Trim and collapse extra spaces" IsChecked="{Binding TrimAndCollapse}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Standardise name capitalisation" IsChecked="{Binding ProperCaseNames}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Normalise email addresses" IsChecked="{Binding NormalizeEmail}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Standardise phone numbers" IsChecked="{Binding NormalizePhone}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Normalise website addresses" IsChecked="{Binding NormalizeWebsite}" Margin="0,0,20,8"/>
+                        <CheckBox Content="Also find exact duplicate records (all fields identical)" IsChecked="{Binding RemoveExactDuplicates}" Margin="0,0,20,8"/>
+                    </WrapPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
+                        <Button Content="Analyse data" Style="{StaticResource Button.Primary}" Command="{Binding AnalyzeCommand}"/>
+                        <Button Content="Cancel" Command="{Binding CancelAnalysisCommand}" Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"/>
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding ProgressText, Converter={StaticResource NullToVis}}" Margin="0,12,0,0">
+                        <ProgressBar Minimum="0" Maximum="1" Value="{Binding Progress}"/>
+                        <TextBlock Text="{Binding ProgressText}" Style="{StaticResource Text.Caption}" Margin="0,6,0,0"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Banner.Info}" Margin="0,0,0,14" Visibility="{Binding ResultText, Converter={StaticResource NullToVis}}">
+                <DockPanel>
+                    <Button DockPanel.Dock="Right" Content="Undo this cleaning" Command="{Binding UndoLastCommand}" Visibility="{Binding CanUndo, Converter={StaticResource BoolToVis}}" Margin="12,0,0,0"/>
+                    <TextBlock Text="{Binding ResultText}" TextWrapping="Wrap" VerticalAlignment="Center"/>
+                </DockPanel>
+            </Border>
+
+            <StackPanel Visibility="{Binding HasReport, Converter={StaticResource BoolToVis}}">
+                <WrapPanel Margin="0,0,0,10">
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="140" Padding="14,10"><StackPanel><TextBlock Text="Records scanned" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding Scanned, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="140" Padding="14,10"><StackPanel><TextBlock Text="Records affected" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding RecordsAffected, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}" Foreground="{DynamicResource Brush.Secondary}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="140" Padding="14,10"><StackPanel><TextBlock Text="Proposed changes" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding TotalChanges, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="140" Padding="14,10"><StackPanel><TextBlock Text="Errors found" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding ErrorCount, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}" Foreground="{DynamicResource Brush.Error}"/></StackPanel></Border>
+                    <Border Style="{StaticResource Card}" Margin="0,0,10,10" MinWidth="140" Padding="14,10"><StackPanel><TextBlock Text="Exact duplicates" Style="{StaticResource Text.Label}"/><TextBlock Text="{Binding Removable, StringFormat='{}{0:N0}'}" Style="{StaticResource Text.Big}" Foreground="{DynamicResource Brush.Warning}"/></StackPanel></Border>
+                </WrapPanel>
+                <TextBlock Text="{Binding LimitNote}" Style="{StaticResource Text.Caption}" Margin="0,0,0,8" Visibility="{Binding LimitNote, Converter={StaticResource NullToVis}}"/>
+
+                <Border Style="{StaticResource Card}" Margin="0,0,0,14">
+                    <TabControl>
+                        <TabItem Header="Before / after preview">
+                            <DataGrid ItemsSource="{Binding Changes}" MaxHeight="420">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding ContactId}" Width="60"/>
+                                    <DataGridTextColumn Header="Contact" Binding="{Binding ContactName}" Width="1.2*"/>
+                                    <DataGridTextColumn Header="Field" Binding="{Binding Field}" Width="*"/>
+                                    <DataGridTextColumn Header="Before" Binding="{Binding Before}" Width="1.5*"/>
+                                    <DataGridTextColumn Header="After" Binding="{Binding After}" Width="1.5*"/>
+                                    <DataGridTextColumn Header="Why" Binding="{Binding Reason}" Width="1.5*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Problems found">
+                            <DataGrid ItemsSource="{Binding Issues}" MaxHeight="420">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="ID" Binding="{Binding ContactId}" Width="60"/>
+                                    <DataGridTextColumn Header="Contact" Binding="{Binding ContactName}" Width="1.2*"/>
+                                    <DataGridTextColumn Header="Field" Binding="{Binding Field}" Width="*"/>
+                                    <DataGridTextColumn Header="Type" Binding="{Binding Kind}" Width="*"/>
+                                    <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="1.5*"/>
+                                    <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="1.3*"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </TabItem>
+                        <TabItem Header="Exact duplicates">
+                            <StackPanel>
+                                <TextBlock Text="Records that are identical in every field after cleaning. Tick 'Also find exact duplicate records' and re-analyse to include them when applying. Similar (not identical) records are handled in Duplicate Detection." Style="{StaticResource Text.Caption}" Margin="0,0,0,8"/>
+                                <ListBox ItemsSource="{Binding DuplicateGroups}" MaxHeight="360"><ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" Margin="12,8"/></DataTemplate></ListBox.ItemTemplate></ListBox>
+                            </StackPanel>
+                        </TabItem>
+                    </TabControl>
+                </Border>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Apply changes" Style="{StaticResource Button.Primary}" Command="{Binding ApplyCommand}" IsEnabled="{Binding CanApply}" Padding="22,8"/>
+                    <TextBlock Text="A backup is taken automatically and everything can be undone." VerticalAlignment="Center" Style="{StaticResource Text.Caption}"/>
+                </StackPanel>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

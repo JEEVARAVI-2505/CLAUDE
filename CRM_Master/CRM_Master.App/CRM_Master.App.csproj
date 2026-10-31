@@ -7,6 +7,12 @@
     <AssemblyName>CRM_Master</AssemblyName>
     <RootNamespace>CRM_Master.App</RootNamespace>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <Company>CRM MASTER</Company>
+    <Description>CRM MASTER - Intelligent CRM Data Management and Automation Suite</Description>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <Version>1.0.0</Version>
   </PropertyGroup>
   <ItemGroup>

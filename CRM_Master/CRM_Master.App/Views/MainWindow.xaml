@@ -4,7 +4,7 @@
         xmlns:svc="clr-namespace:CRM_Master.App.Services"
         Title="CRM MASTER - Intelligent CRM Data Management &amp; Automation Suite" Icon="/Assets/app.ico"
         Width="1380" Height="860" MinWidth="1100" MinHeight="680" WindowStartupLocation="CenterScreen"
-        Background="{DynamicResource Brush.Background}" FontFamily="{StaticResource Font.Default}" TextOptions.TextFormattingMode="Display" UseLayoutRounding="True">
+        Background="{DynamicResource Brush.Background}" FontFamily="{StaticResource Font.Default}" Foreground="{DynamicResource Brush.Text}" UseLayoutRounding="True">
     <Window.Resources>
         <Style x:Key="NavButton" TargetType="Button">
             <Setter Property="Foreground" Value="{DynamicResource Brush.SidebarText}"/><Setter Property="Background" Value="Transparent"/>
