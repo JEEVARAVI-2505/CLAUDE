@@ -1,0 +1,14 @@
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\bin\Release\net8.0\LeadPilot.Domain.deps.json
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\bin\Release\net8.0\LeadPilot.Domain.dll
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\bin\Release\net8.0\LeadPilot.Domain.pdb
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\bin\Release\net8.0\LeadPilot.Domain.xml
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.AssemblyInfoInputs.cache
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.AssemblyInfo.cs
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.csproj.CoreCompileInputs.cache
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.sourcelink.json
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.dll
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\refint\LeadPilot.Domain.dll
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.xml
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\LeadPilot.Domain.pdb
+D:\a\CLAUDE\CLAUDE\LeadPilot\src\LeadPilot.Domain\obj\Release\net8.0\ref\LeadPilot.Domain.dll

@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LeadPilot.Domain</name>
+    </assembly>
+    <members>
+        <member name="T:LeadPilot.Domain.Business">
+            <summary>A company or organisation. Phone/email here are business-level (e.g. a switchboard), not personal.</summary>
+        </member>
+        <member name="M:LeadPilot.Domain.Business.Clone">
+            <summary>Shallow copy used for merge snapshots.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.Contact">
+            <summary>A named person at a business.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.Lead">
+            <summary>A prospect being worked. Has a stable human-readable code such as LD-000042.</summary>
+        </member>
+        <member name="P:LeadPilot.Domain.Lead.IntentEvidence">
+            <summary>Evidence of buying intent supplied by the user or an authorised source (e.g. an enquiry form).</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.LeadSourceRecord">
+            <summary>Where a lead (or part of it) came from. Kept for attribution and licence compliance.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.FieldEvidence">
+            <summary>Field-level provenance: which value came from which URL at what time.</summary>
+        </member>
+        <member name="P:LeadPilot.Domain.FieldEvidence.Applied">
+            <summary>True when the value was written to the lead; false when only recorded as an unapplied suggestion.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.DuplicateMatch">
+            <summary>A candidate duplicate pair with the reasons the detector gave.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.MergeRecord">
+            <summary>Audit trail of a merge, holding enough state to undo it.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.LeadActivity">
+            <summary>One entry on a lead's timeline.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.FollowUpTask">
+            <summary>A scheduled follow-up.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.Campaign">
+            <summary>A prospecting campaign (product + target market).</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.SalesUser">
+            <summary>A local application user. The optional PIN is stored only as a salted hash.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.ImportRecord">
+            <summary>Summary of one import run.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.AuditEntry">
+            <summary>Security-relevant event.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.ApiUsageRecord">
+            <summary>One call made to an external data provider.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.LeadStatus">
+            <summary>Sales pipeline stage of a lead.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.LeadTemperature">
+            <summary>Relevance bucket derived from the 0-100 score. This is relevance, not purchasing intent.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.EmailStatus">
+            <summary>What is known about an email address. Never implies the mailbox belongs to a person.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.PhoneStatus">
+            <summary>What is known about a phone number.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.WebsiteStatus">
+            <summary>Result of the last website check.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.DuplicateConfidence">
+            <summary>How sure the duplicate detector is.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.DuplicateDecision">
+            <summary>User decision on a candidate duplicate pair.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.FollowUpStatus">
+            <summary>State of a follow-up task.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.ActivityType">
+            <summary>Kind of timeline entry.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.UserRole">
+            <summary>Application-level role.</summary>
+        </member>
+        <member name="T:LeadPilot.Domain.CampaignStatus">
+            <summary>Campaign life-cycle state.</summary>
+        </member>
+    </members>
+</doc>

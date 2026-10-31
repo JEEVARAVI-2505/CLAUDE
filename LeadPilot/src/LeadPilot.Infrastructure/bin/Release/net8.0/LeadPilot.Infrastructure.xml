@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LeadPilot.Infrastructure</name>
+    </assembly>
+    <members>
+        <member name="T:LeadPilot.Infrastructure.AppPaths">
+            <summary>Application-specific data folders. All user data lives under one root so uninstall can preserve it.</summary>
+        </member>
+        <member name="M:LeadPilot.Infrastructure.AppPaths.#ctor(System.String)">
+            <summary>Uses <paramref name="root"/>, else the LEADPILOT_DATA_DIR environment variable (portable/test use), else %LOCALAPPDATA%\LeadPilotAI.</summary>
+        </member>
+        <member name="M:LeadPilot.Infrastructure.AppPaths.EnsureCreated">
+            <summary>Creates all folders.</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Files.ExportService">
+            <summary>CSV / Excel / PDF export. Text cells that start with = + - @ are neutralised to prevent spreadsheet formula injection.</summary>
+        </member>
+        <member name="M:LeadPilot.Infrastructure.Files.ExportService.Safe(System.String)">
+            <summary>Prefixes a single quote to values a spreadsheet would interpret as a formula.</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Files.SimplePdfWriter">
+            <summary>Minimal dependency-free PDF writer (A4 landscape, built-in Helvetica) for tables and text reports.</summary>
+        </member>
+        <member name="M:LeadPilot.Infrastructure.Files.SimplePdfWriter.Line(System.String,System.Double,System.Boolean,System.Double)">
+            <summary>Appends a text line, wrapping nothing; call with already-short text.</summary>
+        </member>
+        <member name="M:LeadPilot.Infrastructure.Files.SimplePdfWriter.Row(System.Collections.Generic.IReadOnlyList{System.String},System.Collections.Generic.IReadOnlyList{System.Double},System.Double,System.Boolean)">
+            <summary>Appends a table row; each cell is truncated to its column width.</summary>
+        </member>
+        <member name="M:LeadPilot.Infrastructure.Files.SimplePdfWriter.ToBytes">
+            <summary>Serialises the document.</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Files.TabularFileReader">
+            <summary>Reads CSV and XLSX files with size/row limits. Formulas are read as their cached values and never evaluated; macros and external links are ignored.</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Licensing.LicensePayload">
+            <summary>Signed claims inside a licence key.</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Licensing.LicenseCodec">
+            <summary>Offline licence format: <c>LPAI1-&lt;base64url payload&gt;.&lt;base64url ECDSA-P256 signature&gt;</c>. Only the vendor holds the private key.</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Licensing.LicenseService">
+            <summary>
+            Offline licence validation, kept apart from application logic. Trial: 14 days from first run, 200 leads, 1 user.
+            Paid keys are signed by the vendor (ECDSA P-256); the app contains only the public key, so keys cannot be forged from the installed files.
+            The trial start is stored in two places and the earlier date wins; like any offline trial this deters casual resets, not determined ones.
+            </summary>
+        </member>
+        <member name="M:LeadPilot.Infrastructure.Licensing.LicenseService.#ctor(LeadPilot.Infrastructure.AppPaths,LeadPilot.Application.Abstractions.IClock,LeadPilot.Application.Abstractions.ISettingsService,System.String)">
+            <summary>Creates the service; <paramref name="publicKeyPem"/> overrides the embedded vendor key (tests).</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Logging.FileLoggerProvider">
+            <summary>Writes one log file per day under the Logs folder and deletes files older than 14 days. Never logs secrets or lead contents.</summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Security.BackupService">
+            <summary>
+            Backs up the database as a zip (manifest + consistent SQLite copy). With a password the zip is encrypted with AES-256-GCM,
+            key derived by PBKDF2-SHA256 (600 000 iterations, random salt). Restore verifies integrity and keeps a safety copy first.
+            </summary>
+        </member>
+        <member name="T:LeadPilot.Infrastructure.Security.SecretStore">
+            <summary>
+            Stores API keys encrypted at rest. On Windows each value is protected with DPAPI (current-user scope, so other Windows
+            accounts and copied files cannot read it). On other platforms (development/tests) AES-GCM with a key file is used.
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LeadPilot.Data</name>
+    </assembly>
+    <members>
+        <member name="T:LeadPilot.Data.DatabaseFile">
+            <summary>Physical database operations used by backup/restore.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.DuplicateRepository">
+            <summary>Duplicate candidates, merge and undo-merge (all multi-table changes are transactional).</summary>
+        </member>
+        <member name="T:LeadPilot.Data.LeadRepository">
+            <summary>SQLite implementation of <see cref="T:LeadPilot.Application.Abstractions.ILeadRepository"/>.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.LeadSql">
+            <summary>Shared SELECT for <see cref="T:LeadPilot.Application.Models.LeadRow"/> and the query-to-WHERE translation.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.LeadSql.Where(LeadPilot.Application.Models.LeadQuery,System.DateTime)">
+            <summary>Builds " WHERE …" and parameters from a query. Values are always bound, never concatenated.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.LeadSql.InList(System.Collections.Generic.IEnumerable{System.Int32},System.Collections.Generic.List{System.ValueTuple{System.String,System.Object}},System.String)">
+            <summary>Appends a parameterised IN list: returns "(@i0,@i1,…)".</summary>
+        </member>
+        <member name="T:LeadPilot.Data.Mappers">
+            <summary>Column lists and row mappers. Column order in each constant must match its mapper.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.Migrations">
+            <summary>Ordered, append-only schema migrations. Never edit a released migration; add a new one.</summary>
+        </member>
+        <member name="F:LeadPilot.Data.Migrations.All">
+            <summary>All migrations.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.SqliteDb">
+            <summary>Connection factory and small parameterised-SQL helpers. All values are bound as parameters.</summary>
+        </member>
+        <member name="P:LeadPilot.Data.SqliteDb.Path">
+            <summary>Path of the database file.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.#ctor(System.String)">
+            <summary>Creates a handle for the database file (created on first use).</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.Open">
+            <summary>Opens a connection with foreign keys enforced and a busy timeout.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.ReleaseFiles">
+            <summary>Releases pooled file handles (needed before replacing the file on restore).</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.Exec(Microsoft.Data.Sqlite.SqliteConnection,System.String,System.ValueTuple{System.String,System.Object}[])">
+            <summary>Runs a non-query command.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.Exec(Microsoft.Data.Sqlite.SqliteConnection,Microsoft.Data.Sqlite.SqliteTransaction,System.String,System.ValueTuple{System.String,System.Object}[])">
+            <summary>Runs a non-query command inside a transaction.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.Scalar``1(Microsoft.Data.Sqlite.SqliteConnection,Microsoft.Data.Sqlite.SqliteTransaction,System.String,System.ValueTuple{System.String,System.Object}[])">
+            <summary>Returns the first column of the first row, converted to <typeparamref name="T"/>.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.Insert(Microsoft.Data.Sqlite.SqliteConnection,Microsoft.Data.Sqlite.SqliteTransaction,System.String,System.ValueTuple{System.String,System.Object}[])">
+            <summary>Inserts and returns the new rowid.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.Query``1(Microsoft.Data.Sqlite.SqliteConnection,System.String,System.Func{Microsoft.Data.Sqlite.SqliteDataReader,``0},System.ValueTuple{System.String,System.Object}[])">
+            <summary>Runs a query and maps each row.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.QueryTx``1(Microsoft.Data.Sqlite.SqliteConnection,Microsoft.Data.Sqlite.SqliteTransaction,System.String,System.Func{Microsoft.Data.Sqlite.SqliteDataReader,``0},System.ValueTuple{System.String,System.Object}[])">
+            <summary>Runs a query inside a transaction and maps each row.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.ToDb(System.Object)">
+            <summary>Converts CLR values to SQLite-storable values (UTC ISO-8601 text for dates, ints for enums/bools).</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.Migrate">
+            <summary>Applies pending migrations (tracked via PRAGMA user_version), each in its own transaction.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.SchemaVersion">
+            <summary>Current schema version.</summary>
+        </member>
+        <member name="M:LeadPilot.Data.SqliteDb.BackupTo(System.String)">
+            <summary>Writes a consistent copy of the database to <paramref name="destination"/> using SQLite's online backup API.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.ReaderExt">
+            <summary>Null-safe typed column readers.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.StatsRepository">
+            <summary>Dashboard and analytics aggregates, computed live from the database.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.SystemRepository">
+            <summary>Settings, users, audit log, import history, API usage and destructive data operations.</summary>
+        </member>
+        <member name="T:LeadPilot.Data.WorkRepository">
+            <summary>Activities, follow-up tasks and campaigns.</summary>
+        </member>
+    </members>
+</doc>

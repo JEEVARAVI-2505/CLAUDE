@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LeadPilot.AI</name>
+    </assembly>
+    <members>
+        <member name="T:LeadPilot.AI.NullAiClient">
+            <summary>Used when AI is off. Every feature has a rule-based path, so this simply reports "not available".</summary>
+        </member>
+        <member name="T:LeadPilot.AI.OllamaClient">
+            <summary>Local model through an Ollama server (default http://localhost:11434). Nothing leaves the computer.</summary>
+        </member>
+        <member name="T:LeadPilot.AI.OpenAiCompatibleClient">
+            <summary>Any OpenAI-compatible chat endpoint with the customer's own API key. Prompts (which can contain lead text) are sent to that provider.</summary>
+        </member>
+        <member name="T:LeadPilot.AI.SwitchableAiClient">
+            <summary>Chooses the configured client at call time so Settings changes apply without a restart.</summary>
+        </member>
+    </members>
+</doc>

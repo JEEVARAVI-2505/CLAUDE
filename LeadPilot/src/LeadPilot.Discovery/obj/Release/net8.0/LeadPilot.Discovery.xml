@@ -1,0 +1,376 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>LeadPilot.Discovery</name>
+    </assembly>
+    <members>
+        <member name="T:LeadPilot.Discovery.Providers.CategoryMap">
+            <summary>Maps free-text customer types ("manufacturing companies") to OpenStreetMap tags and name patterns. Rules live in <c>category-map.json</c>.</summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Providers.CategoryMap.Match(LeadPilot.Application.Models.DiscoveryRequest)">
+            <summary>Entries whose keywords occur in the request's target-customer / category / industry text.</summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Providers.CategoryMap.FallbackRegex(LeadPilot.Application.Models.DiscoveryRequest)">
+            <summary>Fallback name pattern built from the customer-type words themselves.</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Providers.OsmOverpassProvider">
+            <summary>
+            Free, key-less business discovery from OpenStreetMap: Nominatim resolves the location, Overpass returns named businesses with their
+            published contact tags. Data is © OpenStreetMap contributors (ODbL 1.0); attribution is stored with every lead. Only information that
+            volunteers have mapped is returned, so phone/e-mail/website are often missing – this is reported, never filled in.
+            Respect the public servers' usage policies; for heavy use point <c>Endpoint</c> at your own Overpass instance.
+            </summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Providers.OsmOverpassProvider.ParseElements(System.String,System.String,System.Collections.Generic.List{System.String},System.String)">
+            <summary>Converts an Overpass JSON response into candidates. Public for fixture tests.</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Web.HttpWebsiteProbe">
+            <summary>Checks that a website answers (GET, headers only). Refuses private addresses.</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Web.DnsMailResolver">
+            <summary>DNS A/AAAA and MX lookups via DnsClient. Never opens SMTP connections.</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Web.BraveWebsiteFinder">
+            <summary>Finds official website candidates through the Brave Search API using the customer's own key (free tier available).</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Web.HttpClients">
+            <summary>Creates the shared HttpClient: honest User-Agent, bounded redirects, gzip.</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Web.RobotsRules">
+            <summary>robots.txt rules for one host (RFC 9309 semantics: longest matching rule wins, Allow beats Disallow on ties).</summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.RobotsRules.Parse(System.String,System.String)">
+            <summary>Parses robots.txt text for the given product token (falls back to the * group).</summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.RobotsRules.IsAllowed(System.String)">
+            <summary>Whether the path (with query) may be fetched.</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Web.UrlGuard">
+            <summary>Blocks requests to private/loopback/link-local addresses so a crafted website value cannot probe the user's own network (SSRF).</summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.UrlGuard.IsPublicHostAsync(System.String,System.Threading.CancellationToken)">
+            <summary>True when the host resolves only to public addresses.</summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.UrlGuard.IsPublic(System.Net.IPAddress)">
+            <summary>True for globally routable unicast addresses.</summary>
+        </member>
+        <member name="T:LeadPilot.Discovery.Web.WebsiteExtractor">
+            <summary>
+            Reads publicly available business information from a company's own website: JSON-LD, meta tags, mailto:/tel: links and visible text.
+            Respects robots.txt (and Crawl-delay), rate-limits per host, refuses private addresses, caps page size and time, and never submits forms,
+            logs in or solves challenges. Anything found is "publicly listed", not "verified".
+            </summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.WebsiteExtractor.#ctor(System.Net.Http.HttpClient,System.Func{System.String},System.Func{System.String,System.Threading.CancellationToken,System.Threading.Tasks.Task{System.Boolean}},System.Nullable{System.TimeSpan})">
+            <summary>Creates the extractor; <paramref name="hostAllowed"/> overrides the SSRF guard and <paramref name="minInterval"/> the per-host delay (tests).</summary>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.WebsiteExtractor.EmailRx">
+            <remarks>
+            Pattern:<br/>
+            <code>[A-Za-z0-9._%+\\-]+@[A-Za-z0-9\\-]+(?:\\.[A-Za-z0-9\\-]+)*\\.[A-Za-z]{2,}</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Match a character in the set [%+-.0-9A-Z_a-z] atomically at least once.<br/>
+            ○ Match '@'.<br/>
+            ○ Match a character in the set [-0-9A-Za-z] greedily at least once.<br/>
+            ○ Loop greedily any number of times.<br/>
+                ○ Match '.'.<br/>
+                ○ Match a character in the set [-0-9A-Za-z] atomically at least once.<br/>
+            ○ Match '.'.<br/>
+            ○ Match a character in the set [A-Za-z] atomically at least twice.<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.WebsiteExtractor.PhoneRx">
+            <remarks>
+            Pattern:<br/>
+            <code>(?&lt;![\\w/])(?:\\+\\d{1,3}[\\s.\\-]?)?(?:\\(?\\d{2,5}\\)?[\\s.\\-]?){2,4}\\d{2,4}(?![\\w])</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Zero-width negative lookbehind.<br/>
+                ○ Match a character in the set [/\w] right-to-left.<br/>
+            ○ Optional (greedy).<br/>
+                ○ Match '+'.<br/>
+                ○ Match a Unicode digit greedily at least 1 and at most 3 times.<br/>
+                ○ Match a character in the set [-.\s] greedily, optionally.<br/>
+            ○ Loop greedily at least 2 and at most 4 times.<br/>
+                ○ Match '(' atomically, optionally.<br/>
+                ○ Match a Unicode digit greedily at least 2 and at most 5 times.<br/>
+                ○ Match ')' greedily, optionally.<br/>
+                ○ Match a character in the set [-.\s] greedily, optionally.<br/>
+            ○ Match a Unicode digit greedily at least 2 and at most 4 times.<br/>
+            ○ Zero-width negative lookahead.<br/>
+                ○ Match a word character.<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.WebsiteExtractor.ContactRx">
+            <remarks>
+            Pattern:<br/>
+            <code>contact|reach\\s*us|get\\s*in\\s*touch|enquir|inquir</code><br/>
+            Options:<br/>
+            <code>RegexOptions.IgnoreCase</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Match with 5 alternative expressions, atomically.<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match a character in the set [Cc].<br/>
+                    ○ Match a character in the set [Oo].<br/>
+                    ○ Match a character in the set [Nn].<br/>
+                    ○ Match a character in the set [Tt].<br/>
+                    ○ Match a character in the set [Aa].<br/>
+                    ○ Match a character in the set [Cc].<br/>
+                    ○ Match a character in the set [Tt].<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match a character in the set [Rr].<br/>
+                    ○ Match a character in the set [Ee].<br/>
+                    ○ Match a character in the set [Aa].<br/>
+                    ○ Match a character in the set [Cc].<br/>
+                    ○ Match a character in the set [Hh].<br/>
+                    ○ Match a whitespace character atomically any number of times.<br/>
+                    ○ Match a character in the set [Uu].<br/>
+                    ○ Match a character in the set [Ss].<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match a character in the set [Gg].<br/>
+                    ○ Match a character in the set [Ee].<br/>
+                    ○ Match a character in the set [Tt].<br/>
+                    ○ Match a whitespace character atomically any number of times.<br/>
+                    ○ Match a character in the set [Ii].<br/>
+                    ○ Match a character in the set [Nn].<br/>
+                    ○ Match a whitespace character atomically any number of times.<br/>
+                    ○ Match a character in the set [Tt].<br/>
+                    ○ Match a character in the set [Oo].<br/>
+                    ○ Match a character in the set [Uu].<br/>
+                    ○ Match a character in the set [Cc].<br/>
+                    ○ Match a character in the set [Hh].<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match a character in the set [Ee].<br/>
+                    ○ Match a character in the set [Nn].<br/>
+                    ○ Match a character in the set [Qq].<br/>
+                    ○ Match a character in the set [Uu].<br/>
+                    ○ Match a character in the set [Ii].<br/>
+                    ○ Match a character in the set [Rr].<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match a character in the set [Ii].<br/>
+                    ○ Match a character in the set [Nn].<br/>
+                    ○ Match a character in the set [Qq].<br/>
+                    ○ Match a character in the set [Uu].<br/>
+                    ○ Match a character in the set [Ii].<br/>
+                    ○ Match a character in the set [Rr].<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="M:LeadPilot.Discovery.Web.WebsiteExtractor.AboutRx">
+            <remarks>
+            Pattern:<br/>
+            <code>\\babout\\b|who\\s*we\\s*are|company</code><br/>
+            Options:<br/>
+            <code>RegexOptions.IgnoreCase</code><br/>
+            Explanation:<br/>
+            <code>
+            ○ Match with 3 alternative expressions, atomically.<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match if at a word boundary.<br/>
+                    ○ Match a character in the set [Aa].<br/>
+                    ○ Match a character in the set [Bb].<br/>
+                    ○ Match a character in the set [Oo].<br/>
+                    ○ Match a character in the set [Uu].<br/>
+                    ○ Match a character in the set [Tt].<br/>
+                    ○ Match if at a word boundary.<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match a character in the set [Ww].<br/>
+                    ○ Match a character in the set [Hh].<br/>
+                    ○ Match a character in the set [Oo].<br/>
+                    ○ Match a whitespace character atomically any number of times.<br/>
+                    ○ Match a character in the set [Ww].<br/>
+                    ○ Match a character in the set [Ee].<br/>
+                    ○ Match a whitespace character atomically any number of times.<br/>
+                    ○ Match a character in the set [Aa].<br/>
+                    ○ Match a character in the set [Rr].<br/>
+                    ○ Match a character in the set [Ee].<br/>
+                ○ Match a sequence of expressions.<br/>
+                    ○ Match a character in the set [Cc].<br/>
+                    ○ Match a character in the set [Oo].<br/>
+                    ○ Match a character in the set [Mm].<br/>
+                    ○ Match a character in the set [Pp].<br/>
+                    ○ Match a character in the set [Aa].<br/>
+                    ○ Match a character in the set [Nn].<br/>
+                    ○ Match a character in the set [Yy].<br/>
+            </code>
+            </remarks>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.EmailRx_0">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the EmailRx method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.EmailRx_0.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EmailRx_0.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.EmailRx_0.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EmailRx_0.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.EmailRx_0.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EmailRx_0.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EmailRx_0.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.EmailRx_0.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Determine whether <paramref name="inputSpan"/> at base.runtextpos is a match for the regular expression.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if the regular expression matches at the current position; otherwise, false.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.PhoneRx_1">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the PhoneRx method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.PhoneRx_1.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.PhoneRx_1.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.PhoneRx_1.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.PhoneRx_1.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.PhoneRx_1.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.PhoneRx_1.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.PhoneRx_1.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.PhoneRx_1.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Determine whether <paramref name="inputSpan"/> at base.runtextpos is a match for the regular expression.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if the regular expression matches at the current position; otherwise, false.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.ContactRx_2">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the ContactRx method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.ContactRx_2.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.ContactRx_2.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.ContactRx_2.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.ContactRx_2.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.ContactRx_2.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.ContactRx_2.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.ContactRx_2.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.ContactRx_2.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Determine whether <paramref name="inputSpan"/> at base.runtextpos is a match for the regular expression.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if the regular expression matches at the current position; otherwise, false.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.AboutRx_3">
+            <summary>Custom <see cref="T:System.Text.RegularExpressions.Regex"/>-derived type for the AboutRx method.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.AboutRx_3.Instance">
+            <summary>Cached, thread-safe singleton instance.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.AboutRx_3.#ctor">
+            <summary>Initializes the instance.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.AboutRx_3.RunnerFactory">
+            <summary>Provides a factory for creating <see cref="T:System.Text.RegularExpressions.RegexRunner"/> instances to be used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.AboutRx_3.RunnerFactory.CreateInstance">
+            <summary>Creates an instance of a <see cref="T:System.Text.RegularExpressions.RegexRunner"/> used by methods on <see cref="T:System.Text.RegularExpressions.Regex"/>.</summary>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.AboutRx_3.RunnerFactory.Runner">
+            <summary>Provides the runner that contains the custom logic implementing the specified regular expression.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.AboutRx_3.RunnerFactory.Runner.Scan(System.ReadOnlySpan{System.Char})">
+            <summary>Scan the <paramref name="inputSpan"/> starting from base.runtextstart for the next match.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.AboutRx_3.RunnerFactory.Runner.TryFindNextPossibleStartingPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Search <paramref name="inputSpan"/> starting from base.runtextpos for the next location a match could possibly start.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if a possible match was found; false if no more matches are possible.</returns>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.AboutRx_3.RunnerFactory.Runner.TryMatchAtCurrentPosition(System.ReadOnlySpan{System.Char})">
+            <summary>Determine whether <paramref name="inputSpan"/> at base.runtextpos is a match for the regular expression.</summary>
+            <param name="inputSpan">The text being scanned by the regular expression.</param>
+            <returns>true if the regular expression matches at the current position; otherwise, false.</returns>
+        </member>
+        <member name="T:System.Text.RegularExpressions.Generated.Utilities">
+            <summary>Helper methods used by generated <see cref="T:System.Text.RegularExpressions.Regex"/>-derived implementations.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout">
+            <summary>Default timeout value set in <see cref="T:System.AppContext"/>, or <see cref="F:System.Text.RegularExpressions.Regex.InfiniteMatchTimeout"/> if none was set.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_hasTimeout">
+            <summary>Whether <see cref="F:System.Text.RegularExpressions.Generated.Utilities.s_defaultTimeout"/> is non-infinite.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.Utilities.IndexOfNonAsciiOrAny_75B25DFAC512962E124EA6EC2AA8FD1CD6DD6536ACEBA530A150297E5E0BF584(System.ReadOnlySpan{System.Char})">
+            <summary>Finds the next index of any character that matches a character in the set [(+\d].</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.Utilities.IsBoundary(System.ReadOnlySpan{System.Char},System.Int32)">
+            <summary>Determines whether the specified index is a boundary.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.Utilities.IsWordChar(System.Char)">
+            <summary>Determines whether the character is part of the [\w] set.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.Utilities.StackPop(System.Int32[],System.Int32@,System.Int32@,System.Int32@)">
+            <summary>Pops 2 values from the backtracking stack.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.Utilities.StackPush(System.Int32[]@,System.Int32@,System.Int32)">
+            <summary>Pushes 1 value onto the backtracking stack.</summary>
+        </member>
+        <member name="M:System.Text.RegularExpressions.Generated.Utilities.StackPush(System.Int32[]@,System.Int32@,System.Int32,System.Int32)">
+            <summary>Pushes 2 values onto the backtracking stack.</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_asciiLetters">
+            <summary>Supports searching for characters in or not in "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_ascii_2068FF03FEFFFF87FEFFFF07">
+            <summary>Supports searching for characters in or not in "%+-.0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz".</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_ascii_20C0000020C00000">
+            <summary>Supports searching for characters in or not in "ENOeno".</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_ascii_20FF03FEFFFF07FEFFFF07">
+            <summary>Supports searching for characters in or not in "-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_ascii_A0000000A00000">
+            <summary>Supports searching for characters in or not in "MOmo".</summary>
+        </member>
+        <member name="F:System.Text.RegularExpressions.Generated.Utilities.s_ascii_FFFFFFFFFFF600FCFFFFFFFFFFFFFFFF">
+            <summary>Supports searching for characters in or not in "\0\u0001\u0002\u0003\u0004\u0005\u0006\a\b\t\n\v\f\r\u000e\u000f\u0010\u0011\u0012\u0013\u0014\u0015\u0016\u0017\u0018\u0019\u001a\u001b\u001c\u001d\u001e\u001f !\"#$%&amp;')*,-./:;&lt;=&gt;?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u007f".</summary>
+        </member>
+    </members>
+</doc>
