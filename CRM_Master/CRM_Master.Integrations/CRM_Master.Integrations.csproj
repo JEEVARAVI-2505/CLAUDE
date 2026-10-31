@@ -1,5 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
     <ProjectReference Include="..\CRM_Master.Core\CRM_Master.Core.csproj" />
   </ItemGroup>
 </Project>
