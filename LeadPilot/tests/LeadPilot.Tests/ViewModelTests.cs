@@ -132,7 +132,10 @@ public class ViewModelTests
     [Fact]
     public async Task Database_manual_entry_validates_and_delete_honours_confirmation()
     {
-        using var v = new VmEnv(); var vm = Db(v); await vm.OnNavigatedToAsync(null);
+        using var v = new VmEnv(); var vm = Db(v);
+        vm.IsEmpty.Should().BeFalse("nothing is shown before the first load");
+        await vm.OnNavigatedToAsync(null);
+        vm.IsEmpty.Should().BeTrue("an empty database shows the empty-state card");
         vm.StartAddCommand.Execute(null); await vm.SaveNewCommand.ExecuteAsync(null); vm.ErrorMessage.Should().Contain("company name");
         vm.NewCompany = "Manual Industries"; vm.NewPhone = "+91 98765 43210"; vm.NewEmail = "bad"; vm.NewCity = "Madurai";
         await vm.SaveNewCommand.ExecuteAsync(null);

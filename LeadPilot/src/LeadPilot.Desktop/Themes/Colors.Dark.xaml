@@ -23,6 +23,7 @@
   <SolidColorBrush x:Key="HotBrush" Color="#F2641A"/>
   <SolidColorBrush x:Key="WarmBrush" Color="#F2B134"/>
   <SolidColorBrush x:Key="ColdBrush" Color="#3B82F6"/>
+  <SolidColorBrush x:Key="ScrollThumbBrush" Color="#3A4670"/>
   <SolidColorBrush x:Key="NoneBrush" Color="#98A2B8"/>
   <!-- make stock controls follow the theme -->
   <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#141B31"/>

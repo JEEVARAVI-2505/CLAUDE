@@ -33,6 +33,7 @@ public sealed partial class LeadDatabaseViewModel : ViewModelBase
     private readonly INavigator _nav;
     private readonly IDialogService _dlg;
     private bool _loading;
+    private bool _loadedOnce;
     private LeadSort _sort = LeadSort.Created;
     private bool _desc = true;
 
@@ -71,7 +72,7 @@ public sealed partial class LeadDatabaseViewModel : ViewModelBase
     public ObservableCollection<string> Cities { get; } = new() { FilterOptionsHelper.All };
     public ObservableCollection<SalesUser> Users { get; } = new();
     public IReadOnlyList<string> StatusChoices { get; } = Enum.GetNames<LeadStatus>();
-    public bool IsEmpty => !IsBusy && Rows.Count == 0;
+    public bool IsEmpty => _loadedOnce && Rows.Count == 0;
     public string PageText => $"Page {Page} of {PageCount}  ·  {Total:N0} lead(s)";
 
     public LeadDatabaseViewModel(ILeadRepository leads, ISystemRepository sys, LeadIngestService ingest, ScoringService scoring, DataGovernanceService gov, IExportService export, ICurrentUser user, INavigator nav, IDialogService dlg)
@@ -115,7 +116,7 @@ public sealed partial class LeadDatabaseViewModel : ViewModelBase
             if (Page > page.PageCount) { Page = page.PageCount; page = await Task.Run(() => _leads.Search(Query(Page, 50))); }
             Rows.Clear();
             foreach (var r in page.Rows) { var item = new LeadRowItem { Row = r }; item.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(LeadRowItem.IsSelected)) SelectedCount = Rows.Count(x => x.IsSelected); }; Rows.Add(item); }
-            Total = page.Total; PageCount = page.PageCount; SelectedCount = 0; AllSelected = false;
+            Total = page.Total; PageCount = page.PageCount; SelectedCount = 0; AllSelected = false; _loadedOnce = true;
             OnPropertyChanged(nameof(PageText)); OnPropertyChanged(nameof(IsEmpty));
         }
         finally { _loading = false; }
