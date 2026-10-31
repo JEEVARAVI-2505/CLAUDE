@@ -289,3 +289,34 @@ public class ImportServiceTests : IAsyncLifetime
         (await ctx.Companies.CountAsync()).Should().Be(2000);
     }
 }
+
+public class LargeExcelTests : IAsyncLifetime
+{
+    private readonly ITestOutputHelper _out; public LargeExcelTests(ITestOutputHelper o) => _out = o;
+    private TestDb _db = null!;
+    public async Task InitializeAsync() => _db = await TestDb.CreateAsync();
+    public Task DisposeAsync() { _db.Dispose(); return Task.CompletedTask; }
+
+    [Fact]
+    [Trait("Category", "Performance")]
+    public async Task Fifty_thousand_row_excel_file_imports_and_reports_progress()
+    {
+        var rows = new List<object?[]> { new object?[] { "First Name", "Last Name", "Email", "Mobile", "Company", "City" } };
+        for (var i = 0; i < 50_000; i++) rows.Add(new object?[] { $"First{i}", $"Last{i}", $"user{i}@company{i % 2000}.com", 9000000000L + i, $"Company {i % 2000} Pvt Ltd", $"City{i % 50}" });
+        var sw = Stopwatch.StartNew();
+        var path = Files.Xlsx(_db.Folder, "50k.xlsx", rows);
+        _out.WriteLine($"Created 50k-row workbook ({new FileInfo(path).Length / 1024:N0} KB) in {sw.Elapsed.TotalSeconds:F1}s");
+
+        var import = new ImportService(_db.Factory, _db.Settings, _db.Backups);
+        sw.Restart();
+        var table = await TableReader.ReadAsync(path, 50);
+        _out.WriteLine($"Preview read (50 rows) in {sw.Elapsed.TotalSeconds:F1}s");   // note: still loads the workbook
+
+        sw.Restart();
+        var stages = new HashSet<string>();
+        var res = await import.ImportAsync(path, import.DefaultOptions(ColumnMapper.Suggest(table)), new Progress<CRM_Master.Core.DTOs.ProgressInfo>(p => stages.Add(p.Stage)));
+        _out.WriteLine($"Imported {res.Imported:N0} rows from XLSX in {sw.Elapsed.TotalSeconds:F1}s");
+        res.Imported.Should().Be(50_000);
+        sw.Elapsed.Should().BeLessThan(TimeSpan.FromMinutes(3));
+    }
+}

@@ -45,7 +45,7 @@ public sealed partial class FirstRunViewModel : ObservableObject
 
         if (!LoadSample) return;
         var sample = Path.Combine(AppContext.BaseDirectory, "SampleData", "sample-contacts.csv");
-        if (!File.Exists(sample)) return;
+        if (!File.Exists(sample)) { Serilog.Log.Warning("Sample dataset not found at {Path}", sample); return; }
         var table = await TableReader.ReadAsync(sample, 50);
         await _import.ImportAsync(sample, _import.DefaultOptions(ColumnMapper.Suggest(table)));
     }

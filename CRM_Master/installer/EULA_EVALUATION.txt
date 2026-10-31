@@ -1,0 +1,12 @@
+CRM MASTER - EVALUATION NOTICE
+
+This is an evaluation build of CRM MASTER, provided "as is", without warranty of any kind.
+
+- All processing happens on your computer. The application does not send your contact data anywhere.
+- Your data is stored in your Windows user profile (%LOCALAPPDATA%\CRM Master). Back it up regularly (Settings > Backup and restore).
+- Data-cleaning, validation, duplicate-detection and bulk-update results are produced by local rules and heuristics. Review them before
+  relying on them. Email checks are syntax-only and do not prove that a mailbox exists.
+- Third-party open-source components are listed in "Third-party software notices" (About screen) with their licences.
+
+PLACEHOLDER: this file is a neutral notice, not a legal licence agreement. Replace it with your own end-user licence agreement
+(have a lawyer review it) before distributing the product commercially.

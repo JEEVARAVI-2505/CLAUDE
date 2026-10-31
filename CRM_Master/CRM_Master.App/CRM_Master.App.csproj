@@ -8,8 +8,6 @@
     <RootNamespace>CRM_Master.App</RootNamespace>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <FileVersion>1.0.0.0</FileVersion>
-    <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <Company>CRM MASTER</Company>
     <Description>CRM MASTER - Intelligent CRM Data Management and Automation Suite</Description>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
@@ -19,7 +17,7 @@
     <Using Include="System.IO" />
     <Resource Include="Assets\app.png" />
     <Resource Include="Assets\app.ico" />
-    <Content Include="Assets\SampleData\*.csv" CopyToOutputDirectory="PreserveNewest" LinkBase="SampleData" />
+    <Content Include="Assets\SampleData\*.csv" Link="SampleData\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="..\THIRD_PARTY.md" Link="THIRD_PARTY_NOTICES.txt" CopyToOutputDirectory="PreserveNewest" />
     <Content Include="branding.json" CopyToOutputDirectory="PreserveNewest" Condition="Exists('branding.json')" />
   </ItemGroup>

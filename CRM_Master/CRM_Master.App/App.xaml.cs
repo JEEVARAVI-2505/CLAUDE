@@ -78,24 +78,7 @@ public partial class App : Application
     private static ServiceProvider BuildServices()
     {
         var sc = new ServiceCollection();
-        var factory = new SqliteContextFactory(DatabasePaths.DatabaseFile);
-        sc.AddSingleton(factory);
-        sc.AddSingleton<IDbContextFactory<CrmDbContext>>(factory);
-
-        sc.AddSingleton<ISettingsService, SettingsService>();
-        sc.AddSingleton<IAuditService, AuditService>();
-        sc.AddSingleton<IContactRepository, ContactRepository>();
-        sc.AddSingleton<IBackupService, BackupService>();
-        sc.AddSingleton<IDashboardService, DashboardService>();
-        sc.AddSingleton<AutomationService>();
-        sc.AddSingleton<ReportService>();
-        sc.AddSingleton<IImportReportGenerator>(p => p.GetRequiredService<ReportService>());
-        sc.AddSingleton<ImportService>();
-        sc.AddSingleton<CleaningService>();
-        sc.AddSingleton<DuplicateService>();
-        sc.AddSingleton<BulkUpdateService>();
-        sc.AddSingleton<BatchUndoService>();
-        sc.AddSingleton<ILicenseProvider, EvaluationLicenseProvider>();
+        sc.AddCrmMasterEngine(DatabasePaths.DatabaseFile);
         sc.AddSingleton<IConnectorRegistry, ConnectorRegistry>();
         sc.AddSingleton<ICredentialStore>(_ => new DpapiCredentialStore(DatabasePaths.CredentialsFolder));
 
