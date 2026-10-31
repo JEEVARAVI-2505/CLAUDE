@@ -260,9 +260,11 @@ public class ViewModelTests
         var vm = new DashboardViewModel(v.E.Stats, v.E.Clock, v.Nav, v.E.Settings);
         await vm.OnNavigatedToAsync(null);
         vm.HasLeads.Should().BeFalse(); vm.Kpis.Should().HaveCount(10); vm.Greeting.Should().Be("Welcome back, Asha");
+        vm.HeroSubtitle.Should().Contain("first customers");
         v.E.Add("One Works"); v.E.Add("Two Works");
         await vm.OnNavigatedToAsync(null);
         vm.HasLeads.Should().BeTrue(); vm.Kpis.Single(k => k.Title == "Leads stored").Value.Should().Be("2");
+        vm.HeroSubtitle.Should().Contain("open follow-up");
         vm.LocationChart.Bars.Single().Should().Be(new ChartBar("Chennai", 2, 1.0));
         vm.MonthlyChart.Bars.Should().HaveCount(12);
     }

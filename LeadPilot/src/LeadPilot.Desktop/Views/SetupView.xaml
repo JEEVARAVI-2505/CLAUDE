@@ -3,9 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
              xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
-             Style="{StaticResource Page}">
+             svc:Motion.Enter="True">
   <Grid Background="{DynamicResource BgBrush}">
-    <Border Style="{StaticResource Card}" Width="640" Padding="36" VerticalAlignment="Center" HorizontalAlignment="Center">
+    <Border Style="{StaticResource Card}" Width="640" Padding="36" VerticalAlignment="Center" HorizontalAlignment="Center" svc:Motion.Reveal="True">
       <StackPanel>
         <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
           <Image Source="/Assets/logo.png" Width="48" Height="48"/>
@@ -16,14 +16,14 @@
         </StackPanel>
         <local:StatusBanner/>
 
-        <StackPanel Visibility="{Binding IsStep0, Converter={StaticResource BoolToVis}}">
+        <StackPanel svc:Motion.Show="True" Visibility="{Binding IsStep0, Converter={StaticResource BoolToVis}}">
           <TextBlock Text="Welcome" Style="{StaticResource H2}"/>
           <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="Tell LeadPilot AI who you sell to. It searches public sources for matching businesses, collects the contact details that are publicly listed, removes duplicates, scores how well each one fits, and keeps your follow-ups organised."/>
           <TextBlock Style="{StaticResource Muted}" Margin="0,10,0,0" Text="Everything is stored on this computer. Nothing is uploaded, and it never invents leads, contact details or 'verified' labels - when data is missing, it says so."/>
           <Border Style="{StaticResource Chip}" Margin="0,16,0,0" HorizontalAlignment="Left"><TextBlock Text="{Binding TrialText}"/></Border>
         </StackPanel>
 
-        <StackPanel Visibility="{Binding IsStep1, Converter={StaticResource BoolToVis}}">
+        <StackPanel svc:Motion.Show="True" Visibility="{Binding IsStep1, Converter={StaticResource BoolToVis}}">
           <TextBlock Text="About you" Style="{StaticResource H2}"/>
           <TextBlock Text="Your name *" Style="{StaticResource FieldLabel}"/>
           <TextBox Text="{Binding OwnerName, UpdateSourceTrigger=PropertyChanged}"/>
@@ -46,7 +46,7 @@
           </Grid>
         </StackPanel>
 
-        <StackPanel Visibility="{Binding IsStep2, Converter={StaticResource BoolToVis}}">
+        <StackPanel svc:Motion.Show="True" Visibility="{Binding IsStep2, Converter={StaticResource BoolToVis}}">
           <TextBlock Text="Data sources and privacy" Style="{StaticResource H2}"/>
           <CheckBox IsChecked="{Binding UseOpenStreetMap}" Margin="0,12,0,0" Content="Use OpenStreetMap to find businesses (free, no account). Sends only your location and category text."/>
           <CheckBox IsChecked="{Binding VisitWebsites}" Content="Read each company's own public website for phone/e-mail (respects robots.txt, rate-limited)."/>

@@ -20,21 +20,21 @@ public static class ScreenshotTour
         {
             setup.NextCommand.Execute(null); setup.OwnerName = "Release Tester"; setup.CompanyName = "Acme Solar";
             setup.NextCommand.Execute(null); await Settle(); Save(win, Path.Combine(dir, "01-setup-sources.png"));
-            setup.FinishCommand.Execute(null); await Settle(1500);
+            setup.FinishCommand.Execute(null); await Settle(2000);
         }
         var i = 2;
         foreach (var key in new[] { PageKey.Dashboard, PageKey.LeadFinder, PageKey.LeadDatabase, PageKey.Duplicates, PageKey.Enrichment, PageKey.Qualification, PageKey.FollowUps, PageKey.Campaigns,
                                     PageKey.Analytics, PageKey.Assistant, PageKey.Import, PageKey.Export, PageKey.Integrations, PageKey.Settings, PageKey.Backup, PageKey.About })
         {
-            main.Navigate(key); await Settle(900);
+            main.Navigate(key); await Settle(1800);
             Save(win, Path.Combine(dir, $"{i++:00}-{key}.png"));
         }
-        main.ToggleThemeCommand.Execute(null); main.Navigate(PageKey.Dashboard); await Settle(900);
+        main.ToggleThemeCommand.Execute(null); main.Navigate(PageKey.Dashboard); await Settle(1800);
         Save(win, Path.Combine(dir, $"{i:00}-Dashboard-dark.png"));
         System.Windows.Application.Current.Shutdown();
     }
 
-    private static Task Settle(int ms = 1200) => Task.Delay(ms);
+    private static Task Settle(int ms = 1800) => Task.Delay(ms);
 
     private static void Save(Window w, string path)
     {

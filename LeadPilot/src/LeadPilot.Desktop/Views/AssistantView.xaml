@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
              xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
-             Style="{StaticResource Page}">
+             svc:Motion.Enter="True">
   <Grid Margin="32,26">
     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
     <StackPanel>
@@ -30,7 +30,7 @@
       <ItemsControl ItemsSource="{Binding Messages}">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
-            <Border Style="{StaticResource ChatBubble}">
+            <Border Style="{StaticResource ChatBubble}" svc:Motion.Reveal="True">
               <StackPanel>
                 <TextBlock Text="{Binding Text}" TextWrapping="Wrap"/>
                 <ItemsControl ItemsSource="{Binding Leads}" Margin="0,8,0,0" Visibility="{Binding HasLeads, Converter={StaticResource BoolToVis}}">

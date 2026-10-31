@@ -16,6 +16,7 @@ public sealed partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty] private bool _hasLeads;
     [ObservableProperty] private string _greeting = "";
+    [ObservableProperty] private string _heroSubtitle = "";
     [ObservableProperty] private ChartData _industryChart = new();
     [ObservableProperty] private ChartData _locationChart = new();
     [ObservableProperty] private ChartData _sourceChart = new();
@@ -46,6 +47,8 @@ public sealed partial class DashboardViewModel : ViewModelBase
         var name = _settings.Current.OwnerName;
         Greeting = string.IsNullOrWhiteSpace(name) ? "Welcome back" : $"Welcome back, {name.Split(' ')[0]}";
         HasLeads = s.TotalLeads > 0 || s.TotalDiscovered > 0;
+        HeroSubtitle = !HasLeads ? "Let's find your first customers - it takes about a minute."
+            : $"{s.HighPriorityLeads:N0} high-priority lead(s) · {s.PendingFollowUps:N0} open follow-up(s)" + (s.OverdueFollowUps > 0 ? $" · {s.OverdueFollowUps:N0} overdue" : "") + (s.DuplicateRecords > 0 ? $" · {s.DuplicateRecords:N0} duplicate pair(s) to review" : "");
         Kpis.Clear();
         void K(string t, int v, string hint, string accent) => Kpis.Add(new KpiCard(t, v.ToString("N0"), hint, accent));
         K("Prospects discovered", s.TotalDiscovered, "returned by discovery sources", "Blue");

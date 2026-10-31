@@ -23,6 +23,7 @@ public sealed partial class MainViewModel : ObservableObject, INavigator
     [ObservableProperty] private bool _isShellVisible;
     [ObservableProperty] private string _licenseBanner = "";
     [ObservableProperty] private string _userName = "";
+    [ObservableProperty] private string _userInitial = "";
     [ObservableProperty] private string _userRole = "";
     [ObservableProperty] private bool _isDark;
     [ObservableProperty] private string _overdueBanner = "";
@@ -97,7 +98,7 @@ public sealed partial class MainViewModel : ObservableObject, INavigator
     {
         var lic = _license.Current;
         LicenseBanner = lic.IsValid ? (lic.IsTrial ? lic.Message : "") : lic.Message;
-        UserName = _users.User?.Name ?? ""; UserRole = _users.User?.Role.ToString() ?? "";
+        UserName = _users.User?.Name ?? ""; UserInitial = UserName.Length > 0 ? UserName[..1].ToUpperInvariant() : ""; UserRole = _users.User?.Role.ToString() ?? "";
         var visible = AllItems.Where(i => i.Key switch
         {
             PageKey.Settings => _users.Can(Permission.ManageSettings),

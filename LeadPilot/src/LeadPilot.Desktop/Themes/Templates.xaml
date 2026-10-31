@@ -33,7 +33,7 @@
 
   <!-- horizontal bar chart (default for ChartData) -->
   <DataTemplate DataType="{x:Type vm:ChartData}">
-    <Border Style="{StaticResource Card}" Margin="0,0,14,14">
+    <Border Style="{StaticResource Card}" Margin="0,0,14,14" conv:Motion.Reveal="True" conv:Motion.Lift="True">
       <StackPanel>
         <TextBlock Text="{Binding Title}" Style="{StaticResource H2}"/>
         <TextBlock Text="No data yet" Style="{StaticResource Muted}" Margin="0,10,0,0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}"/>
@@ -54,7 +54,7 @@
                       <ColumnDefinition Width="{Binding Fraction, Converter={StaticResource FracStar}}"/>
                       <ColumnDefinition Width="{Binding Fraction, Converter={StaticResource FracStar}, ConverterParameter=rest}"/>
                     </Grid.ColumnDefinitions>
-                    <Border Background="{DynamicResource PrimaryBrush}" CornerRadius="6"/>
+                    <Border Background="{DynamicResource PrimaryGradientBrush}" CornerRadius="6" conv:Motion.Grow="X"/>
                   </Grid>
                 </Grid>
                 <TextBlock Grid.Column="2" Text="{Binding Value}" HorizontalAlignment="Right" VerticalAlignment="Center" FontWeight="SemiBold"/>
@@ -68,7 +68,7 @@
 
   <!-- vertical column chart (explicit: ContentTemplate="{StaticResource ColumnChart}") -->
   <DataTemplate x:Key="ColumnChart" DataType="{x:Type vm:ChartData}">
-    <Border Style="{StaticResource Card}" Margin="0,0,14,14">
+    <Border Style="{StaticResource Card}" Margin="0,0,14,14" conv:Motion.Reveal="True" conv:Motion.Lift="True">
       <StackPanel>
         <TextBlock Text="{Binding Title}" Style="{StaticResource H2}"/>
         <TextBlock Text="No data yet" Style="{StaticResource Muted}" Margin="0,10,0,0" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}"/>
@@ -90,7 +90,7 @@
                     <RowDefinition Height="{Binding Fraction, Converter={StaticResource FracStar}, ConverterParameter=rest}"/>
                     <RowDefinition Height="{Binding Fraction, Converter={StaticResource FracStar}}"/>
                   </Grid.RowDefinitions>
-                  <Border Grid.Row="1" Background="{DynamicResource PrimaryBrush}" CornerRadius="4,4,0,0"/>
+                  <Border Grid.Row="1" Background="{DynamicResource PrimaryGradientBrush}" CornerRadius="4,4,0,0" conv:Motion.Grow="Y"/>
                 </Grid>
                 <TextBlock Grid.Row="2" Text="{Binding Label}" HorizontalAlignment="Center" FontSize="10" Margin="0,4,0,0" Foreground="{DynamicResource MutedBrush}"/>
               </Grid>

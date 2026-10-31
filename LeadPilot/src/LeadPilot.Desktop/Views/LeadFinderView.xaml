@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
              xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
-             Style="{StaticResource Page}">
+             svc:Motion.Enter="True">
   <ScrollViewer VerticalScrollBarVisibility="Auto">
     <StackPanel Margin="32,26">
       <TextBlock Text="AI Lead Finder" Style="{StaticResource H1}"/>
@@ -58,7 +58,7 @@
         </StackPanel>
       </Border>
 
-      <Border Style="{StaticResource Card}" Margin="0,14,0,0" Visibility="{Binding HasRun, Converter={StaticResource BoolToVis}}">
+      <Border svc:Motion.Show="True" Style="{StaticResource Card}" Margin="0,14,0,0" Visibility="{Binding HasRun, Converter={StaticResource BoolToVis}}">
         <StackPanel>
           <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" FontWeight="SemiBold"/>
           <ItemsControl ItemsSource="{Binding Providers}" Margin="0,8,0,0">
@@ -78,7 +78,7 @@
         </StackPanel>
       </Border>
 
-      <Border Style="{StaticResource Card}" Margin="0,14,0,0" Padding="0" Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
+      <Border svc:Motion.Show="True" Style="{StaticResource Card}" Margin="0,14,0,0" Padding="0" Visibility="{Binding HasResults, Converter={StaticResource BoolToVis}}">
         <StackPanel>
           <DockPanel Margin="18,14">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
