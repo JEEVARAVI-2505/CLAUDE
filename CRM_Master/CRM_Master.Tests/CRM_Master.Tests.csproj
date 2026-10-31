@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="FluentAssertions" />
+    <Using Include="Xunit" />
+    <Using Include="FluentAssertions" />
+    <ProjectReference Include="..\CRM_Master.Core\CRM_Master.Core.csproj" />
+    <ProjectReference Include="..\CRM_Master.Data\CRM_Master.Data.csproj" />
+    <ProjectReference Include="..\CRM_Master.Engine\CRM_Master.Engine.csproj" />
+    <ProjectReference Include="..\CRM_Master.Integrations\CRM_Master.Integrations.csproj" />
+  </ItemGroup>
+</Project>

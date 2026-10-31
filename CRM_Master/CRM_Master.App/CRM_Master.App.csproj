@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>CRM_Master</AssemblyName>
+    <RootNamespace>CRM_Master.App</RootNamespace>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Serilog" />
+    <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="Serilog.Extensions.Logging" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" />
+    <ProjectReference Include="..\CRM_Master.Core\CRM_Master.Core.csproj" />
+    <ProjectReference Include="..\CRM_Master.Data\CRM_Master.Data.csproj" />
+    <ProjectReference Include="..\CRM_Master.Engine\CRM_Master.Engine.csproj" />
+    <ProjectReference Include="..\CRM_Master.Integrations\CRM_Master.Integrations.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" />
+    <PackageReference Include="CsvHelper" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <ProjectReference Include="..\CRM_Master.Core\CRM_Master.Core.csproj" />
+    <ProjectReference Include="..\CRM_Master.Data\CRM_Master.Data.csproj" />
+  </ItemGroup>
+</Project>

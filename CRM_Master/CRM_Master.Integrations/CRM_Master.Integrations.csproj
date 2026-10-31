@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\CRM_Master.Core\CRM_Master.Core.csproj" />
+  </ItemGroup>
+</Project>

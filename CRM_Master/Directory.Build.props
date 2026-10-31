@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <Version>1.0.0</Version>
+    <Authors>CRM MASTER</Authors>
+    <Product>CRM MASTER</Product>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+</Project>
