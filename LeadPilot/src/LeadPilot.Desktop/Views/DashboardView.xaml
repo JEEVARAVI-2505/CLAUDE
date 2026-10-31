@@ -20,7 +20,7 @@
       <Border CornerRadius="18" Padding="32,28" Margin="0,0,14,18" Background="{DynamicResource PrimaryGradientBrush}" ClipToBounds="True" svc:Motion.Reveal="True">
         <Grid>
           <Canvas IsHitTestVisible="False">
-            <Ellipse Width="260" Height="260" Fill="White" Opacity="0.10" Canvas.Right="-70" Canvas.Top="-110"><Ellipse.RenderTransform><TranslateTransform x:Name="Orb1"/></Ellipse.RenderTransform></Ellipse>
+            <Ellipse Width="260" Height="260" Fill="White" Opacity="0.10" Canvas.Right="70" Canvas.Top="-150"><Ellipse.RenderTransform><TranslateTransform x:Name="Orb1"/></Ellipse.RenderTransform></Ellipse>
             <Ellipse Width="150" Height="150" Fill="White" Opacity="0.08" Canvas.Right="150" Canvas.Bottom="-70"><Ellipse.RenderTransform><TranslateTransform x:Name="Orb2"/></Ellipse.RenderTransform></Ellipse>
           </Canvas>
           <StackPanel>
