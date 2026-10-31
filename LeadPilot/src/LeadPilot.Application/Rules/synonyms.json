@@ -1,0 +1,33 @@
+{
+  "stopwords": ["companies","company","business","businesses","firm","firms","organisation","organization","organisations","organizations","and","of","the","in","for","with","commercial","services","service","providers","provider","small","medium","large","enterprise","enterprises","sme","smes","b2b","a","an"],
+  "groups": [
+    ["manufacturing","manufacturer","factory","industries","industrial","fabrication","works","production","manufactur","engineering works","mills"],
+    ["solar","photovoltaic","pv","renewable","renewable energy","green energy"],
+    ["real estate","realty","property","properties","builders","developers","housing"],
+    ["construction","contractor","contractors","infrastructure","civil","builders","engineering"],
+    ["school","college","university","institute","education","academy","educational","institution","coaching"],
+    ["software","it","information technology","technology","tech","digital","it services","web development","app development"],
+    ["marketing","advertising","agency","branding","seo","digital marketing","media","creative"],
+    ["consulting","consultancy","advisory","consultants","advisors"],
+    ["textile","garment","apparel","fabric","spinning","weaving","clothing"],
+    ["food","food processing","bakery","restaurant","catering","beverage"],
+    ["automobile","automotive","auto","vehicle","car","motor","auto components"],
+    ["pharma","pharmaceutical","pharmaceuticals","medicine","drug","healthcare","clinic","hospital"],
+    ["logistics","transport","transportation","cargo","freight","shipping","warehouse","courier"]
+  ],
+  "industryKeywords": {
+    "Manufacturing": ["manufactur","factory","industries","industrial","fabrication","works","mills","production"],
+    "Construction": ["construction","contractor","civil","infrastructure","builders"],
+    "Real estate": ["real estate","realty","property","properties","developers","housing"],
+    "Education": ["school","college","university","institute","academy","education","coaching"],
+    "IT services": ["software","it services","information technology","web","app development","technologies","systems"],
+    "Marketing": ["marketing","advertising","agency","branding","seo","media"],
+    "Solar & energy": ["solar","renewable","energy","power","electrical"],
+    "Consulting": ["consult","advisory","advisors"],
+    "Textiles": ["textile","garment","apparel","fabric","spinning","weaving"],
+    "Food & beverage": ["food","bakery","restaurant","catering","beverage"],
+    "Healthcare": ["hospital","clinic","pharma","medical","healthcare","diagnostic"],
+    "Logistics": ["logistics","transport","cargo","freight","courier","warehouse"],
+    "Automotive": ["automobile","automotive","auto components","motors"]
+  }
+}
