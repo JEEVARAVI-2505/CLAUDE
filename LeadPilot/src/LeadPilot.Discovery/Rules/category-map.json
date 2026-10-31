@@ -1,0 +1,29 @@
+{
+  "categories": [
+    { "keywords": ["manufactur", "factory", "industr", "fabricat", "production", "engineering"],
+      "tags": ["industrial=factory", "man_made=works", "craft=metal_construction", "craft=sawmill", "craft=carpenter", "office=company"],
+      "nameRegex": "manufactur|industr|works|fabricat|engineering|mills|products|enterprises", "industry": "Manufacturing" },
+    { "keywords": ["real estate", "realty", "property", "propert", "builder", "developer"],
+      "tags": ["office=estate_agent", "office=property_management"], "nameRegex": "realty|real estate|properties|developers|builders|estates|housing", "industry": "Real estate" },
+    { "keywords": ["construction", "contractor", "civil", "infrastructure"],
+      "tags": ["office=construction_company", "craft=builder", "craft=construction", "office=engineer"], "nameRegex": "construction|contractor|builders|infra|civil", "industry": "Construction" },
+    { "keywords": ["marketing", "advertis", "agency", "branding", "seo", "digital"],
+      "tags": ["office=advertising_agency", "office=marketing", "craft=printer"], "nameRegex": "marketing|advertis|media|branding|creative|digital|seo", "industry": "Marketing" },
+    { "keywords": ["school", "college", "universit", "institute", "educat", "academy", "coaching"],
+      "tags": ["amenity=school", "amenity=college", "amenity=university", "amenity=language_school", "office=educational_institution"], "nameRegex": "school|college|university|institute|academy|coaching", "industry": "Education" },
+    { "keywords": ["solar", "renewable", "energy", "power"],
+      "tags": ["craft=electrician", "craft=photovoltaic", "office=energy_supplier", "power=plant"], "nameRegex": "solar|renewable|energy|power|electric", "industry": "Solar & energy" },
+    { "keywords": ["software", "it ", "information technology", "tech", "web", "app development", "it services"],
+      "tags": ["office=it", "office=software_developer", "office=company"], "nameRegex": "software|technolog|infotech|systems|solutions|digital|web|it services", "industry": "IT services" },
+    { "keywords": ["consult", "advisor", "advisory"],
+      "tags": ["office=consulting", "office=company", "office=accountant", "office=financial_advisor"], "nameRegex": "consult|advisor|advisory|associates", "industry": "Consulting" },
+    { "keywords": ["textile", "garment", "apparel", "fabric", "spinning"],
+      "tags": ["craft=tailor", "industrial=factory", "shop=fabric"], "nameRegex": "textile|garment|apparel|fabric|spinning|weav|knit", "industry": "Textiles" },
+    { "keywords": ["restaurant", "food", "bakery", "catering", "hotel"],
+      "tags": ["amenity=restaurant", "craft=bakery", "craft=caterer", "tourism=hotel"], "nameRegex": "foods|bakery|catering|restaurant|hotel", "industry": "Food & beverage" },
+    { "keywords": ["hospital", "clinic", "pharma", "health", "medical"],
+      "tags": ["amenity=hospital", "amenity=clinic", "healthcare=laboratory", "amenity=pharmacy"], "nameRegex": "hospital|clinic|pharma|medical|diagnostic|health", "industry": "Healthcare" },
+    { "keywords": ["logistics", "transport", "cargo", "freight", "courier", "warehouse"],
+      "tags": ["office=logistics", "office=courier", "industrial=warehouse", "amenity=post_office"], "nameRegex": "logistic|transport|cargo|freight|courier|warehouse|movers", "industry": "Logistics" }
+  ]
+}
