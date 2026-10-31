@@ -1,0 +1,19 @@
+LeadPilot AI 1.0.0 - release notes
+===================================
+
+What you get
+ * Lead Finder: type your product, target customer, location and number of prospects; search OpenStreetMap (free, no key) and review real results.
+ * Company-website reader for public phone/e-mail/address (robots.txt respected, rate-limited, never submits forms or logs in).
+ * Duplicate detection with side-by-side review, approval and undo; explainable 0-100 relevance scoring with editable weights.
+ * Lead database (SQLite, local), import from Excel/CSV, export to Excel/CSV/PDF, follow-up tasks, campaigns, dashboard, analytics.
+ * Draft e-mail / WhatsApp messages (opened in your own apps - LeadPilot AI never sends messages itself).
+ * Optional AI (local Ollama or your own API key), optional web search (your own Brave key). Everything works without them.
+ * Encrypted backups, role-based users with optional PINs, audit log, data retention, full data deletion.
+ * Offline licence keys; 14-day free trial (up to 200 leads).
+
+Known limits in this release
+ * OpenStreetMap coverage differs by city and category; many businesses have no phone/e-mail/website there. Missing data is shown as missing.
+ * Legacy .xls files must be saved as .xlsx or CSV first.
+ * Direct CRM / ad-platform / licensed-data-provider connectors are not included; use file import.
+ * Messages are drafted, not sent. E-mail "verified" status is never claimed from format/DNS checks alone.
+ * The installer is not code-signed unless stated otherwise; Windows SmartScreen may show a warning the first time.

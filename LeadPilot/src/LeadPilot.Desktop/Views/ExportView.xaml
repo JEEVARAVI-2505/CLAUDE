@@ -1,0 +1,29 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.ExportView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="32,26" MaxWidth="760" HorizontalAlignment="Left">
+      <TextBlock Text="Export Centre" Style="{StaticResource H1}"/>
+      <TextBlock Text="Take your leads with you - the whole database or a slice - as Excel, CSV or a PDF report. Exports are recorded in the audit log." Style="{StaticResource Muted}" Margin="0,4,0,14"/>
+      <local:StatusBanner/>
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <TextBlock Text="Which leads?" Style="{StaticResource FieldLabel}"/>
+          <ComboBox ItemsSource="{Binding Scopes}" SelectedItem="{Binding Scope}"/>
+          <TextBlock Text="Format" Style="{StaticResource FieldLabel}"/>
+          <ComboBox ItemsSource="{Binding Formats}" SelectedItem="{Binding Format}"/>
+          <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+            <Button Content="Export…" Command="{Binding RunCommand}"/>
+            <Button Content="Summary report (PDF)…" Command="{Binding SummaryPdfCommand}" Style="{StaticResource SecondaryButton}"/>
+            <Button Content="Open exports folder" Command="{Binding OpenFolderCommand}" Style="{StaticResource SecondaryButton}" Margin="0"/>
+          </StackPanel>
+          <TextBlock Text="{Binding LastExport}" Margin="0,12,0,0" TextWrapping="Wrap" Foreground="{DynamicResource SuccessBrush}"/>
+        </StackPanel>
+      </Border>
+      <TextBlock Style="{StaticResource Muted}" Margin="0,12,0,0" Text="Exported cells that start with = + - or @ are stored as plain text so spreadsheets cannot run them as formulas. To export a custom selection, use the checkboxes in the Lead Database and press 'Export selected'."/>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

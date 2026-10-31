@@ -1,0 +1,23 @@
+LeadPilot AI - privacy and data handling
+=========================================
+
+Where your data lives
+  All leads, contacts, notes, tasks and settings are stored on this computer in:
+      %LOCALAPPDATA%\LeadPilotAI
+  API keys you enter are encrypted with Windows DPAPI for your Windows account.
+
+What is sent over the internet - only when you use the feature
+  * Lead Finder (OpenStreetMap): the place name and business categories you search for.
+  * Website reading: ordinary page requests to the websites of companies already in your list.
+  * Optional web search (Brave Search, your key): company name and city.
+  * Optional AI: with Ollama, nothing leaves your computer; with an OpenAI-compatible provider, the text of the prompt (which may include lead details) goes to that provider.
+
+What is NOT sent
+  No analytics, no telemetry, no crash reports, no lead data, and nothing to the software vendor.
+
+Your responsibilities
+  Business contact details that are published online are not automatically free to use for marketing. Follow the anti-spam, telemarketing and
+  data-protection laws of your country (for example consent and opt-out rules). LeadPilot AI includes an opt-out line in drafted e-mails and
+  lets you export or delete all data at any time.
+
+Uninstalling keeps your data unless you choose to delete it.

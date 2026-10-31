@@ -1,0 +1,89 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.DuplicateManagerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="32,26">
+      <DockPanel>
+        <Button DockPanel.Dock="Right" Content="Scan for duplicates" Command="{Binding ScanCommand}" VerticalAlignment="Top" Margin="0"/>
+        <StackPanel>
+          <TextBlock Text="Duplicate Manager" Style="{StaticResource H1}"/>
+          <TextBlock Text="Matches use phone, e-mail, website, name and address. Nothing is merged without your approval, and every merge can be undone." Style="{StaticResource Muted}" Margin="0,4,0,14"/>
+        </StackPanel>
+      </DockPanel>
+      <local:StatusBanner/>
+
+      <Border Style="{StaticResource Card}" Padding="28" Visibility="{Binding HasPending, Converter={StaticResource BoolToVis}, ConverterParameter=invert}">
+        <TextBlock Text="No duplicate pairs are waiting for review." Style="{StaticResource Muted}" HorizontalAlignment="Center"/>
+      </Border>
+
+      <Grid Visibility="{Binding HasPending, Converter={StaticResource BoolToVis}}">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="340"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <Border Style="{StaticResource Card}" Padding="6">
+          <ListBox ItemsSource="{Binding Pending}" SelectedItem="{Binding Selected, Mode=TwoWay}" BorderThickness="0" Background="Transparent" MaxHeight="520">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel Margin="4,6">
+                  <TextBlock Text="{Binding Summary}" TextWrapping="Wrap" FontWeight="SemiBold"/>
+                  <TextBlock Text="{Binding ConfidenceText}" Foreground="{DynamicResource PrimaryBrush}" FontSize="12"/>
+                  <TextBlock Text="{Binding Reasons}" Style="{StaticResource Muted}" FontSize="11"/>
+                </StackPanel>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Border>
+        <Border Grid.Column="2" Style="{StaticResource Card}" Visibility="{Binding HasSelection, Converter={StaticResource BoolToVis}}">
+          <StackPanel>
+            <TextBlock Text="{Binding Guidance}" TextWrapping="Wrap" Margin="0,0,0,12" Foreground="{DynamicResource WarningBrush}" FontWeight="SemiBold"/>
+            <Grid>
+              <Grid.ColumnDefinitions><ColumnDefinition Width="130"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+              <TextBlock Grid.Column="1" Text="{Binding CodeA}" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}"/>
+              <TextBlock Grid.Column="2" Text="{Binding CodeB}" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryBrush}"/>
+            </Grid>
+            <ItemsControl ItemsSource="{Binding Comparison}" Margin="0,6,0,0">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1" Padding="0,6">
+                    <Grid>
+                      <Grid.ColumnDefinitions><ColumnDefinition Width="130"/><ColumnDefinition Width="*"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                      <TextBlock Text="{Binding Field}" Style="{StaticResource Muted}"/>
+                      <TextBlock Grid.Column="1" Text="{Binding ValueA}" TextWrapping="Wrap" Margin="0,0,10,0"/>
+                      <TextBlock Grid.Column="2" Text="{Binding ValueB}" TextWrapping="Wrap"/>
+                    </Grid>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <WrapPanel Margin="0,16,0,0">
+              <Button Content="Keep left, merge right into it" Command="{Binding KeepACommand}"/>
+              <Button Content="Keep right, merge left into it" Command="{Binding KeepBCommand}"/>
+              <Button Content="Not duplicates" Command="{Binding NotDuplicatesCommand}" Style="{StaticResource SecondaryButton}"/>
+              <Button Content="Open left" Command="{Binding OpenACommand}" Style="{StaticResource GhostButton}"/>
+              <Button Content="Open right" Command="{Binding OpenBCommand}" Style="{StaticResource GhostButton}"/>
+            </WrapPanel>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <TextBlock Text="Merge history" Style="{StaticResource H2}" Margin="0,24,0,8"/>
+      <DataGrid ItemsSource="{Binding History}" MaxHeight="280">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="When" Binding="{Binding When}" Width="150"/>
+          <DataGridTextColumn Header="Kept" Binding="{Binding Survivor}" Width="130"/>
+          <DataGridTextColumn Header="Merged into it" Binding="{Binding Merged}" Width="140"/>
+          <DataGridTextColumn Header="State" Binding="{Binding State}" Width="100"/>
+          <DataGridTemplateColumn Width="*">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Button Content="Undo merge" Style="{StaticResource SecondaryButton}" Margin="0" Padding="12,3" HorizontalAlignment="Left" Visibility="{Binding CanUndo, Converter={StaticResource BoolToVis}}"
+                        Command="{Binding DataContext.UndoCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

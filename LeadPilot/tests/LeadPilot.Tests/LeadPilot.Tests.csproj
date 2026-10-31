@@ -7,5 +7,6 @@
     <ProjectReference Include="..\..\src\LeadPilot.Discovery\LeadPilot.Discovery.csproj" />
     <ProjectReference Include="..\..\src\LeadPilot.AI\LeadPilot.AI.csproj" />
     <ProjectReference Include="..\..\src\LeadPilot.Infrastructure\LeadPilot.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\tools\LeadPilot.LicenseTool\LeadPilot.LicenseTool.csproj" />
   </ItemGroup>
 </Project>

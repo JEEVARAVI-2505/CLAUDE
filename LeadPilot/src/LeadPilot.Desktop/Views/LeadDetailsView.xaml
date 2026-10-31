@@ -1,0 +1,207 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.LeadDetailsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="32,26">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+          <Button Content="Back to list" Command="{Binding BackCommand}" Style="{StaticResource SecondaryButton}"/>
+          <Button Content="Save changes" Command="{Binding SaveCommand}" Margin="0"/>
+        </StackPanel>
+        <StackPanel>
+          <TextBlock Style="{StaticResource H1}"><Run Text="{Binding LeadCode, Mode=OneWay}"/><Run Text="  "/><Run Text="{Binding CompanyName, Mode=OneWay}"/></TextBlock>
+          <TextBlock Text="Every value below is editable. Contact checks never claim a person owns a number or mailbox." Style="{StaticResource Muted}" Margin="0,4,0,14"/>
+        </StackPanel>
+      </DockPanel>
+      <local:StatusBanner/>
+
+      <Grid>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="420"/></Grid.ColumnDefinitions>
+        <StackPanel>
+          <Border Style="{StaticResource Card}">
+            <StackPanel>
+              <TextBlock Text="Company" Style="{StaticResource H2}"/>
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <StackPanel>
+                  <TextBlock Text="Company name" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged}"/>
+                  <TextBlock Text="Website" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding Website}"/>
+                  <TextBlock Text="Phone" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding Phone}"/>
+                  <TextBlock Text="E-mail" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding Email}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="Industry" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding Industry}"/>
+                  <TextBlock Text="City" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding City}"/>
+                  <TextBlock Text="Address" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding Address}"/>
+                  <TextBlock Text="Services" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding Services}"/>
+                </StackPanel>
+              </Grid>
+              <TextBlock Text="About the company" Style="{StaticResource FieldLabel}"/>
+              <TextBox Text="{Binding Description}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="54" VerticalContentAlignment="Top"/>
+              <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <Button Content="Open website" Command="{Binding OpenWebsiteCommand}" Style="{StaticResource SecondaryButton}"/>
+                <Button Content="Read website to fill gaps" Command="{Binding EnrichCommand}" Style="{StaticResource SecondaryButton}"/>
+                <Button Content="Run contact checks" Command="{Binding VerifyCommand}" Style="{StaticResource SecondaryButton}"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+            <StackPanel>
+              <TextBlock Text="Contact person and pipeline" Style="{StaticResource H2}"/>
+              <Grid>
+                <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <StackPanel>
+                  <TextBlock Text="Name" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding ContactName}"/>
+                  <TextBlock Text="Job title" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding ContactTitle}"/>
+                  <TextBlock Text="Direct phone" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding ContactPhone}"/>
+                  <TextBlock Text="Direct e-mail" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding ContactEmail}"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="Status" Style="{StaticResource FieldLabel}"/><ComboBox ItemsSource="{Binding StatusChoices}" SelectedItem="{Binding Status}"/>
+                  <TextBlock Text="Assigned salesperson" Style="{StaticResource FieldLabel}"/><ComboBox ItemsSource="{Binding Users}" DisplayMemberPath="Name" SelectedItem="{Binding AssignedUser}"/>
+                  <TextBlock Text="Buying-intent evidence (e.g. enquiry text) - leave empty if none" Style="{StaticResource FieldLabel}"/>
+                  <TextBox Text="{Binding IntentEvidence}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="60" VerticalContentAlignment="Top"/>
+                </StackPanel>
+              </Grid>
+            </StackPanel>
+          </Border>
+
+          <Border Style="{StaticResource Card}" Margin="0,14,0,0" Padding="8,8,8,14">
+            <TabControl BorderThickness="0" Background="Transparent">
+              <TabItem Header="Timeline">
+                <StackPanel Margin="10">
+                  <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <ComboBox ItemsSource="{Binding InteractionTypes}" SelectedItem="{Binding InteractionType}"/>
+                    <TextBox Grid.Column="2" Text="{Binding InteractionSubject, UpdateSourceTrigger=PropertyChanged}" ToolTip="Subject, e.g. Intro call"/>
+                    <TextBox Grid.Column="4" Text="{Binding InteractionNotes}" ToolTip="Notes"/>
+                    <Button Grid.Column="6" Content="Log" Command="{Binding LogInteractionCommand}" Margin="0"/>
+                  </Grid>
+                  <ItemsControl ItemsSource="{Binding Timeline}" Margin="0,12,0,0">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <Border BorderBrush="{DynamicResource LineBrush}" BorderThickness="0,0,0,1" Padding="0,8">
+                          <StackPanel>
+                            <TextBlock><Run Text="{Binding Type, Mode=OneWay}" FontWeight="SemiBold"/><Run Text="  -  "/><Run Text="{Binding Subject, Mode=OneWay}"/></TextBlock>
+                            <TextBlock Text="{Binding Body}" Style="{StaticResource Muted}" Visibility="{Binding Body, Converter={StaticResource HasValueToVis}}"/>
+                            <TextBlock Text="{Binding When}" Style="{StaticResource Muted}" FontSize="11"/>
+                          </StackPanel>
+                        </Border>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </TabItem>
+              <TabItem Header="Follow-ups">
+                <StackPanel Margin="10">
+                  <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="8"/><ColumnDefinition Width="170"/><ColumnDefinition Width="8"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                    <TextBox Text="{Binding TaskTitle, UpdateSourceTrigger=PropertyChanged}" ToolTip="What needs to happen, e.g. Send quote"/>
+                    <DatePicker Grid.Column="2" SelectedDate="{Binding TaskDue}"/>
+                    <Button Grid.Column="4" Content="Schedule" Command="{Binding ScheduleFollowUpCommand}" Margin="0"/>
+                  </Grid>
+                  <ItemsControl ItemsSource="{Binding Tasks}" Margin="0,12,0,0">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <DockPanel Margin="0,4">
+                          <Button DockPanel.Dock="Right" Content="Done" Style="{StaticResource SecondaryButton}" Margin="0" Padding="12,4" Visibility="{Binding IsOpen, Converter={StaticResource BoolToVis}}"
+                                  Command="{Binding DataContext.CompleteTaskCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                          <TextBlock><Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold"/><Run Text="  -  due "/><Run Text="{Binding Due, Mode=OneWay}"/><Run Text="  ("/><Run Text="{Binding Status, Mode=OneWay}"/><Run Text=")"/></TextBlock>
+                        </DockPanel>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </TabItem>
+              <TabItem Header="Evidence">
+                <StackPanel Margin="10">
+                  <TextBlock Style="{StaticResource Muted}" Text="Where each value came from and when. 'Suggestion only' values were found but not applied because they did not meet the quality rules."/>
+                  <DataGrid ItemsSource="{Binding Evidence}" Margin="0,8,0,0" MaxHeight="320">
+                    <DataGrid.Columns>
+                      <DataGridTextColumn Header="Field" Binding="{Binding Field}" Width="90"/>
+                      <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="190"/>
+                      <DataGridTextColumn Header="Result" Binding="{Binding Applied}" Width="110"/>
+                      <DataGridTextColumn Header="Confidence" Binding="{Binding Confidence}" Width="80"/>
+                      <DataGridTextColumn Header="Found" Binding="{Binding When}" Width="120"/>
+                      <DataGridTextColumn Header="Source page" Binding="{Binding Url}" Width="*"/>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </StackPanel>
+              </TabItem>
+              <TabItem Header="Sources">
+                <DataGrid ItemsSource="{Binding Sources}" Margin="10" MaxHeight="300">
+                  <DataGrid.Columns>
+                    <DataGridTextColumn Header="Source" Binding="{Binding Name}" Width="140"/>
+                    <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="150"/>
+                    <DataGridTextColumn Header="Retrieved" Binding="{Binding When}" Width="120"/>
+                    <DataGridTextColumn Header="Licence" Binding="{Binding License}" Width="160"/>
+                    <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="*"/>
+                  </DataGrid.Columns>
+                </DataGrid>
+              </TabItem>
+            </TabControl>
+          </Border>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2">
+          <Border Style="{StaticResource Card}">
+            <StackPanel>
+              <DockPanel>
+                <Button DockPanel.Dock="Right" Content="Re-score" Command="{Binding RescoreCommand}" Style="{StaticResource SecondaryButton}" Margin="0" Padding="12,5"/>
+                <TextBlock Text="Relevance score" Style="{StaticResource H2}" VerticalAlignment="Center"/>
+              </DockPanel>
+              <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                <TextBlock Text="{Binding Score}" FontSize="40" FontWeight="SemiBold"/>
+                <TextBlock Text="/100" Style="{StaticResource Muted}" VerticalAlignment="Bottom" Margin="4,0,12,8"/>
+                <Border Style="{StaticResource Chip}" VerticalAlignment="Center" Background="{Binding Temperature, Converter={StaticResource NameToBrush}}"><TextBlock Text="{Binding Temperature}" Foreground="White" FontWeight="SemiBold"/></Border>
+              </StackPanel>
+              <TextBlock Text="{Binding ScoreExplanation}" TextWrapping="Wrap" Style="{StaticResource Muted}" Margin="0,8,0,0"/>
+            </StackPanel>
+          </Border>
+
+          <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+            <StackPanel>
+              <TextBlock Text="Contact checks" Style="{StaticResource H2}"/>
+              <TextBlock Text="E-mail" Style="{StaticResource FieldLabel}"/><TextBlock Text="{Binding EmailCheck}" TextWrapping="Wrap"/>
+              <TextBlock Text="Phone" Style="{StaticResource FieldLabel}"/><TextBlock Text="{Binding PhoneCheck}" TextWrapping="Wrap"/>
+              <TextBlock Text="Website" Style="{StaticResource FieldLabel}"/><TextBlock Text="{Binding WebsiteCheck}" TextWrapping="Wrap"/>
+            </StackPanel>
+          </Border>
+
+          <Border Style="{StaticResource Card}" Margin="0,14,0,0" Visibility="{Binding Suggestions.Count, Converter={StaticResource HasValueToVis}}">
+            <StackPanel>
+              <TextBlock Text="Suggested next action" Style="{StaticResource H2}"/>
+              <ItemsControl ItemsSource="{Binding Suggestions}" Margin="0,6,0,0">
+                <ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,3"/></DataTemplate></ItemsControl.ItemTemplate>
+              </ItemsControl>
+            </StackPanel>
+          </Border>
+
+          <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+            <StackPanel>
+              <TextBlock Text="Outreach draft" Style="{StaticResource H2}"/>
+              <TextBlock Text="Drafts only - LeadPilot AI never sends messages. You send them from your own mail app or WhatsApp." Style="{StaticResource Muted}" FontSize="11"/>
+              <TextBlock Text="What you are offering" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding Offer}"/>
+              <TextBlock Text="Channel" Style="{StaticResource FieldLabel}"/><ComboBox ItemsSource="{Binding Channels}" SelectedItem="{Binding DraftChannel}"/>
+              <Button Content="Prepare draft" Command="{Binding DraftCommand}" Margin="0,10,0,0" HorizontalAlignment="Left"/>
+              <StackPanel Visibility="{Binding HasDraft, Converter={StaticResource BoolToVis}}">
+                <TextBlock Text="Subject" Style="{StaticResource FieldLabel}"/><TextBox Text="{Binding DraftSubject}"/>
+                <TextBlock Text="Message" Style="{StaticResource FieldLabel}"/>
+                <TextBox Text="{Binding DraftBody}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="150" VerticalContentAlignment="Top"/>
+                <WrapPanel Margin="0,10,0,0">
+                  <Button Content="Open in mail app" Command="{Binding OpenInMailAppCommand}" Style="{StaticResource SecondaryButton}"/>
+                  <Button Content="Open WhatsApp" Command="{Binding OpenInWhatsAppCommand}" Style="{StaticResource SecondaryButton}"/>
+                  <Button Content="Copy" Command="{Binding CopyDraftCommand}" Style="{StaticResource SecondaryButton}"/>
+                </WrapPanel>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </Grid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

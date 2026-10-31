@@ -1,0 +1,150 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.LeadDatabaseView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <Grid Margin="32,26">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <StackPanel Grid.Row="0">
+      <DockPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Top">
+          <Button Content="Add lead" Command="{Binding StartAddCommand}"/>
+          <Button Content="Import" Command="{Binding GoImportCommand}" Style="{StaticResource SecondaryButton}"/>
+          <Button Content="Find leads" Command="{Binding GoFinderCommand}" Style="{StaticResource SecondaryButton}" Margin="0"/>
+        </StackPanel>
+        <StackPanel>
+          <TextBlock Text="Lead Database" Style="{StaticResource H1}"/>
+          <TextBlock Text="{Binding PageText}" Style="{StaticResource Muted}" Margin="0,4,0,14"/>
+        </StackPanel>
+      </DockPanel>
+      <local:StatusBanner/>
+      <DockPanel Margin="0,0,0,10">
+        <Button DockPanel.Dock="Right" Content="Filters" Command="{Binding ToggleFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"/>
+        <Button DockPanel.Dock="Right" Content="Search" Command="{Binding SearchCommand}" Margin="8,0,0,0"/>
+        <TextBox Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search company, contact, phone, e-mail, website, industry, city or lead ID">
+          <TextBox.InputBindings><KeyBinding Key="Enter" Command="{Binding SearchCommand}"/></TextBox.InputBindings>
+        </TextBox>
+      </DockPanel>
+    </StackPanel>
+
+    <StackPanel Grid.Row="1">
+      <Border Style="{StaticResource Card}" Padding="14,6,14,12" Margin="0,0,0,10" Visibility="{Binding ShowFilters, Converter={StaticResource BoolToVis}}">
+        <WrapPanel>
+          <StackPanel Margin="0,0,14,0"><TextBlock Text="Status" Style="{StaticResource FieldLabel}"/><ComboBox Width="140" ItemsSource="{Binding Statuses}" SelectedItem="{Binding StatusFilter}"/></StackPanel>
+          <StackPanel Margin="0,0,14,0"><TextBlock Text="Relevance" Style="{StaticResource FieldLabel}"/><ComboBox Width="140" ItemsSource="{Binding Temperatures}" SelectedItem="{Binding TemperatureFilter}"/></StackPanel>
+          <StackPanel Margin="0,0,14,0"><TextBlock Text="Source" Style="{StaticResource FieldLabel}"/><ComboBox Width="170" ItemsSource="{Binding Sources}" SelectedItem="{Binding SourceFilter}"/></StackPanel>
+          <StackPanel Margin="0,0,14,0"><TextBlock Text="Industry" Style="{StaticResource FieldLabel}"/><ComboBox Width="170" ItemsSource="{Binding Industries}" SelectedItem="{Binding IndustryFilter}"/></StackPanel>
+          <StackPanel Margin="0,0,14,0"><TextBlock Text="City" Style="{StaticResource FieldLabel}"/><ComboBox Width="150" ItemsSource="{Binding Cities}" SelectedItem="{Binding CityFilter}"/></StackPanel>
+          <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal">
+            <CheckBox Content="Incomplete only" IsChecked="{Binding OnlyIncomplete}" VerticalAlignment="Center"/>
+            <Button Content="Apply" Command="{Binding SearchCommand}"/>
+            <Button Content="Clear" Command="{Binding ClearFiltersCommand}" Style="{StaticResource SecondaryButton}" Margin="0"/>
+          </StackPanel>
+        </WrapPanel>
+      </Border>
+
+      <Border Style="{StaticResource Card}" Padding="14,10" Margin="0,0,0,10" Visibility="{Binding IsAdding, Converter={StaticResource BoolToVis}}">
+        <StackPanel>
+          <TextBlock Text="Add a lead manually" Style="{StaticResource H2}"/>
+          <WrapPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="Company *" Style="{StaticResource FieldLabel}"/><TextBox Width="200" Text="{Binding NewCompany, UpdateSourceTrigger=PropertyChanged}"/></StackPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="Contact person" Style="{StaticResource FieldLabel}"/><TextBox Width="160" Text="{Binding NewContact}"/></StackPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="Phone" Style="{StaticResource FieldLabel}"/><TextBox Width="150" Text="{Binding NewPhone}"/></StackPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="E-mail" Style="{StaticResource FieldLabel}"/><TextBox Width="190" Text="{Binding NewEmail}"/></StackPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="Website" Style="{StaticResource FieldLabel}"/><TextBox Width="170" Text="{Binding NewWebsite}"/></StackPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="Industry" Style="{StaticResource FieldLabel}"/><TextBox Width="130" Text="{Binding NewIndustry}"/></StackPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="City" Style="{StaticResource FieldLabel}"/><TextBox Width="120" Text="{Binding NewCity}"/></StackPanel>
+            <StackPanel Margin="0,0,12,0"><TextBlock Text="Enquiry / intent note" Style="{StaticResource FieldLabel}"/><TextBox Width="260" Text="{Binding NewNotes}"/></StackPanel>
+          </WrapPanel>
+          <StackPanel Orientation="Horizontal" Margin="0,12,0,0">
+            <Button Content="Save lead" Command="{Binding SaveNewCommand}"/>
+            <Button Content="Cancel" Command="{Binding CancelAddCommand}" Style="{StaticResource SecondaryButton}"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Style="{StaticResource Card}" Padding="14,8" Margin="0,0,0,10" Background="{DynamicResource PrimarySoftBrush}" Visibility="{Binding SelectedCount, Converter={StaticResource HasValueToVis}}">
+        <WrapPanel VerticalAlignment="Center">
+          <TextBlock VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,14,0"><Run Text="{Binding SelectedCount, Mode=OneWay}"/><Run Text=" selected"/></TextBlock>
+          <ComboBox Width="130" ItemsSource="{Binding StatusChoices}" SelectedItem="{Binding BulkStatus}" Margin="0,0,6,0"/>
+          <Button Content="Set status" Command="{Binding ApplyStatusCommand}" Style="{StaticResource SecondaryButton}"/>
+          <ComboBox Width="150" ItemsSource="{Binding Users}" DisplayMemberPath="Name" SelectedItem="{Binding AssignTo}" Margin="10,0,6,0"/>
+          <Button Content="Assign" Command="{Binding ApplyAssignCommand}" Style="{StaticResource SecondaryButton}"/>
+          <Button Content="Export selected" Command="{Binding ExportSelectedCommand}" Style="{StaticResource SecondaryButton}"/>
+          <Button Content="Delete" Command="{Binding DeleteSelectedCommand}" Style="{StaticResource DangerButton}"/>
+        </WrapPanel>
+      </Border>
+
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+        <TextBlock Text="Sort by:" Style="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+        <Button Content="Company" Command="{Binding SortByCommand}" CommandParameter="Company" Style="{StaticResource GhostButton}" Padding="8,4" Margin="0"/>
+        <Button Content="Score" Command="{Binding SortByCommand}" CommandParameter="Score" Style="{StaticResource GhostButton}" Padding="8,4" Margin="0"/>
+        <Button Content="Status" Command="{Binding SortByCommand}" CommandParameter="Status" Style="{StaticResource GhostButton}" Padding="8,4" Margin="0"/>
+        <Button Content="Newest" Command="{Binding SortByCommand}" CommandParameter="Created" Style="{StaticResource GhostButton}" Padding="8,4" Margin="0"/>
+        <Button Content="Next follow-up" Command="{Binding SortByCommand}" CommandParameter="NextFollowUp" Style="{StaticResource GhostButton}" Padding="8,4" Margin="0"/>
+        <Button Content="Last contacted" Command="{Binding SortByCommand}" CommandParameter="LastContacted" Style="{StaticResource GhostButton}" Padding="8,4" Margin="0"/>
+      </StackPanel>
+    </StackPanel>
+
+    <Border Grid.Row="2" Style="{StaticResource Card}" Padding="32" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}">
+      <StackPanel HorizontalAlignment="Center">
+        <TextBlock Text="No leads to show" Style="{StaticResource H2}" HorizontalAlignment="Center"/>
+        <TextBlock Text="Change the search or filters, find new prospects, or import a spreadsheet." Style="{StaticResource Muted}" HorizontalAlignment="Center" Margin="0,6,0,14"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <Button Content="Find leads" Command="{Binding GoFinderCommand}"/><Button Content="Import" Command="{Binding GoImportCommand}" Style="{StaticResource SecondaryButton}" Margin="0"/>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+
+    <DataGrid Grid.Row="3" ItemsSource="{Binding Rows}" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" CanUserSortColumns="False">
+      <DataGrid.Columns>
+        <DataGridTemplateColumn Width="44">
+          <DataGridTemplateColumn.Header><CheckBox IsChecked="{Binding DataContext.AllSelected, RelativeSource={RelativeSource AncestorType=UserControl}}" HorizontalAlignment="Center"/></DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate><CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center"/></DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTemplateColumn Header="Lead ID" Width="88">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Button Content="{Binding Row.LeadCode}" Style="{StaticResource GhostButton}" Padding="4" Margin="0"
+                      Command="{Binding DataContext.OpenCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Header="Company" Binding="{Binding Row.CompanyName}" Width="210" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Contact person" Binding="{Binding Row.ContactPerson}" Width="130" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Phone" Binding="{Binding Row.Phone}" Width="130" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="E-mail" Binding="{Binding Row.Email}" Width="170" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Website" Binding="{Binding Row.Website}" Width="160" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Industry" Binding="{Binding Row.Industry}" Width="110" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Location" Binding="{Binding Row.Location}" Width="110" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Source" Binding="{Binding Row.Source}" Width="120" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTemplateColumn Header="Score" Width="120">
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Border Width="9" Height="9" CornerRadius="5" Background="{Binding Row.Temperature, Converter={StaticResource NameToBrush}}" Margin="0,0,6,0"/>
+                <TextBlock Text="{Binding TemperatureText}"/>
+              </StackPanel>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+        <DataGridTextColumn Header="Status" Binding="{Binding Row.Status}" Width="95" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Assigned to" Binding="{Binding Row.AssignedTo}" Width="110" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Created" Binding="{Binding Created}" Width="100" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Last contacted" Binding="{Binding LastContacted}" Width="110" ElementStyle="{StaticResource CellText}"/>
+        <DataGridTextColumn Header="Next follow-up" Binding="{Binding NextFollowUp}" Width="110" ElementStyle="{StaticResource CellText}"/>
+      </DataGrid.Columns>
+    </DataGrid>
+
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+      <Button Content="Previous" Command="{Binding PrevPageCommand}" Style="{StaticResource SecondaryButton}"/>
+      <TextBlock VerticalAlignment="Center" Margin="4,0,12,0"><Run Text="Page "/><Run Text="{Binding Page, Mode=OneWay}"/><Run Text=" of "/><Run Text="{Binding PageCount, Mode=OneWay}"/></TextBlock>
+      <Button Content="Next" Command="{Binding NextPageCommand}" Style="{StaticResource SecondaryButton}" Margin="0"/>
+    </StackPanel>
+  </Grid>
+</UserControl>

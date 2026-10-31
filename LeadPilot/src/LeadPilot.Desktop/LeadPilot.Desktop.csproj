@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>LeadPilotAI</AssemblyName>
+    <RootNamespace>LeadPilot.Desktop</RootNamespace>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>LeadPilot AI</Product>
+    <Description>AI-assisted lead discovery and sales follow-up for Windows</Description>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\LeadPilot.Domain\LeadPilot.Domain.csproj" />
+    <ProjectReference Include="..\LeadPilot.Application\LeadPilot.Application.csproj" />
+    <ProjectReference Include="..\LeadPilot.Data\LeadPilot.Data.csproj" />
+    <ProjectReference Include="..\LeadPilot.Discovery\LeadPilot.Discovery.csproj" />
+    <ProjectReference Include="..\LeadPilot.AI\LeadPilot.AI.csproj" />
+    <ProjectReference Include="..\LeadPilot.Infrastructure\LeadPilot.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="8.0.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\app.ico" />
+    <Resource Include="Assets\logo.png" />
+  </ItemGroup>
+</Project>

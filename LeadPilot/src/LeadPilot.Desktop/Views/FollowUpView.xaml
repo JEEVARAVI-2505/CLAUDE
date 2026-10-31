@@ -1,0 +1,87 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.FollowUpView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="32,26">
+      <TextBlock Text="Follow-up Manager" Style="{StaticResource H1}"/>
+      <TextBlock Text="Scheduled tasks, overdue alerts and suggested next actions. Messages are drafted for you to send - the app never sends them." Style="{StaticResource Muted}" Margin="0,4,0,14"/>
+      <local:StatusBanner/>
+      <Border Background="{DynamicResource DangerSoftBrush}" CornerRadius="8" Padding="12,8" Margin="0,0,0,12" Visibility="{Binding OverdueCount, Converter={StaticResource HasValueToVis}}">
+        <TextBlock Foreground="{DynamicResource DangerBrush}" FontWeight="SemiBold"><Run Text="{Binding OverdueCount, Mode=OneWay}"/><Run Text=" follow-up(s) are overdue."/></TextBlock>
+      </Border>
+
+      <Border Style="{StaticResource Card}">
+        <StackPanel>
+          <TextBlock Text="Schedule a follow-up" Style="{StaticResource H2}"/>
+          <Grid Margin="0,6,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="130"/><ColumnDefinition Width="10"/><ColumnDefinition Width="*"/><ColumnDefinition Width="10"/><ColumnDefinition Width="170"/><ColumnDefinition Width="10"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <TextBox Text="{Binding NewLeadCode}" ToolTip="Lead ID, e.g. LD-000012"/>
+            <TextBox Grid.Column="2" Text="{Binding NewTitle, UpdateSourceTrigger=PropertyChanged}" ToolTip="What needs to happen"/>
+            <DatePicker Grid.Column="4" SelectedDate="{Binding NewDue}"/>
+            <Button Grid.Column="6" Content="Add task" Command="{Binding AddTaskCommand}" Margin="0"/>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <StackPanel Orientation="Horizontal" Margin="0,16,0,8">
+        <TextBlock Text="Show:" VerticalAlignment="Center" Margin="0,0,8,0" Style="{StaticResource Muted}"/>
+        <ComboBox Width="140" ItemsSource="{Binding Filters}" SelectedItem="{Binding Filter}"/>
+      </StackPanel>
+      <Border Style="{StaticResource Card}" Padding="24" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}}">
+        <TextBlock Text="No tasks in this view." Style="{StaticResource Muted}" HorizontalAlignment="Center"/>
+      </Border>
+      <DataGrid ItemsSource="{Binding Tasks}" Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVis}, ConverterParameter=invert}" MaxHeight="420">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Due" Binding="{Binding Due}" Width="140"/>
+          <DataGridTextColumn Header="Lead ID" Binding="{Binding LeadCode}" Width="90"/>
+          <DataGridTextColumn Header="Company" Binding="{Binding Company}" Width="190" ElementStyle="{StaticResource CellText}"/>
+          <DataGridTextColumn Header="Task" Binding="{Binding Title}" Width="*" ElementStyle="{StaticResource CellText}"/>
+          <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="80"/>
+          <DataGridTextColumn Header="Owner" Binding="{Binding AssignedTo}" Width="110"/>
+          <DataGridTemplateColumn Width="300">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <StackPanel Orientation="Horizontal">
+                  <Button Content="Done" Padding="10,3" Margin="0,0,6,0" Visibility="{Binding IsOpen, Converter={StaticResource BoolToVis}}"
+                          Command="{Binding DataContext.CompleteCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                  <Button Content="Tomorrow" Style="{StaticResource SecondaryButton}" Padding="10,3" Margin="0,0,6,0" Visibility="{Binding IsOpen, Converter={StaticResource BoolToVis}}"
+                          Command="{Binding DataContext.SnoozeCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                  <Button Content="Cancel" Style="{StaticResource SecondaryButton}" Padding="10,3" Margin="0,0,6,0" Visibility="{Binding IsOpen, Converter={StaticResource BoolToVis}}"
+                          Command="{Binding DataContext.CancelCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                  <Button Content="Open" Style="{StaticResource GhostButton}" Padding="8,3" Margin="0"
+                          Command="{Binding DataContext.OpenLeadCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                </StackPanel>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <TextBlock Text="Suggested next actions" Style="{StaticResource H2}" Margin="0,24,0,4"/>
+      <TextBlock Text="Rule-based suggestions for leads that have no open task (based on status, relevance and recency)." Style="{StaticResource Muted}" Margin="0,0,0,8"/>
+      <ItemsControl ItemsSource="{Binding Suggestions}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border Style="{StaticResource Card}" Margin="0,0,0,8" Padding="14,10">
+              <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                  <Button Content="Schedule for tomorrow" Padding="12,4"
+                          Command="{Binding DataContext.ScheduleCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                  <Button Content="Open lead" Style="{StaticResource SecondaryButton}" Padding="12,4" Margin="0"
+                          Command="{Binding DataContext.OpenSuggestionCommand, RelativeSource={RelativeSource AncestorType=UserControl}}" CommandParameter="{Binding}"/>
+                </StackPanel>
+                <StackPanel>
+                  <TextBlock><Run Text="{Binding Action, Mode=OneWay}" FontWeight="SemiBold"/><Run Text="  -  "/><Run Text="{Binding LeadCode, Mode=OneWay}"/><Run Text=" "/><Run Text="{Binding Company, Mode=OneWay}"/></TextBlock>
+                  <TextBlock Text="{Binding Reason}" Style="{StaticResource Muted}"/>
+                </StackPanel>
+              </DockPanel>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

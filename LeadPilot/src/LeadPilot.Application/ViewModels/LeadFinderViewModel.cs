@@ -60,6 +60,7 @@ public sealed partial class LeadFinderViewModel : ViewModelBase
     [ObservableProperty] private string _summary = "";
     [ObservableProperty] private string _saveSummary = "";
     [ObservableProperty] private int _selectedCount;
+    [ObservableProperty] private DiscoveryItem? _selected;
 
     public ObservableCollection<DiscoveryItem> Results { get; } = new();
     public ObservableCollection<ProviderRunResult> Providers { get; } = new();

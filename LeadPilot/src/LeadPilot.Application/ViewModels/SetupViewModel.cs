@@ -14,17 +14,21 @@ public sealed partial class SetupViewModel : ViewModelBase
     private readonly ILicenseService _license;
     private readonly INavigator _nav;
 
-    public static IReadOnlyList<string> Regions { get; } = new[]
+    private static readonly string[] RegionList = new[]
     {
         "India (IN)", "United States (US)", "United Kingdom (GB)", "United Arab Emirates (AE)", "Australia (AU)", "Canada (CA)", "Singapore (SG)",
         "Germany (DE)", "Saudi Arabia (SA)", "South Africa (ZA)", "New Zealand (NZ)", "Malaysia (MY)"
     };
 
+    /// <summary>Selectable countries, e.g. "India (IN)".</summary>
+    public IReadOnlyList<string> Regions => RegionList;
+    internal static IReadOnlyList<string> AllRegions => RegionList;
+
     [ObservableProperty] private int _step;
     [ObservableProperty] private string _companyName = "";
     [ObservableProperty] private string _ownerName = "";
     [ObservableProperty] private string _contactEmail = "";
-    [ObservableProperty] private string _region = Regions[0];
+    [ObservableProperty] private string _region = RegionList[0];
     [ObservableProperty] private string _pin = "";
     [ObservableProperty] private string _pinConfirm = "";
     [ObservableProperty] private bool _useOpenStreetMap = true;

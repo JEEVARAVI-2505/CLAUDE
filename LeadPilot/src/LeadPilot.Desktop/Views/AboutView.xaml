@@ -1,0 +1,50 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.AboutView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="32,26" MaxWidth="900" HorizontalAlignment="Left">
+      <StackPanel Orientation="Horizontal">
+        <Image Source="/Assets/logo.png" Width="56" Height="56"/>
+        <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+          <TextBlock Text="LeadPilot AI" Style="{StaticResource H1}"/>
+          <TextBlock Style="{StaticResource Muted}"><Run Text="Version "/><Run Text="{Binding Version, Mode=OneWay}"/></TextBlock>
+        </StackPanel>
+      </StackPanel>
+      <local:StatusBanner/>
+
+      <Border Style="{StaticResource Card}" Margin="0,16,0,0">
+        <StackPanel>
+          <TextBlock Text="Licence" Style="{StaticResource H2}"/>
+          <TextBlock Margin="0,6,0,0"><Run Text="{Binding Tier, Mode=OneWay}" FontWeight="SemiBold"/><Run Text="  -  "/><Run Text="{Binding Holder, Mode=OneWay}"/></TextBlock>
+          <TextBlock Text="{Binding LicenseMessage}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+          <TextBlock Text="{Binding Limits}" Style="{StaticResource Muted}" Margin="0,4,0,0"/>
+          <TextBlock Text="Enter a licence key" Style="{StaticResource FieldLabel}"/>
+          <TextBox Text="{Binding LicenseKey, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap" AcceptsReturn="True" MinHeight="64" VerticalContentAlignment="Top" FontFamily="Consolas"/>
+          <Button Content="Activate" Command="{Binding ActivateCommand}" Margin="0,10,0,0" HorizontalAlignment="Left"/>
+          <TextBlock Text="Your computer ID (send this when you buy a single-PC licence)" Style="{StaticResource FieldLabel}"/>
+          <StackPanel Orientation="Horizontal">
+            <TextBox Text="{Binding MachineId, Mode=OneWay}" IsReadOnly="True" Width="260" FontFamily="Consolas"/>
+            <Button Content="Copy" Command="{Binding CopyMachineIdCommand}" Style="{StaticResource SecondaryButton}" Margin="8,0,0,0"/>
+          </StackPanel>
+          <TextBlock Text="{Binding Tiers}" Style="{StaticResource Muted}" Margin="0,12,0,0"/>
+        </StackPanel>
+      </Border>
+
+      <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+        <StackPanel>
+          <TextBlock Text="Privacy" Style="{StaticResource H2}"/>
+          <TextBlock Text="{Binding Privacy}" TextWrapping="Wrap" Margin="0,6,0,0"/>
+        </StackPanel>
+      </Border>
+      <Border Style="{StaticResource Card}" Margin="0,14,0,0">
+        <StackPanel>
+          <TextBlock Text="Notices" Style="{StaticResource H2}"/>
+          <TextBlock Text="{Binding Notices}" TextWrapping="Wrap" Style="{StaticResource Muted}" Margin="0,6,0,0"/>
+        </StackPanel>
+      </Border>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,46 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.AnalyticsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="32,26">
+      <DockPanel>
+        <Button DockPanel.Dock="Right" Content="Refresh" Command="{Binding RefreshCommand}" Style="{StaticResource SecondaryButton}" VerticalAlignment="Top" Margin="0"/>
+        <StackPanel>
+          <TextBlock Text="Analytics" Style="{StaticResource H1}"/>
+          <TextBlock Text="{Binding Headline}" Style="{StaticResource Muted}" Margin="0,4,0,14"/>
+        </StackPanel>
+      </DockPanel>
+      <local:StatusBanner/>
+      <WrapPanel>
+        <ContentControl Content="{Binding Pipeline}" Width="440" VerticalAlignment="Top"/>
+        <ContentControl Content="{Binding Sources}" Width="440" VerticalAlignment="Top"/>
+        <ContentControl Content="{Binding Monthly}" ContentTemplate="{StaticResource ColumnChart}" Width="660" VerticalAlignment="Top"/>
+        <ContentControl Content="{Binding Conversion}" ContentTemplate="{StaticResource ColumnChart}" Width="660" VerticalAlignment="Top"/>
+      </WrapPanel>
+      <TextBlock Text="Which source works best?" Style="{StaticResource H2}" Margin="0,8,0,8"/>
+      <DataGrid ItemsSource="{Binding SourceRows}" MaxHeight="300">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="*"/>
+          <DataGridTextColumn Header="Leads" Binding="{Binding Leads}" Width="80"/>
+          <DataGridTextColumn Header="Qualified+" Binding="{Binding Qualified}" Width="100"/>
+          <DataGridTextColumn Header="Won" Binding="{Binding Won}" Width="80"/>
+          <DataGridTextColumn Header="Win rate" Binding="{Binding WinRate}" Width="90"/>
+          <DataGridTextColumn Header="Avg. score" Binding="{Binding AverageScore}" Width="100"/>
+        </DataGrid.Columns>
+      </DataGrid>
+      <TextBlock Text="External data requests" Style="{StaticResource H2}" Margin="0,24,0,8"/>
+      <DataGrid ItemsSource="{Binding Usage}" MaxHeight="300">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="When" Binding="{Binding When}" Width="130"/>
+          <DataGridTextColumn Header="Provider" Binding="{Binding Provider}" Width="140"/>
+          <DataGridTextColumn Header="Operation" Binding="{Binding Operation}" Width="100"/>
+          <DataGridTextColumn Header="Results" Binding="{Binding Results}" Width="80"/>
+          <DataGridTextColumn Header="Outcome" Binding="{Binding Result}" Width="*" ElementStyle="{StaticResource CellText}"/>
+        </DataGrid.Columns>
+      </DataGrid>
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

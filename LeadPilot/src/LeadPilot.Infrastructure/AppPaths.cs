@@ -13,10 +13,11 @@ public sealed class AppPaths : LeadPilot.Application.Abstractions.IAppFolders
     public string LicenseFile => Path.Combine(Data, "license.key");
     public string TrialMarker => Path.Combine(Data, "install.dat");
 
-    /// <summary>Uses %LOCALAPPDATA%\LeadPilotAI unless <paramref name="root"/> is given (tests, portable mode).</summary>
+    /// <summary>Uses <paramref name="root"/>, else the LEADPILOT_DATA_DIR environment variable (portable/test use), else %LOCALAPPDATA%\LeadPilotAI.</summary>
     public AppPaths(string? root = null)
     {
-        Root = root ?? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LeadPilotAI");
+        var env = Environment.GetEnvironmentVariable("LEADPILOT_DATA_DIR");
+        Root = root ?? (string.IsNullOrWhiteSpace(env) ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "LeadPilotAI") : env);
     }
 
     /// <summary>Creates all folders.</summary>

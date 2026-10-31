@@ -1,0 +1,64 @@
+<UserControl x:Class="LeadPilot.Desktop.Views.SetupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:LeadPilot.Desktop.Views"
+             xmlns:svc="clr-namespace:LeadPilot.Desktop.Services"
+             Style="{StaticResource Page}">
+  <Grid Background="{DynamicResource BgBrush}">
+    <Border Style="{StaticResource Card}" Width="640" Padding="36" VerticalAlignment="Center" HorizontalAlignment="Center">
+      <StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,18">
+          <Image Source="/Assets/logo.png" Width="48" Height="48"/>
+          <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+            <TextBlock Text="LeadPilot AI" Style="{StaticResource H1}"/>
+            <TextBlock Text="Find customers. Qualify them. Follow up." Style="{StaticResource Muted}"/>
+          </StackPanel>
+        </StackPanel>
+        <local:StatusBanner/>
+
+        <StackPanel Visibility="{Binding IsStep0, Converter={StaticResource BoolToVis}}">
+          <TextBlock Text="Welcome" Style="{StaticResource H2}"/>
+          <TextBlock Style="{StaticResource Muted}" Margin="0,8,0,0" Text="Tell LeadPilot AI who you sell to. It searches public sources for matching businesses, collects the contact details that are publicly listed, removes duplicates, scores how well each one fits, and keeps your follow-ups organised."/>
+          <TextBlock Style="{StaticResource Muted}" Margin="0,10,0,0" Text="Everything is stored on this computer. Nothing is uploaded, and it never invents leads, contact details or 'verified' labels - when data is missing, it says so."/>
+          <Border Style="{StaticResource Chip}" Margin="0,16,0,0" HorizontalAlignment="Left"><TextBlock Text="{Binding TrialText}"/></Border>
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding IsStep1, Converter={StaticResource BoolToVis}}">
+          <TextBlock Text="About you" Style="{StaticResource H2}"/>
+          <TextBlock Text="Your name *" Style="{StaticResource FieldLabel}"/>
+          <TextBox Text="{Binding OwnerName, UpdateSourceTrigger=PropertyChanged}"/>
+          <TextBlock Text="Company name" Style="{StaticResource FieldLabel}"/>
+          <TextBox Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged}"/>
+          <TextBlock Text="E-mail (used in the polite User-Agent of website requests; optional)" Style="{StaticResource FieldLabel}"/>
+          <TextBox Text="{Binding ContactEmail, UpdateSourceTrigger=PropertyChanged}"/>
+          <TextBlock Text="Country for phone numbers without a country code" Style="{StaticResource FieldLabel}"/>
+          <ComboBox ItemsSource="{Binding Regions}" SelectedItem="{Binding Region}"/>
+          <Grid Margin="0,4,0,0">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+            <StackPanel>
+              <TextBlock Text="Administrator PIN (optional)" Style="{StaticResource FieldLabel}"/>
+              <PasswordBox Padding="10,8" svc:PasswordHelper.Password="{Binding Pin, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+            <StackPanel Grid.Column="2">
+              <TextBlock Text="Repeat PIN" Style="{StaticResource FieldLabel}"/>
+              <PasswordBox Padding="10,8" svc:PasswordHelper.Password="{Binding PinConfirm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+            </StackPanel>
+          </Grid>
+        </StackPanel>
+
+        <StackPanel Visibility="{Binding IsStep2, Converter={StaticResource BoolToVis}}">
+          <TextBlock Text="Data sources and privacy" Style="{StaticResource H2}"/>
+          <CheckBox IsChecked="{Binding UseOpenStreetMap}" Margin="0,12,0,0" Content="Use OpenStreetMap to find businesses (free, no account). Sends only your location and category text."/>
+          <CheckBox IsChecked="{Binding VisitWebsites}" Content="Read each company's own public website for phone/e-mail (respects robots.txt, rate-limited)."/>
+          <TextBlock Style="{StaticResource Muted}" Margin="0,12,0,0" Text="AI models, extra data providers and API keys are optional and can be added later under API Integrations. You can change all of this in Settings."/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,24,0,0">
+          <Button Content="Back" Command="{Binding BackCommand}" Style="{StaticResource SecondaryButton}" Visibility="{Binding CanGoBack, Converter={StaticResource BoolToVis}}"/>
+          <Button Content="Continue" Command="{Binding NextCommand}" Margin="0" Visibility="{Binding IsLastStep, Converter={StaticResource BoolToVis}, ConverterParameter=invert}"/>
+          <Button Content="Finish and open dashboard" Command="{Binding FinishCommand}" Margin="0" Visibility="{Binding IsLastStep, Converter={StaticResource BoolToVis}}"/>
+        </StackPanel>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

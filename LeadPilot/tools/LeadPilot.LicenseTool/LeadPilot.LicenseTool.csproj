@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>LeadPilot.LicenseTool</RootNamespace>
+    <AssemblyName>LeadPilotLicenseTool</AssemblyName>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\LeadPilot.Infrastructure\LeadPilot.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

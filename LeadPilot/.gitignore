@@ -1,0 +1,4 @@
+publish/
+artifacts/
+*.pem
+!src/LeadPilot.Infrastructure/Licensing/vendor-public-key.pem

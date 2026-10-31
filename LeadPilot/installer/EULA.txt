@@ -1,0 +1,21 @@
+LEADPILOT AI - END-USER LICENCE AGREEMENT (TEMPLATE)
+
+NOTE TO THE VENDOR: this is a plain-language template, not legal advice. Have a lawyer review and adapt it for your jurisdiction before selling.
+
+1. Licence. Subject to this agreement and payment of the applicable fee, you receive a non-exclusive, non-transferable licence to install and use LeadPilot AI
+   on the number of computers/users stated in your licence key (Free trial, Single-PC, Professional or Business).
+2. Trial. The free trial lasts 14 days and is limited to 200 leads and one user.
+3. Restrictions. You may not copy, resell, sublicense, reverse engineer (except where law allows) or remove licence checks from the software.
+4. Your data. Your data stays on your computer. You are the controller of any personal data you collect and are responsible for lawful use, including consent,
+   anti-spam, telemarketing and data-protection rules. The software does not make any content "compliant" for you.
+5. Third-party data and services. Data from OpenStreetMap is licensed under the ODbL and must be attributed. Websites, APIs and AI services you connect are governed
+   by their own terms; you must comply with them. Do not use the software to bypass access controls, CAPTCHAs or website terms.
+6. No guarantees about leads. Search results, relevance scores and contact checks are aids, not guarantees. A relevance score is not evidence of buying intent;
+   a format or DNS check does not prove a mailbox or phone belongs to a person.
+7. Warranty disclaimer. The software is provided "as is" without warranties of any kind, to the maximum extent permitted by law.
+8. Limitation of liability. To the maximum extent permitted by law, the vendor is not liable for indirect or consequential loss, lost profits or lost data.
+   Keep backups.
+9. Termination. The licence ends if you breach this agreement. Uninstalling does not delete your data unless you choose to.
+10. Open-source components are licensed under their own terms (see About & Licensing in the app).
+
+By clicking "I accept" you agree to these terms.

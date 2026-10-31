@@ -24,7 +24,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private string _companyName = "";
     [ObservableProperty] private string _ownerName = "";
     [ObservableProperty] private string _contactEmail = "";
-    [ObservableProperty] private string _region = SetupViewModel.Regions[0];
+    [ObservableProperty] private string _region = SetupViewModel.AllRegions[0];
     [ObservableProperty] private bool _visitWebsites = true;
     [ObservableProperty] private bool _isDark;
     [ObservableProperty] private int _retentionDays;
@@ -32,7 +32,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private string _newUserRole = nameof(UserRole.Sales);
     [ObservableProperty] private string _newUserPin = "";
 
-    public IReadOnlyList<string> Regions => SetupViewModel.Regions;
+    public IReadOnlyList<string> Regions => SetupViewModel.AllRegions;
     public IReadOnlyList<string> Roles { get; } = Enum.GetNames<UserRole>();
     public ObservableCollection<UserRow> Users { get; } = new();
     public ObservableCollection<AuditRow> Audit { get; } = new();
@@ -45,7 +45,7 @@ public sealed partial class SettingsViewModel : ViewModelBase
     {
         var s = _settings.Current;
         CompanyName = s.CompanyName; OwnerName = s.OwnerName; ContactEmail = s.ContactEmail ?? ""; VisitWebsites = s.VisitWebsitesDuringDiscovery; IsDark = s.Theme == "Dark"; RetentionDays = s.RetentionDays;
-        Region = SetupViewModel.Regions.FirstOrDefault(r => r.EndsWith($"({s.DefaultRegion})")) ?? SetupViewModel.Regions[0];
+        Region = SetupViewModel.AllRegions.FirstOrDefault(r => r.EndsWith($"({s.DefaultRegion})")) ?? SetupViewModel.AllRegions[0];
         await LoadListsAsync();
     });
 

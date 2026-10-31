@@ -295,3 +295,30 @@ public class LicenseTests
         svc.Activate("LPAI1-abc.def").Message.Should().Contain("no vendor licence key");
     }
 }
+
+public class LicenseToolTests
+{
+    [Fact]
+    public void Tool_round_trip_keygen_sign_verify_and_app_accepts_the_key()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), "lp-tool-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            string Run(params string[] a) { var o = new StringWriter(); var e = new StringWriter(); var rc = LeadPilot.LicenseTool.Program.Run(a, o, e); rc.Should().Be(0, e.ToString()); return o.ToString().Trim(); }
+            Run("keygen", "--out", dir);
+            var key = Run("sign", "--key", Path.Combine(dir, "private.pem"), "--holder", "Acme Ltd", "--tier", "Professional", "--days", "365");
+            Run("verify", "--pub", Path.Combine(dir, "public.pem"), "--license", key).Should().Contain("VALID").And.Contain("users=3");
+
+            using var env = new TestEnv();
+            var paths = new AppPaths(Path.Combine(env.Folder, "app")); paths.EnsureCreated();
+            var svc = new LicenseService(paths, env.Clock, env.Settings, File.ReadAllText(Path.Combine(dir, "public.pem")));
+            var info = svc.Activate(key); info.IsValid.Should().BeTrue(); info.Tier.Should().Be("Professional");
+
+            var again = new StringWriter();
+            LeadPilot.LicenseTool.Program.Run(new[] { "keygen", "--out", dir }, new StringWriter(), again).Should().Be(1);
+            again.ToString().Should().Contain("refusing to overwrite");
+            LeadPilot.LicenseTool.Program.Run(new[] { "sign", "--key", Path.Combine(dir, "private.pem"), "--holder", "X", "--tier", "Single" }, new StringWriter(), again).Should().Be(1);
+        }
+        finally { if (Directory.Exists(dir)) Directory.Delete(dir, true); }
+    }
+}
