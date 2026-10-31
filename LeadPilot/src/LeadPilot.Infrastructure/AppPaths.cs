@@ -1,7 +1,7 @@
 namespace LeadPilot.Infrastructure;
 
 /// <summary>Application-specific data folders. All user data lives under one root so uninstall can preserve it.</summary>
-public sealed class AppPaths
+public sealed class AppPaths : LeadPilot.Application.Abstractions.IAppFolders
 {
     public string Root { get; }
     public string Data => Path.Combine(Root, "Data");

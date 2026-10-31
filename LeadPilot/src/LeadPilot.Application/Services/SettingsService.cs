@@ -27,6 +27,8 @@ public sealed class SettingsService : ISettingsService
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
+    public void Reload() { _current = Load(); Changed?.Invoke(this, EventArgs.Empty); }
+
     private AppSettings Load()
     {
         var json = _repo.GetSetting(Key);

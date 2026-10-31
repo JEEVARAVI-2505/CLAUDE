@@ -58,7 +58,7 @@ public sealed class DnsMailResolver : IDnsResolver
 /// <summary>Finds official website candidates through the Brave Search API using the customer's own key (free tier available).</summary>
 public sealed class BraveWebsiteFinder : IWebsiteFinder
 {
-    public const string SecretName = "provider:brave-search";
+    public const string SecretName = Application.Abstractions.SecretNames.BraveSearch;
     private readonly HttpClient _http;
     private readonly ISecretStore _secrets;
     public BraveWebsiteFinder(HttpClient http, ISecretStore secrets) { _http = http; _secrets = secrets; }

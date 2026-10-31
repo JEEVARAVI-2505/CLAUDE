@@ -63,6 +63,8 @@ public interface ISettingsService
 {
     AppSettings Current { get; }
     void Save(AppSettings s);
+    /// <summary>Re-reads settings from the database (after a restore).</summary>
+    void Reload();
     event EventHandler? Changed;
 }
 
@@ -99,7 +101,25 @@ public interface IDialogService
     void Info(string title, string message);
     void Error(string title, string message);
     string? PromptPassword(string title, string message, bool confirm);
+    string? PromptText(string title, string message, string? defaultValue = null);
     void OpenUrl(string url);
     void CopyToClipboard(string text);
     void SetTheme(string theme);
+}
+
+/// <summary>Folders the user may want to see or choose by default.</summary>
+public interface IAppFolders
+{
+    string Root { get; }
+    string Backups { get; }
+    string Exports { get; }
+    string Logs { get; }
+}
+
+/// <summary>Names under which secrets are stored.</summary>
+public static class SecretNames
+{
+    public const string BraveSearch = "provider:brave-search";
+    public const string AiKey = "ai:key";
+    public static string Provider(string id) => "provider:" + id;
 }
