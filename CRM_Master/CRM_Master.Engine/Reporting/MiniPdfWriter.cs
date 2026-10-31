@@ -105,7 +105,8 @@ public static class MiniPdfWriter
 
     private static double[] ColumnWidths(ReportData r, double total)
     {
-        var n = Math.Max(1, r.Columns.Count);
+        if (r.Columns.Count == 0) return new[] { total };
+        var n = r.Columns.Count;
         var want = new double[n];
         for (var c = 0; c < n; c++)
         {
