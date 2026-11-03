@@ -25,3 +25,8 @@ Status of each phase against `MASTER_PLAN.md`. 150 automated tests pass (`dotnet
 - The WPF app compiles on Linux CI but was not launched in this environment (Windows only); test it on Windows first.
 - Bylaw and rate packs are templates; verify locally.
 - Options for very small plots can be similar to each other.
+
+## SaaS Operating System (docs/saas-os)
+- Done: 14-stage SOP, 12 gates, computed cost/pricing model, SlotWise worked example, 20 templates, dashboard spec; HTML + PDF generated.
+- Next: owner fills intake answers; replace ASSUMPTIONs in build/calc.py with cited official prices; research real competitors.
+- Known issues: no live pricing/competitor research was performed (by design, nothing invented).
