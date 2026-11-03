@@ -34,3 +34,7 @@ Status of each phase against `MASTER_PLAN.md`. 150 automated tests pass (`dotnet
 ## docs: Mobile App Company OS v1.1 (VEL Software Solutions)
 - Done: branding + watermark (logo, developer credit on every page/PDF header+footer), Apple fees VERIFIED 2026-11-03, Google US$25 via search summary of Google help (page blocked), 8 new elaboration blocks (scorecards, PRD, ADR/decision matrix, CI, MASVS, RACI, DNS, SoW, plan, India compliance). 29 pages.
 - Next: confirm Google fee on signup screen; replace remaining Planning prices at Gate 8.
+
+## docs: Software Delivery Handbook v1.0 (beginner guide)
+- Done: `docs/mobile-company-os/Software-Delivery-Handbook.{pdf,html}` (57 pp): process map, Part A (how a company works), Part B (folder system + repo structure + naming), Stages 0-13 with steps/commands/forms, appendix (templates, glossary, troubleshooting, 100% checklist). Built by `build/build_handbook.py`.
+- Next: pilot the handbook with a new hire on a real project and collect gaps; confirm Google Play fee on signup screen.
