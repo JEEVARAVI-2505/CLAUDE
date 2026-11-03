@@ -1,15 +1,14 @@
-# SaaS & Web Development Company Operating System
+# VEL Software Solutions – Software Delivery Handbook (v2.0)
 
-- `saas-operating-system.html` – responsive web version (live break-even/LTV calculator, light/dark).
-- `saas-operating-system.pdf` – A4 print version (33 pages).
-- `build/` – generator. `python3 docs/saas-os/build/build.py` rebuilds both (needs Python 3 + Node Playwright).
-  All financial tables are computed in `build/calc.py`; edit the assumptions there and rebuild.
+Beginner-friendly, stage-by-stage guide from zero to delivery.
 
-All unit prices, rates, churn, CAC etc. are labelled **ASSUMPTION**. Replace them with cited, dated official figures
-before commercial use. No competitor data, domain availability or DNS values are invented.
+- `VEL-Software-Delivery-Handbook.pdf` – A4 print version (with contents page numbers).
+- `VEL-Software-Delivery-Handbook.html` – responsive web version (search-friendly, light/dark, live calculator in Appendix B).
+- `build/` – generator: `python3 docs/saas-os/build/build.py` rebuilds both (Python 3 + Node Playwright + poppler `pdftotext`).
+  Content lives in `hb_front.py` (company, folders, rules, glossary, learning), `hb1.py`–`hb3.py` (stages 0–12), `hb_app.py` (forms, commands),
+  `calc.py` (financial assumptions – edit and rebuild).
 
-## Version 1.1
-- Added App-store fees section. Apple fees were fetched from Apple's official pages on 2026-11-03.
-  Google Play fees are search-reported only (Google help pages were unreachable from the build environment) – re-verify.
-- Added VEL Software Solutions logo, watermark and "Developed by V.LOKESHWARAN" credit on every page (PDF header/footer + web footer).
-- Added per-stage precision notes and a 150-day rollout plan.
+Developed by V.LOKESHWARAN · velsoftwaresolutions.in@gmail.com · VEL Software Solutions.
+
+Fees: Apple Developer Program/commission verified from Apple's pages on 2026-11-03. Google Play fees are search-reported only – re-verify (Appendix B).
+All other prices/rates are marked ASSUMPTION and must be replaced by cited, dated official figures.

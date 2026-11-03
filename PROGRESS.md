@@ -26,7 +26,7 @@ Status of each phase against `MASTER_PLAN.md`. 150 automated tests pass (`dotnet
 - Bylaw and rate packs are templates; verify locally.
 - Options for very small plots can be similar to each other.
 
-## SaaS Operating System (docs/saas-os)
-- Done: 14-stage SOP, 12 gates, computed cost/pricing model, SlotWise worked example, 20 templates, dashboard spec; HTML + PDF generated.
-- Next: owner fills intake answers; replace ASSUMPTIONs in build/calc.py with cited official prices; research real competitors.
-- Known issues: no live pricing/competitor research was performed (by design, nothing invented).
+## Software Delivery Handbook (docs/saas-os) v2.0
+- Done: beginner stage-by-stage handbook (Stages 0-12, 12 gates), company/roles/day-to-day, folder structures, rules/DoD, 12-week learning path, glossary, forms, commands, worked cost model, Apple fees verified, branding/watermark. HTML + PDF (52 pp).
+- Next: owner reviews wording; replace ASSUMPTIONs in build/calc.py with cited official prices; verify Google Play fee pages when network allows; pilot the handbook with one new hire and note where they get stuck.
+- Known issues: Google Play fees search-reported only; example numbers for SlotWise are illustrative.
