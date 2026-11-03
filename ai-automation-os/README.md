@@ -16,7 +16,7 @@ Separate from the WPF "AI Building Studio" project in this repo.
 | `05-people-portal-and-support.md` | Role charters, RACI by gate, portal spec, support levels, operating rhythm |
 | `handbook/` | **Delivery Handbook**: how a software company works, folder structure explained, 15 stages (S00–S14) with steps, deliverables, checklists, gates, plus appendices and a 90-day learning path |
 | `reference-project/` | Small working project (23 tests): GST rules, AI-step safety wrapper, FastAPI service, Dockerfile |
-| `dist/` | Built handbook (PDF and HTML); rebuild with `python scripts/build_handbook.py && node scripts/make_pdf.js` |
+| `dist/` | Built handbook (PDF and HTML); rebuild with `python scripts/build_handbook.py && node scripts/make_pdf.js && python scripts/build_handbook_web.py` (`handbook.html` is the responsive web version) |
 | `calculator/` | `cost_model.py` + golden tests, `pricing_inputs.json`, `report.py`, `sensitivity.py`, `opportunity_score.py` |
 
 Run: `cd calculator && pip install pytest && python -m pytest -q && python report.py`
