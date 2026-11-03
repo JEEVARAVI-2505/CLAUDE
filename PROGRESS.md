@@ -25,3 +25,6 @@ Status of each phase against `MASTER_PLAN.md`. 150 automated tests pass (`dotnet
 - The WPF app compiles on Linux CI but was not launched in this environment (Windows only); test it on Windows first.
 - Bylaw and rate packs are templates; verify locally.
 - Options for very small plots can be similar to each other.
+
+## Side track: AI Engineering Division handbook
+- Added `docs/ai-division/` (staged beginner handbook, templates, reproducible `tools/cost_model.py`, repo scaffold script). Unrelated to the WPF app. All provider prices in the cost model are unverified placeholders.
