@@ -76,9 +76,9 @@ def phase8():
 {table(["One-time equipment", "Class", "₹", "Basis"], one, num_cols=(2,))}
 <h3>8.5 App-store and developer accounts</h3>
 {table(["Item", "USD", "₹ at planning FX", "Status"], st, num_cols=(1, 2))}
-{callout("warn", "Verify before quoting", "Fees above are the last values the authors knew and were <b>not confirmed</b> on Apple/Google official pages in this edition. "
- "Open the Google Play Console help and Apple Developer Program pages, record the fee, currency, tax and access date in the evidence register. "
- "Also confirm current identity rules (organisation accounts need a D-U-N-S number; new personal Google accounts may face closed-testing prerequisites before production release). Account approval never guarantees app approval.")}
+{callout("ok", "Fee verification (access date 2026-11-03)", "<b>Apple - verified</b> on the official page <i>developer.apple.com/help/account/membership/program-enrollment</i>: Developer Program <b>US$99/year</b>, Enterprise Program US$299/year, 'in local currency where available; prices may vary by region'. Organisations must be a legal entity with a <b>D-U-N-S number</b>; DBAs, fictitious businesses and trade names are not accepted. The Apple Developer app enrolment renews automatically until cancelled. "
+ "<br><b>Google - US$25 one-time</b>, from Google's Play Console help (answer 6112435) as summarised by search on the same date; the Google support host is blocked in this environment so the page itself could not be opened - <b>confidence Medium-High; confirm on the signup screen and record a screenshot at Gate 8</b>. Google may ask for a government ID and a card in your legal name; the fee is not refunded if the details prove invalid. "
+ "<br>INR amounts here use the planning rate of ₹90/US$; Apple shows the real local price during enrolment. Account approval never guarantees app approval; confirm any closed-testing prerequisite for new personal Google accounts on the day.")}
 <h3>8.6 One-time infrastructure</h3>{table(["Item", "₹", "Basis"], inf, num_cols=(1,), total_last=True)}
 <h3>8.7 Non-labour setup summary</h3>{table(["Component", "₹"], setup, num_cols=(1,), total_last=True)}
 {callout("ok","Budget check", f"Cash need {I(M.SETUP_COSTS)} vs intake budget ₹3,00,000 → " + ("within budget." if M.SETUP_COSTS <= 300000 else "OVER budget; resequence purchases."))}

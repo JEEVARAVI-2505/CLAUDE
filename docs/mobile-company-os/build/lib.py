@@ -65,7 +65,7 @@ tbody tr:nth-child(even){background:var(--soft)}
 tr.total td{font-weight:700;background:#e6eefc;color:#0a2e6e;border-top:2px solid var(--acc2)}
 @media (prefers-color-scheme:dark){:root:not(.print) tr.total td{background:#1d2a40;color:#cfe0ff}}
 .callout{border-left:5px solid var(--acc);background:var(--soft);padding:10px 14px;margin:14px 0;border-radius:0 8px 8px 0}
-.callout b{display:block;margin-bottom:2px}
+.callout>b:first-child{display:block;margin-bottom:2px}
 .callout.warn{border-color:var(--warn)}.callout.bad{border-color:var(--bad)}.callout.ok{border-color:var(--ok)}
 pre{white-space:pre-wrap;background:var(--code);border:1px solid var(--line);border-radius:8px;padding:10px 12px;overflow:auto;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:10px 0}
 pre.formula{border-left:4px solid var(--acc);font-weight:600}
@@ -89,8 +89,17 @@ ul,ol{padding-left:22px;margin:6px 0}li{margin:2px 0}
 .calc label{font-size:12px;color:var(--mut);display:block}
 .calc input{width:100%;padding:6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
 .bar{height:10px;background:var(--acc);border-radius:5px}
+.wm{position:fixed;inset:0;z-index:50;pointer-events:none;display:flex;align-items:center;justify-content:center}
+.wm img{width:min(55vmin,520px);opacity:.07}
+.wm .t{position:absolute;bottom:14px;right:18px;font-size:11px;color:var(--mut);opacity:.75;text-align:right}
+.wm .diag{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.wm .diag span{transform:rotate(-30deg);font-size:46px;font-weight:800;letter-spacing:.08em;color:var(--acc2);opacity:.045;white-space:nowrap;text-align:center;line-height:1.3}
+.cover .logo{width:230px;margin:0 0 14px 0;background:#fff;border-radius:12px;padding:6px}
+nav#toc .navlogo{width:92px;display:block;margin:0 0 8px}
+nav#toc .dev{margin-top:16px;padding-top:10px;border-top:1px solid var(--line);font-size:11px;color:var(--mut)}
 footer{margin-top:60px;border-top:1px solid var(--line);padding-top:12px;color:var(--mut);font-size:12px}
 @media print{
+ .wm .t{display:none}.wm img{width:150mm;opacity:.08}.wm .diag span{font-size:34pt}
  nav#toc,#menu,.calc .grid{display:none}main{margin:0;max-width:none;padding:0}
  h2{break-before:page;margin-top:0}h2:first-of-type{break-before:auto}
  .cover{min-height:auto;height:230mm;break-after:page}

@@ -123,12 +123,16 @@ SW_BUILD = sum(a for _, c, a, _ in SOFTWARE_MONTHLY if c != "Optional") * SW_MON
 SW_ONE = sum(a for _, _, a, _ in SOFTWARE_ONETIME)
 
 STORE = [  # item, USD, INR, status
-    ("Google Play Console registration (one-time)", 25, round(25 * USD_INR), "Last known US$25 - NOT verified this session"),
-    ("Apple Developer Program (annual)", 99, round(99 * USD_INR), "Last known US$99/yr (INR price differs) - NOT verified"),
-    ("D-U-N-S number (organisation accounts)", 0, 0, "Free from D&B via store flow - verify"),
+    ("Google Play Console registration (one-time)", 25, round(25 * USD_INR),
+     "US$25 one-time - per Google Play Console help (answer 6112435) as returned by search summary 2026-11-03; direct page fetch blocked. Confidence: Medium-High - confirm at signup"),
+    ("Apple Developer Program (annual)", 99, round(99 * USD_INR),
+     "VERIFIED 2026-11-03: US$99/yr 'in local currency where available; prices vary by region' - developer.apple.com/help/account/membership/program-enrollment"),
+    ("Apple Developer Enterprise Program (not used)", 299, 0, "VERIFIED 2026-11-03: US$299/yr, internal distribution only - not for public store apps"),
+    ("D-U-N-S number (organisation accounts)", 0, 0,
+     "VERIFIED (Apple): organisation must be a legal entity with a D-U-N-S; DBAs/trade names not accepted; 'free in most jurisdictions'"),
     ("Store assets: screenshots, icon, listing (in-house hours)", 0, 0, "Covered in T20"),
 ]
-STORE_YEAR1 = STORE[0][2] + STORE[1][2]
+STORE_YEAR1 = STORE[0][2] + STORE[1][2]   # Google one-time + Apple year 1 (INR at planning FX; Apple bills in local currency)
 
 INFRA_ONETIME = [
     ("Domain registration (1 yr)", 1000, "Planning"),

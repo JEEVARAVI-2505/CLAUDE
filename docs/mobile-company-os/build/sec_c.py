@@ -87,7 +87,8 @@ SRC = [("Android developer docs", "https://developer.android.com/docs"), ("Kotli
 def sources():
     rows = [[n, f'<a href="{u}">{u}</a>'] for n, u in SRC]
     ver = table(["Figure used in this document", "Status", "Action at Gate 8"], [
-        ["Google Play registration fee", "Last known - not verified", "Read official Play Console help; record fee, currency, date"], ["Apple Developer Program fee", "Last known - not verified (page fetch did not show price)", "Read developer.apple.com programs page"],
+        ["Apple Developer Program US$99/yr; Enterprise US$299/yr; D-U-N-S for organisations", "<b>Verified 2026-11-03</b> (developer.apple.com/programs and /help/account/membership/program-enrollment)", "Re-check each renewal; record local-currency price at enrolment"],
+        ["Google Play registration US$25 one-time", "<b>Medium-High</b> - Google help page via search summary 2026-11-03; page itself blocked", "Open support.google.com/googleplay/android-developer/answer/6112435 and screenshot the signup fee"],
         ["Cloud, SMS, email, storage unit prices", "Planning assumptions", "Use official calculators; paste output + date in PriceSource"], ["SaaS tools (GitHub, Figma, Sentry…)", "Planning", "Check pricing pages"],
         ["Income tax & GST rates", "Planning - verify", "Confirm with CA / CBIC notifications"], ["Android vitals thresholds, store policies", "Reference only", "Re-read policy on submission day"]])
     return ("<h3>Official sources (primary references)</h3>" + table(["Source", "URL"], rows) + "<h3>Verification log - items that must be refreshed</h3>" + ver +

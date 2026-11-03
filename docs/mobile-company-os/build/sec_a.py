@@ -2,18 +2,19 @@
 from lib import *
 import model as M
 
-def cover():
-    return f"""<div class="cover"><div class="tag">Company Operating System · Version 1.0 · 3 Nov 2026</div>
+def cover(logo=""):
+    return f"""<div class="cover"><img class="logo" src="{logo}" alt="VEL Software Solutions logo">
+<div class="tag">VEL Software Solutions · Company Operating System · v1.1 · 3 Nov 2026</div>
 <h1>Mobile Application Development Company<br>Operating System</h1>
 <p class="lead">One repeatable system to research, design, build, test, publish, price, sell and maintain
-profitable mobile apps — with SOPs, templates, approval gates, costing formulas and a fully worked example.</p>
-{table(["Document control",""],[["Owner","CTO / Managing Director"],["Approver","Founders (Gate owner list in §2)"],
- ["Status","Draft v1.0 for founder review"],["Currency / units","INR (₹), Indian digit grouping; hours; ex-GST unless stated"],
+profitable mobile apps, with procedures, templates, approval gates, costing formulas and a fully worked example.</p>
+{table(["Document control",""],[["Prepared for / developed by","<b>V.LOKESHWARAN</b> · VEL Software Solutions · velsoftwaresolutions.in@gmail.com"],["Owner","CTO / Managing Director"],["Approver","Founders (gate owners in §2)"],
+ ["Status","v1.1 - fees verified where reachable; for founder review"],["Currency / units","INR (₹), Indian digit grouping; hours; ex-GST unless stated"],
  ["Companion file","build/model.py recomputes every number in this document"]])}
-{callout("warn","Read this first - what is verified and what is not",
- "Prices of cloud services, SaaS tools, SMS/email and store fees were <b>not</b> verified against live official pages while preparing this edition "
- "(the research environment could not reach them). Every such figure is labelled <b>Planning</b> or <b>Last known</b> and must be replaced from the official page "
- "or calculator, with the access date, at <b>Gate 8</b>. No market statistics are quoted; Phase 1 requires every statistic to carry a source URL, access date and confidence level.")}
+{callout("ok","Verification status (access date 3 Nov 2026)",
+ "<b>Apple Developer Program US$99/year</b> and Enterprise US$299/year are <b>verified</b> on Apple's official enrolment page, including the D-U-N-S rule for organisations. "
+ "<b>Google Play US$25 one-time</b> is confirmed from Google's Play Console help via search (the Google support site itself is blocked in the build environment) - confidence Medium-High; confirm on the signup screen. "
+ "Cloud, SMS, email and tool prices, tax rates, salaries and churn/CAC are labelled <b>Planning</b>: replace them from official calculators, with date, at <b>Gate 8</b>. No market statistics are quoted; Phase 1 requires source URL, access date and confidence for every statistic.")}
 </div>"""
 
 def exec_summary():
@@ -34,7 +35,7 @@ def exec_summary():
 "<b>People and portal</b> (§16-§17): role responsibilities, weekly report, and the spec for the internal project portal."])}"""
 
 def intake():
-    rows = [["Company name", "[To be provided]", "Placeholder: <i>Your Company Pvt Ltd</i>"],
+    rows = [["Company name", "VEL Software Solutions", "Founder / developer of this system: V.LOKESHWARAN (velsoftwaresolutions.in@gmail.com). Legal entity type to be confirmed - store organisation accounts need a legal entity + D-U-N-S"],
             ["Business model", "Hybrid: own SaaS products + paid client builds", "Own products give recurring revenue; client work funds the runway"],
             ["Employees", "6 (PM, UX, Flutter, Backend, QA, DevOps/DB) + part-time support", "Used for rates in §10"],
             ["Technology budget (cash, non-labour)", "₹3,00,000 for first product", f"Sample app non-labour cash need: {M.inr(M.SETUP_COSTS)} (§10-D)"],
