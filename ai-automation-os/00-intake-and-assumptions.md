@@ -42,6 +42,7 @@ Method: 10 candidates scored against the 10 weighted criteria from Phase 1.4 (`c
 | 10 | Legal admin document drafting | 61 |
 
 **Honest limits of this ranking**
+
 - The 1–5 inputs are the author's hypotheses, not market data. Live web research was **not possible** in this session (network allowlist blocked provider and vendor sites). Gate 1 requires replacing them with interview evidence from at least 10 target customers.
 - "Low competition" is not claimed for the winner. Accounting-software vendors and GST tools already cover parts of this space. The wedge is **CA firms processing many clients' bills**: multi-client volume, a recurring need and a human reviewer already in the loop.
 - **Construction tender/BOQ extraction** (rank 2, best competition score, 4/5) is the strongest second product because it matches your existing building-engineering domain. Recommended as Wave 2.

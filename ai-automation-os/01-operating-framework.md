@@ -48,6 +48,7 @@ Trigger → Validate input → Dedupe (idempotency key) → Process (rules)
 ```
 
 Non-negotiables:
+
 1. Model output is **never** trusted. Validate against a JSON schema and domain rules (e.g. GSTIN checksum, totals reconcile).
 2. Every external write has an **idempotency key** (`customer_id + source_id + action`).
 3. Approval screen shows the exact action and its consequence.
@@ -82,6 +83,7 @@ Rules: protected `main`, PR + 1 review, CI runs lint/tests/dependency scan/secre
 | Customer success / support | Gates 11–12; onboarding; monitoring | 1 |
 
 Scaling guide (matches the ₹1 lakh → ₹25 lakh+ range):
+
 - **1–2 people, ₹1–5 lakh:** one product at a time, Lean infra (`infra_monthly_inr.lean`), no enterprise promises.
 - **3–6 people, ₹5–15 lakh:** two products, Professional infra, part-time dedicated QA.
 - **7–15 people, ₹15–25 lakh+:** dedicated roles, Enterprise infra only when a contract pays for it.
@@ -121,6 +123,7 @@ Support levels: **L1** Customer Success (config, how-to), **L2** Developer (work
 ## 11. Internal portal (Phase 14) — build order
 
 Don't build all 28 modules first. Build in this order, only when the manual spreadsheet/Notion version hurts:
+
 1. Project register + gates + risk register (replaces `project.yaml`)
 2. Cost/price/ROI calculators (wrap `calculator/cost_model.py`)
 3. Prompt and model registry + eval results

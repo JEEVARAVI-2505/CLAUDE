@@ -35,3 +35,8 @@ Status of each phase against `MASTER_PLAN.md`. 150 automated tests pass (`dotnet
 - Done: `ai-automation-os/handbook/` (company operations, folder structure, stages S00–S14, appendices), `reference-project/` (23 tests), built `dist/VEL-Delivery-Handbook.pdf` (68 pages).
 - Next: management review of the handbook; verify all prices; test the Dockerfile; run a real pilot and revise the book from the retrospective.
 - Known issues: Dockerfile not built here; worked-example figures are illustrative; prices unverified.
+
+## AIOS.5 — Handbook v1.1: gaps against the 14-phase master prompt closed
+- Added Parts 3–6 (market research + TAM/SAM/SOM + 15 industry pages, solution families A–J + failure-behaviour table, platform scoring matrix, DR/RPO/RTO + maintenance packages + commercial terms), Appendix H coverage map, Annexes A–F (worked sample, intake, costing reference, roles/portal, framework, templates). PDF now 100 pages.
+- Calculator: `market_sizing.py` and maintenance package pricing (16 tests).
+- Still open: verify all prices and market counts; real customer interviews; build reusable workflow templates for A–J; build the internal portal (spec only); lawyer review of contracts.

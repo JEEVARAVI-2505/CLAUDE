@@ -1,0 +1,9 @@
+{
+  "_warning": "ILLUSTRATIVE PLACEHOLDERS, NOT MARKET DATA. Firm counts and filters below were not researched (network blocked). Replace each with a sourced figure (government statistics, industry-body registries, directory counts, your own lead-list sample), set verified=true and add the source and date.",
+  "acv_inr": {"value": 179988, "basis": "Professional tier 14,999 x 12", "verified": false},
+  "segments": [
+    {"name": "CA / accounting firms processing 2,000+ bills a month", "firms": 20000, "f_geo": 0.30, "f_fit": 0.15, "source": "ICAI/registry counts (to find)", "verified": false},
+    {"name": "SMEs with an in-house accounts team at 2,000+ bills a month", "firms": 40000, "f_geo": 0.30, "f_fit": 0.05, "source": "MSME registry / GST taxpayer counts (to find)", "verified": false}
+  ],
+  "som": {"share_of_sam_in_3_years": 0.05, "onboarding_capacity_per_month": 3, "months": 36, "verified": false}
+}

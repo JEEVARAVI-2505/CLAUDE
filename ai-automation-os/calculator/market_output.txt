@@ -1,0 +1,4 @@
+UNVERIFIED INPUTS: 4
+TAM 60,000 firms  = INR 1,079.9 crore / year
+SAM 1,500 firms  = INR 27.00 crore / year
+SOM 75 customers = INR 1.35 crore ARR (limited by market share)

@@ -186,6 +186,7 @@ No unlimited plans: overage pricing plus per-tenant caps are the abuse control. 
 | Enterprise | 99,999 | 48,675 | 51,324 | 51% |
 
 **Decisions this forces (do not ignore):**
+
 1. **Starter loses money as configured**: it carries the same 14 h/month of maintenance/support as bigger tiers. Either raise it to a price that clears cost (≈₹9,999+), give it pooled/community support only, or drop it and run a free pilot instead.
 2. **Professional's 23% margin is thin**: maintenance labour (6 h dev + 8 h support ≈ ₹7,400) is ~49% of its revenue. The lever is support automation and fewer hours per customer, not cheaper models.
 3. Business tier is the profitable core; lead sales there for CA firms.

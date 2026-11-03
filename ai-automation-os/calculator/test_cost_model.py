@@ -87,3 +87,14 @@ def test_volume_table_monotonic():
     rows = cm.volume_table(cm.load())
     assert [r["total_inr"] for r in rows] == sorted(r["total_inr"] for r in rows)
     assert rows[-1]["per_success_inr"] < rows[0]["per_success_inr"]
+
+
+def test_maintenance_package_golden():
+    cfg = cm.load()
+    # basic: 2 dev x 700 + 4 support x 400 = 1,400 + 1,600 = 3,000 ; / 0.65 = 4,615.38
+    b = cm.maintenance_package_price_inr(cfg, "basic")
+    assert b["cost"] == 3000 and b["price"] == pytest.approx(3000 / 0.65)
+    # enterprise: 16x700 + 20x400 + 4x1200 = 11,200 + 8,000 + 4,800 = 24,000
+    assert cm.maintenance_package_price_inr(cfg, "enterprise")["cost"] == 24000
+    # extra work: 700 / 0.65 = 1,076.92 per hour
+    assert b["extra_hour_rate"] == pytest.approx(700 / 0.65)

@@ -36,6 +36,11 @@
   "risk_allowance_pct": 0.15,
   "target_margin_pct": 0.35,
   "maintenance_hours_per_month": {"developer": 6, "support": 8},
+  "maintenance_packages": {
+    "basic":        {"developer": 2,  "support": 4,  "architect": 0},
+    "professional": {"developer": 6,  "support": 8,  "architect": 0},
+    "enterprise":   {"developer": 16, "support": 20, "architect": 4}
+  },
   "tiers": {
     "starter":      {"setup_inr": 15000,  "monthly_inr": 4999,  "included_exec": 300,   "overage_inr": 6.0},
     "professional": {"setup_inr": 40000,  "monthly_inr": 14999, "included_exec": 1500,  "overage_inr": 4.5},

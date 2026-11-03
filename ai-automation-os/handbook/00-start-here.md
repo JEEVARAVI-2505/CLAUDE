@@ -5,7 +5,7 @@
 | Document control | |
 |---|---|
 | Document ID | VEL-DH-001 |
-| Version | 1.0 (draft for management approval) |
+| Version | 1.1 (draft for management approval) |
 | Owner | V. LOKESHWARAN, Founder |
 | Audience | New engineers, analysts and support staff with basic knowledge |
 | Review cycle | Every quarter, or after any failed project |
@@ -115,6 +115,19 @@ In a small team one person wears several hats. The duties still exist; one perso
 | MRR | Monthly recurring revenue: subscription income each month |
 | Margin | Revenue minus cost, as a share of revenue |
 | Technical debt | Shortcuts taken now that will cost time later |
+
+## 0.6b How this book is organised
+
+| Section | What it gives you |
+|---|---|
+| Parts 0–2 | Orientation: how a software company works, the folder structure |
+| Part 3 | Market research method, market size (TAM/SAM/SOM), competitor matrix, 15 industry pages |
+| Part 4 | The ten reusable solution families (A–J), the 13-step workflow, expected behaviour on failures |
+| Part 5 | Technology and platform scoring matrix |
+| Part 6 | Disaster recovery, maintenance packages, commercial terms |
+| Stages S00–S14 | The step-by-step procedure from Day 0 to delivery and maintenance |
+| Appendices A–H | Git cheat sheet, escalation, review checklist, FAQ, learning path, gate summary, coverage map |
+| Annexes A–F | Full worked sample, intake, costing reference, roles and portal, operating framework, 14 templates |
 
 ## 0.7 How to read the stage files
 

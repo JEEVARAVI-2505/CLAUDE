@@ -117,6 +117,15 @@ def tier_margin(cfg: dict, tier: str, utilisation: float = 0.8, shared_customers
             "contribution": rev - cost, "margin_pct": (rev - cost) / rev}
 
 
+def maintenance_package_price_inr(cfg: dict, package: str) -> dict:
+    """Monthly retainer = (hours x loaded hourly cost) / (1 - target margin); extra-work hourly rate likewise."""
+    r, h = cfg["labour_hourly_inr"], cfg["maintenance_packages"][package]
+    cost = sum(hrs * r[k] for k, hrs in h.items())
+    m = 1 - cfg["target_margin_pct"]
+    return {"hours": sum(h.values()), "cost": cost, "price": cost / m,
+            "extra_hour_rate": r["developer"] / m}
+
+
 def project_price_inr(cfg: dict, third_party_inr: float = 0.0) -> dict:
     """Price = (dev + third party) x (1+risk) / (1 - target margin)."""
     d = dev_cost(cfg)["expected"]

@@ -4,7 +4,7 @@
 
 Separate from the WPF "AI Building Studio" project in this repo.
 
-**New employees start here: `dist/VEL-Delivery-Handbook.pdf` (68 pages, printable) — source in `handbook/`.**
+**New employees start here: `dist/VEL-Delivery-Handbook.pdf` (100 pages, printable) — source in `handbook/`.**
 
 | File | Purpose |
 |---|---|
@@ -14,10 +14,10 @@ Separate from the WPF "AI Building Studio" project in this repo.
 | `03-sop-and-template-pack.md` | 14 fill-in templates: interview guide, process sheet, feasibility, I/O freeze, agent spec, eval plan, security checklist, risks, commercial docs, status, readiness, maintenance, sign-off |
 | `04-technology-competitors-and-costing-reference.md` | Competitor map, platform/framework/model selection, every costing formula, sensitivity checks |
 | `05-people-portal-and-support.md` | Role charters, RACI by gate, portal spec, support levels, operating rhythm |
-| `handbook/` | **Delivery Handbook**: how a software company works, folder structure explained, 15 stages (S00–S14) with steps, deliverables, checklists, gates, plus appendices and a 90-day learning path |
+| `handbook/` | **Delivery Handbook**: how a software company works, folder structure, market research and TAM/SAM/SOM, 15 industry pages, ten solution families (A–J), platform matrix, disaster recovery and maintenance packages, 15 stages (S00–S14), appendices incl. a coverage map of the master prompt |
 | `reference-project/` | Small working project (23 tests): GST rules, AI-step safety wrapper, FastAPI service, Dockerfile |
 | `dist/` | Built handbook (PDF and HTML); rebuild with `python scripts/build_handbook.py && node scripts/make_pdf.js && python scripts/build_handbook_web.py` (`handbook.html` is the responsive web version) |
-| `calculator/` | `cost_model.py` + golden tests, `pricing_inputs.json`, `report.py`, `sensitivity.py`, `opportunity_score.py` |
+| `calculator/` | `cost_model.py` + golden tests, `pricing_inputs.json`, `report.py`, `sensitivity.py`, `market_sizing.py`, `opportunity_score.py` |
 
 Run: `cd calculator && pip install pytest && python -m pytest -q && python report.py`
 

@@ -34,6 +34,7 @@ Good commit message: `GBA-12: reject bills whose CGST and IGST are both present`
 ## Appendix C — Code review checklist
 
 Reviewer ticks each item:
+
 - [ ] Does it do what the ticket's acceptance criteria say?
 - [ ] Are there tests, and do they test failures as well as success?
 - [ ] Are names clear; are functions short and focused?

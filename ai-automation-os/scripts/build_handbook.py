@@ -5,11 +5,7 @@ from pathlib import Path
 import markdown
 
 ROOT = Path(__file__).resolve().parent.parent
-ORDER = ["00-start-here", "01-how-a-software-company-works", "02-folder-structure-explained", "S00-workstation-and-habits",
-         "S01-opportunity-and-customer-discovery", "S02-understand-the-process-as-is", "S03-feasibility-and-to-be-design",
-         "S04-requirements-and-scope-freeze", "S05-technology-and-architecture", "S06-project-setup", "S07-build-the-core",
-         "S08-ai-and-integrations", "S09-testing-and-ai-evaluation", "S10-security-review", "S11-costing-and-pricing",
-         "S12-deployment", "S13-demo-acceptance-onboarding", "S14-maintenance-and-improvement", "A-appendices"]
+import sys; sys.path.insert(0, str(Path(__file__).parent)); from handbook_sources import load
 logo = base64.b64encode((ROOT / "assets/vel-logo-small.webp").read_bytes()).decode()
 logo_big = base64.b64encode((ROOT / "assets/vel-logo.webp").read_bytes()).decode()
 md = markdown.Markdown(extensions=["tables", "fenced_code", "sane_lists"])
@@ -21,9 +17,7 @@ def render(text):
     return re.sub(r'<p><em>Developed by.*?</em></p>', '', html)  # footer is added on every page instead
 
 sections, toc = [], []
-for i, name in enumerate(ORDER):
-    text = (ROOT / "handbook" / f"{name}.md").read_text()
-    title = re.search(r"^# (.+)$", text, re.M).group(1)
+for i, (title, text) in enumerate(load()):
     toc.append((f"s{i}", title))
     body = render(text).replace("<h1>", f'<h1 id="s{i}">', 1)
     sections.append(f'<section class="chap">{body}</section>')
@@ -55,10 +49,10 @@ html = f"""<!doctype html><html lang="en"><head><meta charset="utf-8"><title>VEL
 <div class="cover"><img src="data:image/webp;base64,{logo_big}" alt="VEL Software Solutions">
 <h1>Delivery Handbook</h1><h2>AI Automation Projects: from Day 0 to 100% Delivery</h2>
 <div class="by">Developed by <b>V. LOKESHWARAN</b><br>VEL Software Solutions<br>velsoftwaresolutions.in@gmail.com</div>
-<div style="color:var(--muted);font-size:9.5pt">Document VEL-DH-001 · Version 1.0 (draft for management approval)</div></div>
+<div style="color:var(--muted);font-size:9.5pt">Document VEL-DH-001 · Version 1.1 (draft for management approval)</div></div>
 <div class="tocpage"><h1>Contents</h1><ol>{toc_html}</ol>
 <p style="color:var(--muted);font-size:9.5pt">All prices and market figures in this handbook's examples are placeholders until verified from official sources (see Stage S11).</p></div>
 {''.join(sections)}</body></html>"""
 out = ROOT / "dist" / "VEL-Delivery-Handbook.html"
 out.write_text(html)
-print("wrote", out, len(html) // 1024, "KB;", len(ORDER), "sections")
+print("wrote", out, len(html) // 1024, "KB;", len(toc), "sections")

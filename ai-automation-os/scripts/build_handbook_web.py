@@ -5,11 +5,7 @@ from pathlib import Path
 import markdown
 
 ROOT = Path(__file__).resolve().parent.parent
-ORDER = ["00-start-here", "01-how-a-software-company-works", "02-folder-structure-explained", "S00-workstation-and-habits",
-         "S01-opportunity-and-customer-discovery", "S02-understand-the-process-as-is", "S03-feasibility-and-to-be-design",
-         "S04-requirements-and-scope-freeze", "S05-technology-and-architecture", "S06-project-setup", "S07-build-the-core",
-         "S08-ai-and-integrations", "S09-testing-and-ai-evaluation", "S10-security-review", "S11-costing-and-pricing",
-         "S12-deployment", "S13-demo-acceptance-onboarding", "S14-maintenance-and-improvement", "A-appendices"]
+import sys; sys.path.insert(0, str(Path(__file__).parent)); from handbook_sources import load
 b64 = lambda p: base64.b64encode((ROOT / "assets" / p).read_bytes()).decode()
 small, big = b64("vel-logo-small.webp"), b64("vel-logo.webp")
 md = markdown.Markdown(extensions=["tables", "fenced_code", "sane_lists"])
@@ -27,9 +23,7 @@ def render(text, sid):
     return h.replace("<h1>", f'<h1 id="{sid}">', 1)
 
 secs, nav = [], []
-for i, name in enumerate(ORDER):
-    text = (ROOT / "handbook" / f"{name}.md").read_text()
-    title = re.search(r"^# (.+)$", text, re.M).group(1)
+for i, (title, text) in enumerate(load()):
     sid = "p" + str(i)
     nav.append(f'<a href="#{sid}" data-s="{sid}">{title}</a>')
     secs.append(f'<article class="chap" data-s="{sid}">{render(text, sid)}</article>')
