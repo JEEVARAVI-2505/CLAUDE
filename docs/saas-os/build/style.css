@@ -43,3 +43,12 @@ pre{background:var(--card);padding:12px;border-radius:8px;overflow:auto;border:1
  table{font-size:7.6pt}th,td{padding:2.5px 4px}h3{break-after:avoid}tr{break-inside:avoid}.callout,pre{break-inside:avoid}
  a{color:inherit;text-decoration:none}.src small{display:inline;font-size:7pt}
  .grid2{gap:0 16px}h2{font-size:18pt}}
+
+body::before{content:"";position:fixed;inset:0;background:var(--wm) center 55%/min(70vmin,520px) no-repeat;opacity:.07;mix-blend-mode:multiply;pointer-events:none;z-index:0}
+body::after{content:"Developed by V.LOKESHWARAN · velsoftwaresolutions.in@gmail.com";position:fixed;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-30deg);white-space:nowrap;font:700 28px system-ui;color:#0b2a6b;opacity:.045;pointer-events:none;z-index:0;letter-spacing:.04em}
+main,nav#toc{position:relative;z-index:1}nav#toc{position:fixed}
+@media(prefers-color-scheme:dark){:root:not(.print) body::before{filter:invert(1) hue-rotate(180deg);mix-blend-mode:screen;opacity:.06}:root:not(.print) body::after{color:#fff}}
+.cover img.logo{display:block;width:min(360px,70%);margin:0 0 6px;border-radius:12px;mix-blend-mode:multiply}
+.cover .dev{font-size:13.5px;margin:4px 0 14px}
+footer.credit{margin-top:40px;padding-top:14px;border-top:2px solid var(--pri);font-size:12.5px;color:var(--mut)}
+@media print{body::before{opacity:.08;mix-blend-mode:normal;background-size:150mm}body::after{font-size:22pt;opacity:.05}.cover img.logo{width:95mm}.cover{padding-top:18mm}footer.credit{break-before:avoid}}

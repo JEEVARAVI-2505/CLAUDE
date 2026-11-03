@@ -7,3 +7,9 @@
 
 All unit prices, rates, churn, CAC etc. are labelled **ASSUMPTION**. Replace them with cited, dated official figures
 before commercial use. No competitor data, domain availability or DNS values are invented.
+
+## Version 1.1
+- Added App-store fees section. Apple fees were fetched from Apple's official pages on 2026-11-03.
+  Google Play fees are search-reported only (Google help pages were unreachable from the build environment) – re-verify.
+- Added VEL Software Solutions logo, watermark and "Developed by V.LOKESHWARAN" credit on every page (PDF header/footer + web footer).
+- Added per-stage precision notes and a 150-day rollout plan.

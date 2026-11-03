@@ -1,5 +1,6 @@
 """Front matter: intake, operating model, gates, roles, rules."""
 from html import escape as e
+from stages_extra import EXTRA
 
 def table(head, rows, cls=""):
     h = "".join(f"<th>{x}</th>" for x in head)
@@ -11,7 +12,7 @@ def callout(kind, title, body):
 
 def intake():
     rows = [
-     ("Company name","[Company Name]","Legal entity name for contracts, registrar and billing"),
+     ("Company name","VEL Software Solutions (owner and developer: V.LOKESHWARAN)","Legal entity name for contracts, registrar and billing"),
      ("Business model","B2B SaaS subscriptions + custom web development (project work)","Recurring revenue is the long-term goal; project work funds the runway"),
      ("Employee count","1 founder + 5 roles (Tech Lead, Full-stack dev, UI/UX, QA, DevOps) – can be part-time","Roles can be combined; gates cannot be skipped"),
      ("Target customers","Small and mid-sized businesses (10–200 staff) in India; service-led businesses first","Narrow ICP gives cheaper acquisition"),
@@ -68,6 +69,7 @@ def stage_card(s):
     return f'''<section class="phase" id="stage{s["n"]}"><h2><span class="num">{s["n"]}</span>{s["name"]} <small class="gate">{s["gate"]}</small></h2>
 <p class="why">{s["why"]}</p>
 <h3>1. Detailed instructions</h3>{ol(s["steps"])}
+<div class="callout"><b>In practice – precise targets and artefacts</b>{li(EXTRA.get(s["n"], []))}</div>
 <h3>2. Employee responsibilities</h3>{roles}
 <div class="grid2"><div><h3>3. Required tools</h3><p>{s["tools"]}</p><h3>4. Estimated time</h3><p>{s["time"]}</p><h3>5. Estimated cost</h3><p>{s["cost"]}</p></div>
 <div><h3>6. Expected deliverables</h3>{li(s["deliver"])}<h3>7. Quality checklist</h3>{chk}</div></div>
