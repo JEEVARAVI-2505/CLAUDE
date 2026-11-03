@@ -4,6 +4,8 @@
 
 Separate from the WPF "AI Building Studio" project in this repo.
 
+**New employees start here: `dist/VEL-Delivery-Handbook.pdf` (68 pages, printable) — source in `handbook/`.**
+
 | File | Purpose |
 |---|---|
 | `00-intake-and-assumptions.md` | Intake answers, assumptions to confirm, opportunity ranking |
@@ -12,6 +14,9 @@ Separate from the WPF "AI Building Studio" project in this repo.
 | `03-sop-and-template-pack.md` | 14 fill-in templates: interview guide, process sheet, feasibility, I/O freeze, agent spec, eval plan, security checklist, risks, commercial docs, status, readiness, maintenance, sign-off |
 | `04-technology-competitors-and-costing-reference.md` | Competitor map, platform/framework/model selection, every costing formula, sensitivity checks |
 | `05-people-portal-and-support.md` | Role charters, RACI by gate, portal spec, support levels, operating rhythm |
+| `handbook/` | **Delivery Handbook**: how a software company works, folder structure explained, 15 stages (S00–S14) with steps, deliverables, checklists, gates, plus appendices and a 90-day learning path |
+| `reference-project/` | Small working project (23 tests): GST rules, AI-step safety wrapper, FastAPI service, Dockerfile |
+| `dist/` | Built handbook (PDF and HTML); rebuild with `python scripts/build_handbook.py && node scripts/make_pdf.js` |
 | `calculator/` | `cost_model.py` + golden tests, `pricing_inputs.json`, `report.py`, `sensitivity.py`, `opportunity_score.py` |
 
 Run: `cd calculator && pip install pytest && python -m pytest -q && python report.py`

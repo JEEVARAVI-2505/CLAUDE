@@ -30,3 +30,8 @@ Status of each phase against `MASTER_PLAN.md`. 150 automated tests pass (`dotnet
 - Done: `ai-automation-os/` framework docs, GST-bill sample lifecycle, cost/pricing calculator (12 passing tests).
 - Next: verify all prices; 10 customer interviews; label 300 real bills.
 - Known issues: prices are placeholders; opportunity scores are hypotheses; Starter tier loses money as priced.
+
+## AIOS.3 — Delivery Handbook for new employees
+- Done: `ai-automation-os/handbook/` (company operations, folder structure, stages S00–S14, appendices), `reference-project/` (23 tests), built `dist/VEL-Delivery-Handbook.pdf` (68 pages).
+- Next: management review of the handbook; verify all prices; test the Dockerfile; run a real pilot and revise the book from the retrospective.
+- Known issues: Dockerfile not built here; worked-example figures are illustrative; prices unverified.
