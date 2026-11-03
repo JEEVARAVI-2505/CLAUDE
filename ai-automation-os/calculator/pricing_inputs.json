@@ -1,0 +1,47 @@
+{
+  "_warning": "ALL PRICES BELOW ARE UNVERIFIED PLACEHOLDERS. Network to provider docs was blocked when this was written. Replace each value from the official source in 'source', set verified=true and verified_on. cost_model.py refuses to produce a customer quote while any item is unverified.",
+  "fx": {"usd_inr": 85.0, "source": "RBI reference rate", "verified": false},
+  "models": {
+    "economical": {"in_per_mtok_usd": 0.30, "out_per_mtok_usd": 1.50, "source": "https://docs.anthropic.com/en/docs/about-claude/pricing", "verified": false},
+    "balanced":   {"in_per_mtok_usd": 3.00, "out_per_mtok_usd": 15.00, "source": "https://docs.anthropic.com/en/docs/about-claude/pricing", "verified": false},
+    "high":       {"in_per_mtok_usd": 15.00, "out_per_mtok_usd": 75.00, "source": "https://docs.anthropic.com/en/docs/about-claude/pricing", "verified": false}
+  },
+  "ocr_per_page_inr": {"value": 0.15, "source": "chosen OCR vendor pricing page", "verified": false},
+  "whatsapp_per_msg_inr": {"value": 0.35, "source": "https://developers.facebook.com/docs/whatsapp/pricing", "verified": false},
+  "infra_monthly_inr": {
+    "lean": 6000, "professional": 28000, "enterprise": 120000,
+    "source": "cloud + n8n + managed Postgres + monitoring quotes", "verified": false
+  },
+  "labour_hourly_inr": {
+    "business_analyst": 500, "architect": 1200, "ai_engineer": 900, "developer": 700,
+    "qa": 500, "devops": 800, "security": 1000, "pm": 900, "support": 400, "reviewer": 250
+  },
+  "workload": {
+    "pages_per_invoice": 1.6,
+    "extraction": {"model": "economical", "in_tok": {"low": 2000, "medium": 3000, "high": 5000}, "out_tok": {"low": 400, "medium": 600, "high": 900}},
+    "escalation": {"model": "balanced", "rate": 0.15, "in_tok": 3500, "out_tok": 700},
+    "retry_rate": 0.08,
+    "failure_rate": 0.03,
+    "human_review_rate": 0.20,
+    "human_review_minutes": 2.0,
+    "whatsapp_msgs_per_exec": 0.2,
+    "other_variable_inr_per_exec": 0.10
+  },
+  "dev_hours": {
+    "business_analyst": 40, "architect": 32, "ai_engineer": 80, "developer": 120,
+    "qa": 60, "devops": 24, "security": 16, "pm": 40
+  },
+  "estimate_multipliers": {"optimistic": 0.8, "expected": 1.0, "pessimistic": 1.4},
+  "overhead_pct": 0.20,
+  "risk_allowance_pct": 0.15,
+  "target_margin_pct": 0.35,
+  "maintenance_hours_per_month": {"developer": 6, "support": 8},
+  "tiers": {
+    "starter":      {"setup_inr": 15000,  "monthly_inr": 4999,  "included_exec": 300,   "overage_inr": 6.0},
+    "professional": {"setup_inr": 40000,  "monthly_inr": 14999, "included_exec": 1500,  "overage_inr": 4.5},
+    "business":     {"setup_inr": 90000,  "monthly_inr": 39999, "included_exec": 6000,  "overage_inr": 3.5},
+    "enterprise":   {"setup_inr": 250000, "monthly_inr": 99999, "included_exec": 20000, "overage_inr": 2.5}
+  },
+  "customer": {"manual_minutes_per_invoice": 6.0, "staff_hourly_inr": 200, "realisable_saving_pct": 0.6, "implementation_investment_inr": 40000},
+  "business": {"cac_inr": 25000, "monthly_churn": 0.03, "sales_cost_pct_of_mrr": 0.10, "fixed_company_monthly_inr": 150000, "tax_rate": 0.25}
+}

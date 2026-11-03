@@ -25,3 +25,8 @@ Status of each phase against `MASTER_PLAN.md`. 150 automated tests pass (`dotnet
 - The WPF app compiles on Linux CI but was not launched in this environment (Windows only); test it on Windows first.
 - Bylaw and rate packs are templates; verify locally.
 - Options for very small plots can be similar to each other.
+
+## AIOS.1 — AI Automation OS (separate from Building Studio)
+- Done: `ai-automation-os/` framework docs, GST-bill sample lifecycle, cost/pricing calculator (12 passing tests).
+- Next: verify all prices; 10 customer interviews; label 300 real bills.
+- Known issues: prices are placeholders; opportunity scores are hypotheses; Starter tier loses money as priced.

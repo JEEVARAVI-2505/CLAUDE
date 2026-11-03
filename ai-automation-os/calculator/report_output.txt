@@ -1,0 +1,53 @@
+UNVERIFIED INPUTS: 7
+
+[low] AI/attempt 0.38  var/attempt 0.79  per-success 0.81
+
+[medium] AI/attempt 0.43  var/attempt 0.84  per-success 0.87
+
+[high] AI/attempt 0.53  var/attempt 0.94  per-success 0.97
+
+Model comparison (medium, extraction model swapped; escalation unchanged):
+  economical AI/attempt INR 0.43
+  balanced   AI/attempt INR 1.92
+  high       AI/attempt INR 8.53
+
+Human review/exec 1.67
+
+Volume (professional infra, medium):
+      100 var        84.30 review       166.67 total    28,250.97 per-success   291.25 reviews 20
+      500 var       421.49 review       833.33 total    29,254.83 per-success    60.32 reviews 100
+     1000 var       842.99 review     1,666.67 total    30,509.66 per-success    31.45 reviews 200
+     5000 var     4,214.95 review     8,333.33 total    40,548.28 per-success     8.36 reviews 1000
+    10000 var     8,429.90 review    16,666.67 total    53,096.57 per-success     5.47 reviews 2000
+    25000 var    21,074.75 review    41,666.67 total    90,741.42 per-success     3.74 reviews 5000
+    50000 var    42,149.50 review    83,333.33 total   153,482.83 per-success     3.16 reviews 10000
+   100000 var    84,299.00 review   166,666.67 total   278,965.67 per-success     2.88 reviews 20000
+
+Infra tiers: {'lean': 6000, 'professional': 28000, 'enterprise': 120000, 'source': 'cloud + n8n + managed Postgres + monitoring quotes', 'verified': False}
+
+DEV {'hours': '412.00', 'labour': '315,600.00', 'loaded': '378,720.00', 'optimistic': '302,976.00', 'expected': '378,720.00', 'pessimistic': '530,208.00'}
+PROJECT PRICE {'cost_base': '378,720.00', 'with_risk': '435,528.00', 'price': '670,043.08'}
+
+Tier margin @80% utilisation, infra shared by 25:
+  {'tier': 'starter', 'executions': 240, 'revenue': '4,999.00', 'cost_to_serve': '9,122.32', 'contribution': '-4,123.32', 'margin_pct': '-0.82'}
+  {'tier': 'professional', 'executions': 1200, 'revenue': '14,999.00', 'cost_to_serve': '11,531.59', 'contribution': '3,467.41', 'margin_pct': '0.23'}
+  {'tier': 'business', 'executions': 4800, 'revenue': '39,999.00', 'cost_to_serve': '20,566.35', 'contribution': '19,432.65', 'margin_pct': '0.49'}
+  {'tier': 'enterprise', 'executions': 16000, 'revenue': '99,999.00', 'cost_to_serve': '48,674.51', 'contribution': '51,324.49', 'margin_pct': '0.51'}
+
+ROI professional tier:
+  500 inv/mo {'hours_saved': '50.00', 'labour_saving': '6,000.00', 'net_monthly': '-8,999.00', 'payback_months': None}
+  1500 inv/mo {'hours_saved': '150.00', 'labour_saving': '18,000.00', 'net_monthly': '3,001.00', 'payback_months': '13.33'}
+  3000 inv/mo {'hours_saved': '300.00', 'labour_saving': '36,000.00', 'net_monthly': '21,001.00', 'payback_months': '1.90'}
+  6000 inv/mo {'hours_saved': '600.00', 'labour_saving': '72,000.00', 'net_monthly': '57,001.00', 'payback_months': '0.70'}
+
+Profitability (professional, 80% util):
+  {'customers': 5, 'mrr': '74,995.00', 'arr': '899,940.00', 'ai_api': '5,057.94', 'review': '10,000.00', 'infra': 28000, 'maintenance_support': '37,000.00', 'sales': '7,499.50', 'gross_margin_pct': '-0.07', 'operating_profit': '-162,562.44', 'tax': '0.00'}
+  {'customers': 10, 'mrr': '149,990.00', 'arr': '1,799,880.00', 'ai_api': '10,115.88', 'review': '20,000.00', 'infra': 28000, 'maintenance_support': '74,000.00', 'sales': '14,999.00', 'gross_margin_pct': '0.12', 'operating_profit': '-147,124.88', 'tax': '0.00'}
+  {'customers': 25, 'mrr': '374,975.00', 'arr': '4,499,700.00', 'ai_api': '25,289.70', 'review': '50,000.00', 'infra': 28000, 'maintenance_support': '92,500.00', 'sales': '37,497.50', 'gross_margin_pct': '0.48', 'operating_profit': '-8,312.20', 'tax': '0.00'}
+  {'customers': 50, 'mrr': '749,950.00', 'arr': '8,999,400.00', 'ai_api': '50,579.40', 'review': '100,000.00', 'infra': 28000, 'maintenance_support': '185,000.00', 'sales': '74,995.00', 'gross_margin_pct': '0.52', 'operating_profit': '161,375.60', 'tax': '40,343.90'}
+  {'customers': 100, 'mrr': '1,499,900.00', 'arr': '17,998,800.00', 'ai_api': '101,158.80', 'review': '200,000.00', 'infra': 56000, 'maintenance_support': '370,000.00', 'sales': '149,990.00', 'gross_margin_pct': '0.52', 'operating_profit': '472,751.20', 'tax': '118,187.80'}
+  {'customers': 250, 'mrr': '3,749,750.00', 'arr': '44,997,000.00', 'ai_api': '252,897.00', 'review': '500,000.00', 'infra': 140000, 'maintenance_support': '925,000.00', 'sales': '374,975.00', 'gross_margin_pct': '0.52', 'operating_profit': '1,406,878.00', 'tax': '351,719.50'}
+  {'customers': 500, 'mrr': '7,499,500.00', 'arr': '89,994,000.00', 'ai_api': '505,794.00', 'review': '1,000,000.00', 'infra': 280000, 'maintenance_support': '1,850,000.00', 'sales': '749,950.00', 'gross_margin_pct': '0.52', 'operating_profit': '2,963,756.00', 'tax': '740,939.00'}
+
+LTV 115,580.40 CAC 25000 LTV/CAC 4.62
+Break-even customers: 27
