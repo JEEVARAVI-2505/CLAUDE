@@ -1,4 +1,6 @@
-"""AI automation cost, pricing and profitability model.
+"""Developed by V. LOKESHWARAN, VEL Software Solutions, velsoftwaresolutions.in@gmail.com
+
+AI automation cost, pricing and profitability model.
 
 Every formula maps to a section of the operating framework (Phases 8-9).
 All money is INR unless a name ends in _usd. Inputs live in pricing_inputs.json;

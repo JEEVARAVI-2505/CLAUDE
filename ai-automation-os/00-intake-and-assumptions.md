@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/vel-logo-small.webp" alt="VEL Software Solutions" width="140"></p>
+
 # 00 — Company Intake and Working Assumptions
 
 Status: **DRAFT for founder confirmation (Gate 0)**. Anything marked `ASSUMED` was not told to us and must be confirmed or replaced.
@@ -16,7 +18,7 @@ Status: **DRAFT for founder confirmation (Gate 0)**. Anything marked `ASSUMED` w
 
 | Item | Working assumption | Why it matters |
 |---|---|---|
-| Company name | `[Company]` | Contracts, branding |
+| Company name | **VEL Software Solutions** (from supplied logo; confirm legal entity name) | Contracts, branding |
 | Target customer size | 10–200 employee Indian SMEs, and accounting/CA firms as a channel | Price points, security level |
 | Preferred stack | Python 3.12 + FastAPI, n8n (self-hosted), PostgreSQL + pgvector, Docker | Hiring, cost |
 | Geography / currency | India, INR; GST 18% on services shown separately | Pricing, DPDP Act duties |
@@ -47,8 +49,14 @@ Method: 10 candidates scored against the 10 weighted criteria from Phase 1.4 (`c
 
 ## 4. Gate 0 checklist (founder signs)
 
-- [ ] Company name, entity type, GSTIN
+- [x] Company brand: VEL Software Solutions · developer/owner contact: V. LOKESHWARAN, velsoftwaresolutions.in@gmail.com
+- [ ] Legal entity type, GSTIN
 - [ ] Monthly budget ceiling and cash runway
 - [ ] Confirm India-first scope
 - [ ] Confirm sample automation (GST bill processing) or substitute
 - [ ] Name a person for each role in `01-operating-framework.md` §5 (one person may hold several)
+
+---
+
+<p align="center"><img src="assets/vel-logo-small.webp" alt="VEL Software Solutions" width="120"><br>
+<sub>Developed by <b>V. LOKESHWARAN</b> · VEL Software Solutions · <a href="mailto:velsoftwaresolutions.in@gmail.com">velsoftwaresolutions.in@gmail.com</a></sub></p>

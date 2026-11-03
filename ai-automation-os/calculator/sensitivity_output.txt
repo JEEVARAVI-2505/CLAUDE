@@ -1,0 +1,25 @@
+Baseline
+baseline                           contribution     3,467  margin   23.1%  break-even 27
+
+Auto-approval (human review rate)
+review rate 40%                    contribution     1,467  margin    9.8%  break-even 38
+review rate 20%                    contribution     3,467  margin   23.1%  break-even 27
+review rate 10%                    contribution     4,467  margin   29.8%  break-even 25
+
+Support/maintenance hours per customer
+support hours x0.5                 contribution     7,167  margin   47.8%  break-even 25
+support hours x1                   contribution     3,467  margin   23.1%  break-even 27
+support hours x2                   contribution    -3,933  margin  -26.2%  break-even 67
+
+Model price x2 and tokens x1.5
+model price x2, tokens x1.5        contribution     2,750  margin   18.3%  break-even 30
+
+Utilisation of included volume
+utilisation 50%                    contribution     4,597  margin   30.6%
+utilisation 80%                    contribution     3,467  margin   23.1%
+utilisation 100%                   contribution     2,715  margin   18.1%
+
+Churn -> LTV (baseline contribution)
+churn 3%: LTV   115,580  LTV/CAC 4.62
+churn 6%: LTV    57,790  LTV/CAC 2.31
+churn 10%: LTV    34,674  LTV/CAC 1.39

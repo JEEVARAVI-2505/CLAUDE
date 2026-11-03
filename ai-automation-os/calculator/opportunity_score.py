@@ -1,4 +1,4 @@
-"""Weighted opportunity scoring (Phase 1.4). Scores are 1-5 where 5 = most favourable
+"""Developed by V. LOKESHWARAN, VEL Software Solutions, velsoftwaresolutions.in@gmail.com. Weighted opportunity scoring (Phase 1.4). Scores are 1-5 where 5 = most favourable
 (complexity, error risk and competition are already inverted). They are the author's
 HYPOTHESES to be replaced by customer-interview evidence at Gate 1."""
 W = dict(severity=15, frequency=10, time_savings=15, financial=10, feasibility=15,

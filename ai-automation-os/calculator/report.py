@@ -1,4 +1,4 @@
-"""Print every figure used in docs/02 so the document is reproducible: python report.py"""
+"""Developed by V. LOKESHWARAN, VEL Software Solutions, velsoftwaresolutions.in@gmail.com. Print every figure used in docs/02 so the document is reproducible: python report.py"""
 import cost_model as cm
 c = cm.load()
 f = lambda x: f"{x:,.2f}"

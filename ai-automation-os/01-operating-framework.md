@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/vel-logo-small.webp" alt="VEL Software Solutions" width="140"></p>
+
 # 01 — Company-Wide Operating Framework
 
 One lifecycle, twelve gates, one project record. Nobody skips a gate without written management authorisation (recorded in the project's `gates.md`).
@@ -125,3 +127,8 @@ Don't build all 28 modules first. Build in this order, only when the manual spre
 4. Deployment tracker + usage/cost analytics per customer
 5. Pipeline/CRM (use an off-the-shelf CRM until volume justifies building)
 Role-based access from day one; never display or export customer secrets.
+
+---
+
+<p align="center"><img src="assets/vel-logo-small.webp" alt="VEL Software Solutions" width="120"><br>
+<sub>Developed by <b>V. LOKESHWARAN</b> · VEL Software Solutions · <a href="mailto:velsoftwaresolutions.in@gmail.com">velsoftwaresolutions.in@gmail.com</a></sub></p>

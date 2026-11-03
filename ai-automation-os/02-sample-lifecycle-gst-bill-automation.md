@@ -1,3 +1,5 @@
+<p align="center"><img src="assets/vel-logo-small.webp" alt="VEL Software Solutions" width="140"></p>
+
 # 02 — Sample Lifecycle: GST Purchase-Bill Automation for CA Firms and SMEs
 
 All ₹ figures come from `calculator/report_output.txt` (run `python calculator/report.py`). **Every price input is an unverified placeholder** (network to vendor pricing pages was blocked). Treat all money below as a worked example of the method, not a quote. `assert_quotable()` blocks a real quote until each source is checked.
@@ -220,6 +222,27 @@ Fixed company cost assumed ₹1,50,000/month; sales cost 10% of MRR; infra one s
 - Recovering the ₹3,78,720 build from Professional contribution alone would take ~109 customer-months, so sell Business tier first and the bespoke route to fund the build.
 - The 5–10 customer rows are negative: the company needs the founder's salary-free runway or service revenue (setup fees, bespoke builds) to bridge to ~27 customers. This is the real funding requirement.
 
+
+### 17a. Sensitivity (Professional tier; `calculator/sensitivity.py`)
+
+| Assumption changed | Contribution ₹/customer | Margin | Break-even customers |
+|---|---|---|---|
+| Baseline | 3,467 | 23.1% | 27 |
+| Human review 40% (weak auto-approval) | 1,467 | 9.8% | 38 |
+| Human review 10% (strong auto-approval) | 4,467 | 29.8% | 25 |
+| Support hours ×0.5 | 7,167 | 47.8% | 25 |
+| Support hours ×2 | −3,933 | −26.2% | 67 |
+| Model price ×2 and tokens ×1.5 | 2,750 | 18.3% | 30 |
+| Customers use 100% of included volume | 2,715 | 18.1% | n/a |
+
+| Monthly churn | LTV ₹ | LTV/CAC |
+|---|---|---|
+| 3% | 1,15,580 | 4.62 |
+| 6% | 57,790 | 2.31 |
+| 10% | 34,674 | 1.39 |
+
+**Reading it:** support hours are the single biggest lever (swing of ₹11,100 per customer per month), larger than doubling model prices (−₹717). Measure real support minutes per customer in the first pilot before fixing the Professional price. If churn is 10%, acquisition spend is barely recovered, so retention work is as valuable as new sales.
+
 ## 18. Deployment (Gate 10)
 
 Staging then production via Docker Compose (single VM, Lean/Professional) with Postgres backups, HTTPS, webhook signature checks, n8n behind VPN/SSO, spend caps, alerts, rollback tag. Restore drill completed and timed before go-live.
@@ -239,3 +262,8 @@ Daily failed-run check; weekly human-override review feeding the eval set; month
 3. Build the 300-bill labelled evaluation set from authorised data.
 4. Re-run `report.py` and refresh this document's tables.
 5. Legal review of n8n licence use, DPA, and contract templates.
+
+---
+
+<p align="center"><img src="assets/vel-logo-small.webp" alt="VEL Software Solutions" width="120"><br>
+<sub>Developed by <b>V. LOKESHWARAN</b> · VEL Software Solutions · <a href="mailto:velsoftwaresolutions.in@gmail.com">velsoftwaresolutions.in@gmail.com</a></sub></p>
