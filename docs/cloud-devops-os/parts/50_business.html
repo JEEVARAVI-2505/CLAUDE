@@ -1,0 +1,100 @@
+<h2 id="s6">Roles and Project Management</h2>
+<table><tr><th>Role</th><th>Responsibilities</th></tr>
+<tr><td>Sales Executive</td><td>Lead generation, first contact, scheduling discovery, proposal coordination</td></tr>
+<tr><td>Project Manager</td><td>Plan, timeline, resources, client communication, risk and change management</td></tr>
+<tr><td>Cloud Engineer</td><td>Cloud architecture implementation, provisioning, networking, security configuration</td></tr>
+<tr><td>DevOps Engineer</td><td>Git workflows, CI/CD, containers, IaC, deployment automation</td></tr>
+<tr><td>QA Engineer</td><td>Test planning, infrastructure validation, performance testing, security verification</td></tr>
+<tr><td>Technical Lead</td><td>Architecture approval, code and infrastructure review, production approval</td></tr></table>
+<p>In a startup one person may hold several roles, but <b>the author of a change must never be its only approver</b>. For critical production changes use independent review wherever possible.</p>
+<h4>RACI for key activities</h4>
+<table><tr><th>Activity</th><th>Cloud/DevOps Eng.</th><th>QA</th><th>Tech Lead</th><th>PM</th><th>Client</th></tr>
+<tr><td>Architecture</td><td>R</td><td>C</td><td>A</td><td>I</td><td>A</td></tr>
+<tr><td>Infrastructure change</td><td>R</td><td>C</td><td>A</td><td>I</td><td>I</td></tr>
+<tr><td>QA sign-off</td><td>C</td><td>R</td><td>A</td><td>I</td><td>I</td></tr>
+<tr><td>Production release</td><td>R</td><td>C</td><td>A</td><td>C</td><td>A</td></tr>
+<tr><td>Scope change</td><td>C</td><td>I</td><td>C</td><td>R</td><td>A</td></tr></table>
+<p style="font-size:9pt">R = Responsible, A = Accountable/approves, C = Consulted, I = Informed.</p>
+
+<h2 id="s7">Internal Operations Portal</h2>
+<p>One internal portal (build or buy) to run the division. Required modules:</p>
+<div class="grid">
+<div class="card"><h4>People</h4><ul><li>Employee management</li><li>Training progress</li><li>Task assignment</li></ul></div>
+<div class="card"><h4>Sales &amp; clients</h4><ul><li>Lead management</li><li>Client management</li><li>Billing and recurring revenue</li></ul></div>
+<div class="card"><h4>Delivery</h4><ul><li>Project management and milestones</li><li>Change requests</li><li>QA reports</li><li>Deployment history</li></ul></div>
+<div class="card"><h4>Operations</h4><ul><li>Infrastructure inventory</li><li>Cloud cost tracking</li><li>Incident management</li><li>Support tickets, SLA tracking</li></ul></div>
+<div class="card"><h4>Knowledge</h4><ul><li>Documentation repository</li><li>Monthly reports</li></ul></div></div>
+<h4>Mandatory fields for every project record</h4>
+<p>Unique project ID &middot; client ID &middot; assigned employee &middot; project manager &middot; current stage &middot; milestones &middot; due dates &middot; approval status &middot; cost status &middot; risk register &middot; delivery status.</p>
+<div class="box warn"><b class="t">Security</b>The portal must never store cloud root passwords, API keys or private keys. Link to the approved secrets manager instead. Protect the portal with SSO/MFA and audit logs.</div>
+
+<h2 id="s8">Pricing and Profitability</h2>
+<h3>Commercial model for every proposal</h3>
+<table><tr><th>One-time project price</th><th>Monthly managed service</th></tr>
+<tr><td>Discovery, architecture, development, cloud configuration, migration, CI/CD, security, QA, documentation, training, project management</td><td>Cloud resources, monitoring, maintenance, security reviews, backup verification, incident support, reporting, support hours, third-party subscriptions</td></tr></table>
+<h3>Required financial outputs</h3>
+<p>Direct project cost &middot; internal labour &middot; third-party cost &middot; cloud cost &middot; contingency &middot; total cost &middot; selling price &middot; gross profit &middot; gross margin &middot; MRR &middot; ARR &middot; break-even &middot; renewal price &middot; additional usage charges.</p>
+<h3>Formulas</h3>
+<pre><code>Gross profit      = Revenue - Direct costs
+Gross margin %    = Gross profit / Revenue x 100
+Contribution      = Revenue - Variable costs
+Break-even (units)= Fixed costs / (Price per unit - Variable cost per unit)
+MRR               = Sum of monthly recurring fees
+ARR               = MRR x 12
+Cost per user     = Monthly cloud cost / Active users</code></pre>
+<h3>Worked example (illustrative numbers only, not real prices)</h3>
+<p>Assumptions: labour 120 hours at an internal cost of 20 per hour; tools 100; contingency 15% of subtotal; target profit 30% of total cost. Currency units are generic.</p>
+<table><tr><th>Line</th><th>Calculation</th><th>Result</th></tr>
+<tr><td>Labour</td><td>120 &times; 20</td><td>2,400</td></tr>
+<tr><td>Tools and other direct</td><td>&nbsp;</td><td>100</td></tr>
+<tr><td>Subtotal</td><td>2,400 + 100</td><td>2,500</td></tr>
+<tr><td>Contingency 15%</td><td>2,500 &times; 0.15</td><td>375</td></tr>
+<tr><td>Total delivery cost</td><td>2,500 + 375</td><td>2,875</td></tr>
+<tr><td>Target profit 30%</td><td>2,875 &times; 0.30</td><td>862.50</td></tr>
+<tr><td><b>Selling price</b></td><td>2,875 + 862.50</td><td><b>3,737.50</b></td></tr>
+<tr><td>Gross margin</td><td>862.50 / 3,737.50</td><td>23.1%</td></tr></table>
+<p><b>Note:</b> a 30% markup on cost is a 23.1% margin, not 30%. To reach a 30% margin the price is cost / (1 &minus; 0.30) = 2,875 / 0.70 = 4,107.14. Always state which one you mean.</p>
+<h3>Scenario table template (fill from the official calculator)</h3>
+<table><tr><th>Users</th><th>Compute</th><th>DB</th><th>Storage</th><th>Network</th><th>Monitoring</th><th>Total / month</th><th>Cost per user</th></tr>
+<tr><td>100</td><td colspan="7">Fill from provider calculator: region, date, assumptions</td></tr>
+<tr><td>1,000</td><td colspan="7">&nbsp;</td></tr>
+<tr><td>10,000</td><td colspan="7">&nbsp;</td></tr>
+<tr><td>100,000</td><td colspan="7">&nbsp;</td></tr></table>
+<h3>Expense classification (put it in every contract)</h3>
+<table><tr><th>Type</th><th>Meaning</th></tr>
+<tr><td>Customer-billed cloud</td><td>Client's own cloud account, paid directly to the provider</td></tr>
+<tr><td>Company-managed cloud</td><td>Our account; resold with a stated management fee</td></tr>
+<tr><td>Pass-through third party</td><td>Licences/subscriptions billed at cost</td></tr>
+<tr><td>Service fee</td><td>Our labour and expertise</td></tr></table>
+<p>Prefer the client owning their cloud account with us holding limited, individual access. Define additional-usage rates and caps; avoid unlimited support or usage unless priced in.</p>
+
+<h2 id="s9">Client Acquisition and Deal Closing</h2>
+<p><b>Target customers:</b> SaaS startups; software companies; healthcare; e-commerce; manufacturing; financial and professional services; growing SMEs; businesses on outdated infrastructure.</p>
+<p><b>Channels:</b> LinkedIn; Upwork; Clutch; direct email; technology partnerships; startup communities; referrals; existing web/app development clients.</p>
+<h3>15-step sales process</h3>
+<ol><li>Identify potential customer.</li><li>Research their technology.</li><li>Find a real infrastructure problem.</li><li>Contact the decision-maker.</li><li>Schedule discovery.</li><li>Conduct technical assessment.</li><li>Prepare solution proposal.</li><li>Present architecture.</li><li>Explain implementation and recurring costs.</li><li>Offer a paid pilot where appropriate.</li><li>Agree scope and contract.</li><li>Obtain payment and authorisation.</li><li>Start delivery.</li><li>Demonstrate results.</li><li>Convert to a managed-services contract.</li></ol>
+<div class="box warn"><b class="t">Honesty rule</b>Never promise savings, performance or security outcomes without supporting evidence. Say &ldquo;we will measure and report,&rdquo; not &ldquo;you will save 40%.&rdquo;</div>
+<h3>Template: cold email</h3>
+<pre><code>Subject: Quick question about deployments at {Company}
+
+Hi {Name},
+I noticed {specific observation, e.g. your app runs on a single server / releases are manual}.
+We help {industry} teams set up reliable cloud hosting, automated deployments and monitoring,
+usually starting with a short, fixed-price assessment.
+Would a 20-minute call next week be useful to see whether this applies to you?
+- {Your name}, VEL Software Solutions</code></pre>
+<h3>Template: LinkedIn outreach</h3>
+<pre><code>Hi {Name}, I work with {industry} teams on cloud reliability and deployment automation.
+Saw {company/news}. Happy to share a short checklist we use for pre-launch cloud reviews, no strings attached.</code></pre>
+<h3>Template: discovery questionnaire (short form)</h3>
+<ul><li>What is the business problem and what does success look like?</li><li>Where does the application run today and who maintains it?</li><li>How many users, and what happens if it is down for an hour?</li><li>What data do you hold and are there regulatory duties?</li><li>When was the last backup restored successfully?</li><li>What is the monthly hosting bill, budget range and deadline?</li><li>Who approves scope and payment?</li></ul>
+<h3>Proposal and contract pack</h3>
+<table><tr><th>Document</th><th>Must contain</th></tr>
+<tr><td>Technical assessment</td><td>Findings, evidence, risks, quick wins</td></tr>
+<tr><td>Proposal</td><td>Problem, solution, architecture summary, timeline, price, assumptions, exclusions</td></tr>
+<tr><td>SOW</td><td>As in Stage 03</td></tr>
+<tr><td>Pricing sheet</td><td>One-time, monthly, usage charges, validity period</td></tr>
+<tr><td>Paid pilot agreement</td><td>Small fixed scope, fixed price, success criteria, what follows if it succeeds</td></tr>
+<tr><td>Client presentation</td><td>Business-first story: problem &rarr; solution &rarr; risk &rarr; cost &rarr; next step</td></tr>
+<tr><td>Handover certificate</td><td>List of deliverables, date, client signature</td></tr></table>
+<p><b>Objection handling:</b> &ldquo;Too expensive&rdquo; &rarr; show cost of downtime and options at different price points. &ldquo;We can do it ourselves&rdquo; &rarr; offer assessment or training. &ldquo;We are on Vendor X&rdquo; &rarr; skills apply to any cloud. Legal terms are reviewed by a qualified lawyer before use.</p>

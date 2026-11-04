@@ -1,0 +1,154 @@
+<h2 id="s5">Client Project Lifecycle: Stages 01&ndash;18</h2>
+<p>Every client project follows these 18 stages in order. Each stage lists its objective, steps, deliverables, <b>acceptance criteria</b> and <b>approval gate</b>. A stage is closed only when the gate is signed by the named approver.</p>
+<div class="flow"><span>01 Lead</span><i>&rarr;</i><span>02 Discovery</span><i>&rarr;</i><span>03 Scope/SOW</span><i>&rarr;</i><span>04 Architecture</span><i>&rarr;</i><span>05 Cost</span><i>&rarr;</i><span>06 Dev env</span><i>&rarr;</i><span>07 Repo</span><i>&rarr;</i><span>08 IaC</span><i>&rarr;</i><span>09 Docker</span><i>&rarr;</i><span>10 CI/CD</span><i>&rarr;</i><span>11 K8s*</span><i>&rarr;</i><span>12 Security</span><i>&rarr;</i><span>13 Monitoring</span><i>&rarr;</i><span>14 Backup/DR</span><i>&rarr;</i><span>15 QA</span><i>&rarr;</i><span>16 Production</span><i>&rarr;</i><span>17 Handover</span><i>&rarr;</i><span>18 Managed service</span></div>
+<p style="font-size:9pt">*Stage 11 only when Kubernetes is justified (see toolchain section).</p>
+<table><tr><th>Stage</th><th>Gate</th><th>Approver</th></tr>
+<tr><td>01 Lead qualification</td><td>Proceed / decline</td><td>Sales or Project Manager</td></tr>
+<tr><td>02 Discovery</td><td>Problem statement and requirements confirmed</td><td>Client</td></tr>
+<tr><td>03 Scope freeze</td><td>SOW signed; commercial terms; access authorised</td><td>Client + Company</td></tr>
+<tr><td>04 Architecture</td><td>Design approved</td><td>Technical Lead + Client</td></tr>
+<tr><td>05 Cost</td><td>Estimate approved</td><td>Project Manager + commercial representative</td></tr>
+<tr><td>08, 16 Infra change / Production</td><td>Plan reviewed, change approved</td><td>Technical Lead (independent of author) + Client for production</td></tr>
+<tr><td>15 QA</td><td>Critical defects resolved or formally accepted</td><td>QA + Technical Lead</td></tr>
+<tr><td>17 Handover</td><td>Written acceptance certificate</td><td>Client</td></tr></table>
+
+<h3>Stage 01 &mdash; Lead Qualification</h3>
+<p><b>Objective:</b> decide whether this client is a good fit before spending engineering time.</p>
+<p><b>Collect:</b> company name; industry; size; current application/infrastructure; business problem; expected outcome; technical requirements; estimated users and traffic; current hosting; budget range; timeline; security/compliance needs; decision-maker.</p>
+<p><b>Deliverables:</b> lead qualification document; discovery notes; opportunity assessment (fit score, risks, red flags such as &ldquo;wants guaranteed 100% uptime on a tiny budget&rdquo;).</p>
+<div class="box gate"><b class="t">Gate 1</b>Sales/Project Manager approves proceeding. Acceptance: all fields above filled or marked &ldquo;unknown&rdquo; with an owner.</div>
+
+<h3>Stage 02 &mdash; Client Discovery and Technical Assessment</h3>
+<p><b>Objective:</b> understand reality before designing anything. Run a structured meeting; never assume.</p>
+<table><tr><th>Area</th><th>Questions to ask</th></tr>
+<tr><td>Infrastructure</td><td>What runs where? Servers, versions, regions, who has access, any diagrams?</td></tr>
+<tr><td>Application</td><td>Languages, frameworks, databases, third-party integrations, build and deploy steps today.</td></tr>
+<tr><td>Traffic &amp; availability</td><td>Users today / in 12 months, peak times, tolerated downtime per month.</td></tr>
+<tr><td>Data</td><td>Sensitivity (personal, financial, health), location constraints, retention, encryption today.</td></tr>
+<tr><td>Backup &amp; recovery</td><td>What exists? Has restoration ever been tested? Acceptable data loss (RPO) and downtime (RTO)?</td></tr>
+<tr><td>Cost</td><td>Current monthly cloud spend, invoices, known waste.</td></tr>
+<tr><td>Limits</td><td>Legacy dependencies, licences, skills in the client team, policy restrictions.</td></tr></table>
+<p><b>Deliverables:</b> discovery questionnaire (completed); current-state architecture diagram; infrastructure inventory; risk and dependency register.</p>
+<div class="box gate"><b class="t">Gate 2</b>Client confirms in writing the problem statement and requirements. Acceptance: inventory matches what the client can verify.</div>
+
+<h3>Stage 03 &mdash; Requirements and Scope Freeze (SOW)</h3>
+<p>Create a formal Statement of Work containing: objectives; in-scope and <b>out-of-scope</b> services; technical and infrastructure requirements; deliverables; responsibilities (ours vs client); timeline and milestones; dependencies; acceptance criteria; support period; change-request procedure.</p>
+<div class="box warn"><b class="t">Do not start implementation</b> without (1) approved scope, (2) agreed commercial terms, (3) written access authorisation. Access is granted to named individuals with individual accounts, never shared admin credentials.</div>
+<h4>Change-request procedure</h4>
+<ol><li>Client or team raises the change in writing.</li><li>Project Manager assesses impact on cost, time and risk.</li><li>Client approves the revised quote/timeline.</li><li>SOW addendum is signed before work begins.</li></ol>
+
+<h3>Stage 04 &mdash; Infrastructure Architecture Design</h3>
+<p>Design ten views: application, cloud, network, database, storage, security, deployment, backup, monitoring, disaster recovery.</p>
+<p><b>Create:</b> system architecture diagram; network topology; component list; data-flow diagram; security-boundary diagram; deployment-flow diagram; <b>Architecture Decision Records (ADRs)</b>.</p>
+<h4>Compare at least two options</h4>
+<table><tr><th>Criterion</th><th>Option A: single VM + Compose</th><th>Option B: ALB + auto-scaling + managed DB</th><th>Option C: Kubernetes</th></tr>
+<tr><td>Cost</td><td>Lowest</td><td>Medium</td><td>Highest (cluster + people)</td></tr>
+<tr><td>Security</td><td>Fewer controls</td><td>Good isolation</td><td>Powerful but larger attack surface</td></tr>
+<tr><td>Complexity</td><td>Low</td><td>Medium</td><td>High</td></tr>
+<tr><td>Scalability</td><td>Vertical only</td><td>Horizontal</td><td>Horizontal, fine-grained</td></tr>
+<tr><td>Operational effort</td><td>Low</td><td>Medium</td><td>High</td></tr></table>
+<pre><code># ADR template (docs/adr/0001-choose-hosting.md)
+Title: Use ALB + Auto Scaling + RDS
+Status: Proposed | Accepted | Superseded
+Context: why a decision is needed
+Options considered: A, B, C with cost/security/complexity notes
+Decision: B, because ...
+Consequences: what becomes easier / harder</code></pre>
+<div class="box gate"><b class="t">Gate 4</b>Technical Lead and client approve the architecture.</div>
+
+<h3>Stage 05 &mdash; Cloud Cost Estimation and Commercial Approval</h3>
+<p>Estimate <b>before</b> provisioning. Never invent prices; use the provider's official calculator and record <b>region, currency, pricing date, usage assumptions and taxes</b>. Estimates are not guaranteed bills.</p>
+<table><tr><th>Group</th><th>Items</th></tr>
+<tr><td>A. One-time</td><td>Discovery, architecture, infrastructure setup, networking, migration, CI/CD, testing, documentation, training</td></tr>
+<tr><td>B. Recurring</td><td>VMs, containers, Kubernetes, storage, databases, backups, bandwidth/data transfer, load balancers, DNS/certificates, monitoring, security tools, logging, support, third-party subscriptions</td></tr>
+<tr><td>C. Internal</td><td>Developer hours, tech-lead review, project management, QA, support, contingency</td></tr></table>
+<pre><code>Total Monthly Cloud Cost = Compute + Storage + Database + Network + Backup
+                         + Monitoring + Security + Other services
+Total Project Cost       = Labour + Setup + Migration + Testing + Tools + Other direct costs
+Selling Price            = Total Delivery Cost + Risk Allowance + Target Profit</code></pre>
+<p>Also calculate gross margin, contribution margin, break-even, MRR, ARR, expected cloud cost per customer, cost per active user. Provide scenarios at <b>100, 1,000, 10,000 and 100,000 users</b> where relevant (see worked template in the pricing section).</p>
+<div class="box gate"><b class="t">Gate 5</b>Project Manager and an authorised commercial representative approve the estimate.</div>
+
+<h3>Stage 06 &mdash; Corporate Development Environment Setup</h3>
+<table><tr><th>Item</th><th>Requirement</th></tr>
+<tr><td>Workstation</td><td>Company-approved, disk encryption, screen lock</td></tr>
+<tr><td>Software</td><td>VS Code, Git, Docker, cloud CLI, Terraform/OpenTofu, Python or required runtime, Linux environment (WSL2 or VM)</td></tr>
+<tr><td>Access</td><td>Individual GitHub account, SSH keys (ed25519, passphrase), password manager, <b>MFA on everything</b></td></tr>
+<tr><td>Workspaces</td><td>Project management board, documentation workspace</td></tr>
+<tr><td>Environments</td><td>Separate <b>development, staging, production</b> (separate accounts/subscriptions/projects where possible)</td></tr></table>
+<div class="box warn"><b class="t">Forbidden</b>Shared root accounts, shared cloud admin credentials, shared personal access tokens, long-lived keys on laptops when SSO is available.</div>
+<pre><code>ssh-keygen -t ed25519 -C "you@company.com"      # create key (set a passphrase)
+aws configure sso                                # preferred over static keys
+aws sts get-caller-identity                      # verify who you are</code></pre>
+
+<h3>Stage 07 &mdash; GitHub Repository and Folder Structure</h3>
+<pre><code>client-project/
+|-- README.md  CHANGELOG.md  LICENSE  .gitignore
+|-- docs/                 requirements, architecture, network design, deployment guide,
+|   `-- runbooks/         backup policy, DR, security policy, troubleshooting
+|-- infrastructure/
+|   |-- terraform/{modules,environments/{dev,staging,production}}
+|   `-- ansible/{inventories,playbooks,roles}
+|-- application/{src,tests,Dockerfile,requirements.txt}
+|-- deployment/{docker,kubernetes,nginx,scripts}
+|-- ci-cd/github-actions/
+|-- monitoring/{prometheus,grafana,alerts}
+|-- security/{policies,scans,checklists}
+`-- tests/{infrastructure,integration,performance,security}</code></pre>
+<p>Adapt to the project; <b>do not create empty folders for appearance</b>. Explain every folder to the trainee.</p>
+<div class="box warn"><b class="t">Never commit</b>passwords, private keys, API secrets, cloud credentials, production env files, customer personal data, database dumps with sensitive data. Add them to <code>.gitignore</code> and scan with Gitleaks. If a secret is committed: <b>revoke and rotate it immediately</b>.</div>
+<p><b>Repository rules:</b> protected <code>main</code> branch; pull requests with at least one review; meaningful commit messages (<code>feat:</code>, <code>fix:</code>, <code>docs:</code>); release tags such as <code>v1.2.0</code>.</p>
+
+<h3>Stage 08 &mdash; Infrastructure as Code</h3>
+<p><b>What:</b> describe infrastructure in text files so it is repeatable, reviewable and versioned. Process (follow in order):</p>
+<ol><li>Install Terraform or OpenTofu.</li><li>Authenticate securely (SSO / short-lived credentials).</li><li>Provider configuration.</li><li>Variables, 5. outputs, 6. reusable modules.</li><li>Remote state with locking (e.g. S3 + DynamoDB lock or native locking where supported).</li><li><code>fmt</code> + <code>validate</code>.</li><li>Review the <code>plan</code>; 9. obtain approval; 10. <code>apply</code>; 11. verify resources; 12. document; 13. test controlled <code>destroy</code> in non-production.</li></ol>
+<pre><code>provider "aws" { region = var.region }
+
+variable "region"      { type = string  default = "ap-south-1" }
+variable "environment" { type = string }
+
+resource "aws_s3_bucket" "assets" {
+  bucket = "client-${var.environment}-assets"
+}
+resource "aws_s3_bucket_public_access_block" "assets" {
+  bucket                  = aws_s3_bucket.assets.id
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
+}
+output "assets_bucket" { value = aws_s3_bucket.assets.bucket }</code></pre>
+<div class="box warn"><b class="t">Production rule</b>No production apply without peer review of the plan, a relevant backup, and explicit approval. Read every line marked <code>destroy</code> or <code>replace</code>.</div>
+
+<h3>Stage 09 &mdash; Docker and Containerisation</h3>
+<p><b>Concepts:</b> container vs VM; image vs container; Dockerfile; Compose; volumes; networks; env vars; registries; multi-stage builds; image size; health checks; non-root users; image scanning.</p>
+<pre><code># Dockerfile: multi-stage, non-root, health check
+FROM python:3.12-slim AS build
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+FROM python:3.12-slim
+RUN useradd -r -u 10001 appuser
+WORKDIR /app
+COPY --from=build /install /usr/local
+COPY src/ ./src/
+USER appuser
+EXPOSE 8080
+HEALTHCHECK --interval=30s --timeout=3s CMD python -c "import urllib.request;urllib.request.urlopen('http://localhost:8080/health')"
+CMD ["python","-m","src.main"]</code></pre>
+<pre><code># docker-compose.yml (development)
+services:
+  app:
+    build: ./application
+    ports: ["8080:8080"]
+    environment:
+      DATABASE_URL: ${DATABASE_URL}      # from untracked .env
+    depends_on: [db]
+    deploy: { resources: { limits: { cpus: "0.5", memory: 256M } } }
+  db:
+    image: postgres:16
+    environment: { POSTGRES_PASSWORD: ${DB_PASSWORD} }
+    volumes: [dbdata:/var/lib/postgresql/data]
+volumes: { dbdata: {} }</code></pre>
+<p><b>Test:</b> startup; <code>/health</code>; DB connection; <code>docker restart</code> (app recovers); data survives container removal (volume); failure handling (stop DB, app logs a clear error); resource limits; <code>trivy image</code> shows no unaccepted critical findings.</p>

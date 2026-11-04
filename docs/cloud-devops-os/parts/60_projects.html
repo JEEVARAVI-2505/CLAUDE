@@ -1,0 +1,64 @@
+<h2 id="s10">Practical Training Projects and Sign-off</h2>
+<p>The employee must complete these projects, in order, in a personal sandbox account with a budget alert set, before working independently on client work. Each is reviewed by the Technical Lead against its acceptance criteria. Evidence (repo link, screenshots, logs) goes in the trainee's portfolio.</p>
+<table><tr><th>#</th><th>Project</th><th>Skills proven</th><th>Acceptance criteria</th></tr>
+<tr><td>P1</td><td>Hardened Linux web server</td><td>Ubuntu, SSH, UFW, Nginx, systemd, TLS</td><td>Key-only SSH; only 22/80/443 open; HTTPS valid; service restarts after reboot; hardening checklist 100%</td></tr>
+<tr><td>P2</td><td>Git workflow and secret hygiene</td><td>Branches, PRs, reviews, Gitleaks</td><td>Protected main; PR with review; secret scan passes; a deliberately committed fake secret is detected and the rotation steps documented</td></tr>
+<tr><td>P3</td><td>Containerised app + database</td><td>Docker, Compose, volumes, health checks</td><td>Non-root image; data survives restart; Trivy has no unaccepted critical issues; resource limits set</td></tr>
+<tr><td>P4</td><td>AWS 3-tier network with Terraform</td><td>VPC, subnets, SGs, ALB, RDS, IaC</td><td>DB not public; plan reviewed; remote state; clean <code>destroy</code> in sandbox; cost estimate with stated assumptions</td></tr>
+<tr><td>P5</td><td>CI/CD pipeline</td><td>GitHub Actions, scanning, environments</td><td>PR runs tests + scans; staging auto-deploy; production needs approval; rollback demonstrated</td></tr>
+<tr><td>P6</td><td>Monitoring and alerting</td><td>CloudWatch or Prometheus/Grafana, logs</td><td>Dashboard for CPU, memory, disk, errors, latency; an induced failure triggers an alert received by the trainee; runbook written</td></tr>
+<tr><td>P7</td><td>Backup and disaster recovery drill</td><td>Snapshots, restore, RPO/RTO</td><td>Database restored to a new instance from backup; measured recovery time vs RTO documented</td></tr>
+<tr><td>P8</td><td>Azure/GCP comparative build</td><td>Cloud equivalence</td><td>Same app deployed on a second cloud; comparison table of services, cost drivers and gotchas</td></tr>
+<tr><td>P9</td><td>Capstone: mock client engagement</td><td>All 18 stages</td><td>Complete lifecycle for a fictional client: questionnaire, SOW, architecture + ADR, cost model, IaC, pipeline, security review, QA report, handover pack, and a 20-minute client presentation</td></tr></table>
+<h3>Assessment and levels</h3>
+<table><tr><th>Level</th><th>Title</th><th>Can do</th><th>Evidence</th></tr>
+<tr><td>0</td><td>Trainee</td><td>Completes Levels 1&ndash;4 exercises</td><td>Quizzes + practical</td></tr>
+<tr><td>1</td><td>Associate</td><td>P1&ndash;P5; works on tasks under supervision</td><td>Reviewed portfolio</td></tr>
+<tr><td>2</td><td>Engineer</td><td>P1&ndash;P8; builds non-production environments; participates in reviews</td><td>Lead sign-off</td></tr>
+<tr><td>3</td><td>Independent engineer</td><td>P9; may own a project stage; production changes still need independent approval</td><td>Capstone passed</td></tr></table>
+<p><b>Suggested timeline:</b> weeks 1&ndash;2 Level 1; 3&ndash;5 Level 2; 6&ndash;7 Level 3; 8&ndash;10 Level 4; 11&ndash;14 AWS and P1&ndash;P4; 15&ndash;18 CI/CD, security, monitoring, P5&ndash;P7; 19&ndash;22 Azure/GCP and capstone. Adjust to the learner; competence matters more than speed.</p>
+<h3>Trainee code of conduct</h3>
+<ul><li>Ask early; stuck for 30 minutes means ask.</li><li>Treat client data and credentials as sacred.</li><li>Write down what you did: if it is not documented, it did not happen.</li><li>Destroy sandbox resources after each lab to avoid cost.</li></ul>
+
+<h2 id="s11">Appendices</h2>
+<h3>A. Production readiness checklist</h3>
+<table><tr><th>Area</th><th>Check</th></tr>
+<tr><td>Security</td><td>MFA, least privilege, no public DB, secrets in vault, encryption, scans clean, threat model done</td></tr>
+<tr><td>Reliability</td><td>Health checks, auto-restart/scaling, tested rollback, load test passed</td></tr>
+<tr><td>Data</td><td>Backups automated, restoration tested, RPO/RTO met</td></tr>
+<tr><td>Observability</td><td>Dashboards, alerts tested, logs centralised, on-call contacts</td></tr>
+<tr><td>Cost</td><td>Budget alerts, tagging, estimate vs actual reviewed</td></tr>
+<tr><td>Operations</td><td>Runbooks, documentation, access register, change plan approved</td></tr>
+<tr><td>Commercial</td><td>SOW accepted, support terms agreed, handover scheduled</td></tr></table>
+<h3>B. Incident response (first 30 minutes)</h3>
+<ol><li><b>Acknowledge</b> the alert; assign an incident lead.</li><li><b>Assess</b> severity and user impact; open an incident record.</li><li><b>Communicate</b> to the client with what is known, what is being done, next update time.</li><li><b>Mitigate</b> first (rollback, scale, failover); find root cause after service is restored.</li><li><b>Record</b> timeline and actions.</li><li><b>Post-incident review</b> within days: blameless, root cause, actions with owners.</li></ol>
+<h3>C. Change request template</h3>
+<pre><code>ID / Date / Requester
+Description and reason
+Systems affected / environments
+Risk and impact assessment
+Implementation steps
+Test steps
+Rollback steps
+Backup taken? (Y/N + reference)
+Approvers: Technical Lead ____  Client ____
+Result and evidence</code></pre>
+<h3>D. Monthly managed-service report outline</h3>
+<ul><li>Availability vs SLO; incidents and root causes</li><li>Patching and vulnerability status</li><li>Backup success and last restoration test</li><li>Cost vs budget with optimisation recommendations</li><li>Capacity trends; planned work for next month</li></ul>
+<h3>E. Glossary</h3>
+<table><tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>IaC</td><td>Infrastructure as Code: infrastructure defined in version-controlled files</td></tr>
+<tr><td>CI/CD</td><td>Continuous Integration / Delivery: automated build, test, deploy</td></tr>
+<tr><td>VPC</td><td>Virtual Private Cloud: your isolated network in the cloud</td></tr>
+<tr><td>IAM</td><td>Identity and Access Management</td></tr>
+<tr><td>RPO / RTO</td><td>Maximum data loss / maximum downtime acceptable</td></tr>
+<tr><td>SLI / SLO / SLA</td><td>Measurement / internal target / contractual promise</td></tr>
+<tr><td>ADR</td><td>Architecture Decision Record</td></tr>
+<tr><td>SOW</td><td>Statement of Work</td></tr>
+<tr><td>MFA</td><td>Multi-factor authentication</td></tr>
+<tr><td>Least privilege</td><td>Grant only the permissions needed, no more</td></tr></table>
+<h3>F. Official references to consult (verify current versions)</h3>
+<ul><li>AWS Well-Architected Framework and AWS Pricing Calculator; Azure Architecture Center and Pricing Calculator; Google Cloud Architecture Framework and Pricing Calculator</li><li>OWASP Top 10; CIS Benchmarks; NIST Cybersecurity Framework</li><li>Terraform / OpenTofu, Docker, Kubernetes and GitHub Actions official documentation</li><li>Google SRE Book (free online)</li></ul>
+<div class="box"><b class="t">Document control</b>Document VEL-CD-001 &middot; Version 1.0 (draft for management approval) &middot; Owner: V. LOKESHWARAN &middot; Review: quarterly or after any failed project &middot; Contact: velsoftwaresolutions.in@gmail.com. Prices and figures in examples are placeholders until verified from official sources.</div>
+<p class="foot">Developed by V. LOKESHWARAN &middot; VEL Software Solutions &middot; velsoftwaresolutions.in@gmail.com</p>
+</div></body></html>

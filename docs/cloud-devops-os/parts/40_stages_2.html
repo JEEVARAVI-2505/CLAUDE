@@ -1,0 +1,144 @@
+<h3>Stage 10 &mdash; CI/CD Pipeline Development</h3>
+<div class="flow"><span>Commit</span><i>&rarr;</i><span>Pull request</span><i>&rarr;</i><span>Code review</span><i>&rarr;</i><span>Tests</span><i>&rarr;</i><span>Quality</span><i>&rarr;</i><span>Dependency scan</span><i>&rarr;</i><span>Secret scan</span><i>&rarr;</i><span>Image build</span><i>&rarr;</i><span>Image scan</span><i>&rarr;</i><span>Registry</span><i>&rarr;</i><span>Staging deploy</span><i>&rarr;</i><span>Integration tests</span><i>&rarr;</i><span>Approval</span><i>&rarr;</i><span>Production deploy</span><i>&rarr;</i><span>Smoke tests</span><i>&rarr;</i><span>Monitor</span></div>
+<p>Each step exists to stop a specific class of failure: tests catch bugs, scans catch known vulnerabilities and leaked secrets, staging catches environment problems, approval catches business risk, smoke tests catch a broken release, rollback limits damage.</p>
+<pre><code># .github/workflows/ci.yml
+name: ci
+on: { pull_request: { branches: [main] } }
+permissions: { contents: read }
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -r application/requirements.txt pytest
+      - run: pytest application/tests
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - uses: gitleaks/gitleaks-action@v2
+      - run: |
+          docker build -t app:${{ github.sha }} application
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy image --exit-code 1 --severity CRITICAL app:${{ github.sha }}</code></pre>
+<pre><code># .github/workflows/cd.yml  (deploys only from main, production needs approval)
+name: cd
+on: { push: { branches: [main] } }
+jobs:
+  staging:
+    runs-on: ubuntu-latest
+    environment: staging
+    steps: [ { uses: actions/checkout@v4 }, { run: ./deployment/scripts/deploy.sh staging } ]
+  production:
+    needs: staging
+    runs-on: ubuntu-latest
+    environment: production        # configure required reviewers in GitHub
+    steps: [ { uses: actions/checkout@v4 }, { run: ./deployment/scripts/deploy.sh production } ]</code></pre>
+<p><b>Also deliver:</b> environment-specific deployment; approval protection; <b>rollback procedure</b> (redeploy previous tagged image; database changes must be backward compatible); release notes; failure notifications to the team channel. Pin third-party actions to versions or commit SHAs and use OIDC rather than stored cloud keys.</p>
+<div class="box warn"><b class="t">Never</b>deploy to production straight from an unreviewed developer branch.</div>
+
+<h3>Stage 11 &mdash; Kubernetes Engineering (only if justified)</h3>
+<p>Teach only after containers and networking are solid. Topics: cluster architecture; nodes; pods; deployments; services; ConfigMaps; Secrets; ingress; persistent volumes; storage classes; namespaces; requests/limits; probes; autoscaling; RBAC; network policies; Helm; monitoring; upgrade and backup planning.</p>
+<pre><code>kubectl get nodes
+kubectl apply -f deployment.yaml
+kubectl get pods -n demo
+kubectl describe pod &lt;name&gt; -n demo     # events show why it is Pending/CrashLoopBackOff
+kubectl logs &lt;name&gt; -n demo
+kubectl rollout undo deployment/app -n demo</code></pre>
+<p><b>Build</b> a non-production demo cluster (kind/minikube or a small managed cluster) and then <b>cost it</b>: control-plane fees, nodes, load balancers, storage, plus engineer time to upgrade, patch and monitor. Present the comparison to the client; do not recommend Kubernetes by default.</p>
+
+<h3>Stage 12 &mdash; Security Engineering</h3>
+<table><tr><th>Control</th><th>Minimum standard</th></tr>
+<tr><td>Identity</td><td>MFA everywhere; individual accounts; least-privilege IAM; separate dev/prod permissions; no shared admin</td></tr>
+<tr><td>Secrets</td><td>Secrets Manager / Key Vault / Secret Manager; never in Git or images</td></tr>
+<tr><td>Encryption</td><td>TLS in transit; encryption at rest (disks, DB, buckets, backups)</td></tr>
+<tr><td>Network</td><td>Default-deny firewalls; segmentation; DB in private subnets; SSH restricted or replaced by SSM/bastion</td></tr>
+<tr><td>Vulnerabilities</td><td>OS patching; dependency, container-image and code scans in CI</td></tr>
+<tr><td>Audit</td><td>CloudTrail/Activity Log/Audit Logs on; log retention; alerts on root/admin use</td></tr>
+<tr><td>Backups</td><td>Encrypted, access-restricted, separate account/region where appropriate</td></tr>
+<tr><td>Governance</td><td>Quarterly access reviews; incident response document; threat model before production</td></tr></table>
+<p><b>Frameworks to reference:</b> OWASP, CIS Benchmarks, NIST Cybersecurity Framework, provider best-practice guides (e.g. AWS Well-Architected Security pillar).</p>
+<h4>Simple threat model (STRIDE) &mdash; do before production</h4>
+<ol><li>Draw the data-flow diagram and trust boundaries.</li><li>For each flow ask: Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege.</li><li>Record threat, likelihood, impact, mitigation, owner.</li></ol>
+<div class="box warn"><b class="t">Authorisation</b>No penetration testing or intrusive scanning without written client authorisation and a defined scope. Scanning our own CI artefacts is fine; probing a client's live systems is not.</div>
+
+<h3>Stage 13 &mdash; Monitoring, Logging and SRE</h3>
+<p>Implement <b>before</b> launch. Monitor CPU, memory, disk, network, availability, response time, error rate, database performance, storage, cloud spend, certificate expiry, backup status, deployment status.</p>
+<table><tr><th>Term</th><th>Meaning</th><th>Example</th></tr>
+<tr><td>SLI</td><td>A measurement</td><td>% of requests answered under 500 ms without error</td></tr>
+<tr><td>SLO</td><td>Internal target for an SLI</td><td>99.5% per 30 days</td></tr>
+<tr><td>SLA</td><td>Contractual promise with remedies</td><td>Set only after measuring real performance</td></tr>
+<tr><td>Error budget</td><td>Allowed failure (100% &minus; SLO)</td><td>99.5% &rarr; about 3.6 hours/month</td></tr></table>
+<p>Calculation check: 30 days = 43,200 minutes; 0.5% = 216 minutes = 3.6 hours. <b>Do not promise availability that the architecture and team cannot deliver</b>: a single VM cannot honestly back 99.99%.</p>
+<h4>Alert quality rules</h4>
+<ul><li>Alert on symptoms users feel (errors, latency, downtime) more than causes.</li><li>Every alert has an owner, severity, runbook link and escalation path.</li><li>Test alerts by triggering them. Remove noisy alerts.</li></ul>
+<pre><code># Prometheus alert example
+- alert: HighErrorRate
+  expr: sum(rate(http_requests_total{status=~"5.."}[5m])) / sum(rate(http_requests_total[5m])) &gt; 0.05
+  for: 10m
+  labels: { severity: page }
+  annotations: { summary: "5xx rate above 5% for 10 minutes", runbook: "docs/runbooks/high-5xx.md" }</code></pre>
+<p><b>Create:</b> dashboards; alerts; escalation procedure; incident runbooks; monthly reliability report.</p>
+
+<h3>Stage 14 &mdash; Backup and Disaster Recovery</h3>
+<table><tr><th>Define</th><th>Example answer</th></tr>
+<tr><td>What</td><td>Database, uploaded files, configuration, IaC state, secrets metadata</td></tr>
+<tr><td>Frequency / retention</td><td>DB: continuous + daily snapshot; keep 30 days; monthly keep 12 (agree with client)</td></tr>
+<tr><td>Encryption / location</td><td>KMS-encrypted; second region or account for critical data</td></tr>
+<tr><td>RPO</td><td>Maximum acceptable data loss, e.g. 15 minutes</td></tr>
+<tr><td>RTO</td><td>Maximum acceptable downtime, e.g. 4 hours</td></tr>
+<tr><td>Owner / test schedule</td><td>Named engineer; restoration test every quarter</td></tr></table>
+<div class="box tip"><b class="t">Rule</b>A successful backup job proves nothing. Only a <b>tested restoration</b> proves recoverability. Record: backup used, steps, time taken (compare to RTO), data checked, issues found.</div>
+
+<h3>Stage 15 &mdash; Testing and Quality Assurance</h3>
+<table><tr><th>#</th><th>Test area</th><th>Typical tool / evidence</th></tr>
+<tr><td>1</td><td>Infrastructure validation</td><td><code>terraform validate</code>, plan review, tflint</td></tr>
+<tr><td>2</td><td>Configuration validation</td><td>yamllint, nginx <code>-t</code>, ansible-lint</td></tr>
+<tr><td>3</td><td>Network connectivity</td><td><code>curl</code>, <code>nc</code>, security group checks</td></tr>
+<tr><td>4</td><td>Application functionality</td><td>Pytest, Postman collections</td></tr>
+<tr><td>5</td><td>Database connectivity</td><td>App health endpoint, migration test</td></tr>
+<tr><td>6</td><td>Integration</td><td>End-to-end flows in staging</td></tr>
+<tr><td>7</td><td>Load / performance</td><td>k6, Locust: report p95 latency and error rate at target load</td></tr>
+<tr><td>8</td><td>Security scanning</td><td>Trivy, Gitleaks, Semgrep reports</td></tr>
+<tr><td>9</td><td>Backup restoration</td><td>Restore log + timings</td></tr>
+<tr><td>10</td><td>Deployment</td><td>Pipeline run record</td></tr>
+<tr><td>11</td><td>Rollback</td><td>Rollback executed and verified</td></tr>
+<tr><td>12</td><td>Monitoring / alerts</td><td>Alert fired and received</td></tr></table>
+<h4>QA report row template</h4>
+<table><tr><th>ID</th><th>Objective</th><th>Preconditions</th><th>Steps</th><th>Expected</th><th>Actual</th><th>Pass/Fail</th><th>Evidence</th><th>Defect ref</th></tr>
+<tr><td>QA-012</td><td>App survives DB restart</td><td>Staging up</td><td>1. Restart DB 2. Call /health</td><td>200 within 60 s</td><td>&nbsp;</td><td>&nbsp;</td><td>Screenshot/log</td><td>&nbsp;</td></tr></table>
+<p>All critical defects are resolved or <b>formally accepted</b> by the client in writing before release.</p>
+
+<h3>Stage 16 &mdash; Production Deployment</h3>
+<table><tr><th>Pre-deployment verification</th><th>Done</th></tr>
+<tr><td>Client approval of change plan</td><td>&#9744;</td></tr>
+<tr><td>Infrastructure matches approved IaC plan</td><td>&#9744;</td></tr>
+<tr><td>DNS and TLS certificates valid; renewal automated</td><td>&#9744;</td></tr>
+<tr><td>IAM permissions least-privilege; secrets present in secret store</td><td>&#9744;</td></tr>
+<tr><td>Database private, encrypted, backed up</td><td>&#9744;</td></tr>
+<tr><td>Monitoring, alerts, on-call contacts and cost alerts active</td><td>&#9744;</td></tr>
+<tr><td>Rollback plan tested</td><td>&#9744;</td></tr>
+<tr><td>Access restrictions confirmed (no open admin ports)</td><td>&#9744;</td></tr></table>
+<p><b>Post-deployment:</b> smoke tests; check logs; verify health and performance; confirm monitoring and first backup; record deployment evidence (time, version, approver, results). Deploy in a low-traffic window agreed with the client.</p>
+
+<h3>Stage 17 &mdash; Client Handover</h3>
+<p>Deliver: final architecture diagrams; infrastructure inventory; deployment and CI/CD documentation; access and permissions register; backup/recovery documentation; monitoring dashboards; incident runbooks; troubleshooting guide; cost breakdown; maintenance schedule; training session; <b>acceptance certificate</b>; support and escalation contacts.</p>
+<div class="box warn"><b class="t">Credentials</b>Transfer through the approved secrets manager or secure sharing with expiry. Never place passwords or private keys in handover documents. Remove our temporary access if the client is not on a managed plan.</div>
+<div class="box gate"><b class="t">Gate 17</b>Written client acceptance obtained and filed.</div>
+
+<h3>Stage 18 &mdash; Maintenance and Managed Services</h3>
+<table><tr><th>Service</th><th>Cadence</th></tr>
+<tr><td>Monitoring and alert response</td><td>24x7 or business hours, per contract</td></tr>
+<tr><td>Security patching</td><td>Monthly; critical within an agreed window</td></tr>
+<tr><td>Backup verification and DR test</td><td>Monthly check; quarterly restoration test</td></tr>
+<tr><td>Certificate and renewal monitoring; CI/CD upkeep</td><td>Continuous / monthly</td></tr>
+<tr><td>Cost optimisation and capacity planning</td><td>Monthly review</td></tr>
+<tr><td>Incident management; monthly report</td><td>As needed; monthly</td></tr></table>
+<p>Contract must define support hours, response targets by severity, escalation, exclusions and service-level commitments. Avoid &ldquo;unlimited&rdquo; support or usage unless priced for it.</p>
+<table><tr><th>Severity</th><th>Definition</th><th>Example response target (set per contract)</th></tr>
+<tr><td>P1</td><td>Production down / data at risk</td><td>Acknowledge fast, update frequently</td></tr>
+<tr><td>P2</td><td>Major feature degraded</td><td>Same business day</td></tr>
+<tr><td>P3</td><td>Minor issue, workaround exists</td><td>Within agreed business days</td></tr></table>

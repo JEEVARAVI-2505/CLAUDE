@@ -3,22 +3,22 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Cloud Engineering and DevOps Company Operating System</title>
 <style>
-:root{--ink:#17202e;--mut:#5b6677;--brand:#0b4f8a;--acc:#e8750a;--bg:#fff;--soft:#f3f6fa;--line:#d6dde8;--ok:#117a4d;--warn:#b45309;--bad:#b42318}
-@page{size:A4;margin:18mm 15mm 18mm 15mm}
+:root{--ink:#17202e;--mut:#5b6677;--brand:#14306b;--acc:#c2185b;--bg:#fff;--soft:#eef2f9;--line:#d6dde8;--ok:#117a4d;--warn:#b45309;--bad:#b42318}
+@page{size:A4;margin:20mm 15mm 18mm 15mm}
 *{box-sizing:border-box}
 body{font:10.5pt/1.55 "Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);margin:0;counter-reset:ch}
 .wrap{max-width:900px;margin:0 auto;padding:0 18px}
-/* Watermark: fixed elements repeat on every printed page */
-.wm{position:fixed;inset:0;z-index:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
-.wm span{transform:rotate(-35deg);font-size:64pt;font-weight:800;letter-spacing:.08em;color:rgba(11,79,138,.07);white-space:nowrap;text-align:center;line-height:1.1}
-.wm small{display:block;font-size:22pt;letter-spacing:.2em;color:rgba(232,117,10,.12)}
+/* VEL logo watermark: fixed element repeats on every printed page */
+.wm{position:fixed;left:50%;top:50%;width:125mm;height:83mm;margin:-41.5mm 0 0 -62.5mm;z-index:0;pointer-events:none;background:url({{WM}}) center/contain no-repeat;opacity:.06}
 .wrap,.cover{position:relative;z-index:1}
-.cover{min-height:255mm;display:flex;flex-direction:column;justify-content:center;padding:0 24px;page-break-after:always;break-after:page;background:linear-gradient(160deg,#0b4f8a 0,#0b2f55 100%);color:#fff;margin:0 0 20px}
-.cover h1{font-size:34pt;line-height:1.1;margin:.2em 0}
-.cover .tag{letter-spacing:.25em;text-transform:uppercase;color:#ffb878;font-weight:700;font-size:10pt}
-.cover p{font-size:12pt;max-width:640px;color:#dbe7f5}
-.cover .meta{margin-top:40px;font-size:9.5pt;color:#b9cde6;border-top:1px solid #4a77a8;padding-top:12px}
-h2{counter-increment:ch;font-size:19pt;color:var(--brand);border-bottom:3px solid var(--acc);padding-bottom:4px;margin:34px 0 12px;page-break-before:always;break-before:page}
+.cover{min-height:245mm;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 24px;page-break-after:always;break-after:page;margin:0 0 20px}
+.cover img{width:300px;max-width:70%}
+.cover h1{font:700 34pt/1.15 Georgia,"Times New Roman",serif;color:var(--brand);margin:.6em 0 .1em}
+.cover .sub{font-size:14pt;color:var(--mut);margin:0 0 30px}
+.cover .tag{letter-spacing:.2em;text-transform:uppercase;color:var(--acc);font-weight:700;font-size:9.5pt}
+.cover .by{font-size:11pt;line-height:1.6}.cover .by b{color:var(--brand)}
+.cover .meta{margin-top:30px;font-size:9.5pt;color:var(--mut);max-width:560px}
+h2{counter-increment:ch;font:700 19pt Georgia,"Times New Roman",serif;color:var(--brand);border-bottom:3px solid var(--acc);padding-bottom:4px;margin:34px 0 12px;page-break-before:always;break-before:page}
 h2::before{content:counter(ch) ". ";color:var(--acc)}
 h2.nopb{page-break-before:auto;break-before:auto;counter-increment:none}h2.nopb::before{content:""}
 h3{font-size:13pt;color:var(--brand);margin:20px 0 6px;break-after:avoid}
@@ -49,13 +49,14 @@ ul,ol{margin:4px 0 4px 22px;padding:0}li{margin:2px 0}
 @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.wrap{max-width:none;padding:0}}
 @media(max-width:600px){h2{font-size:16pt}.wm span{font-size:34pt}}
 </style></head><body>
-<div class="wm"><span>CONFIDENTIAL<small>INTERNAL TRAINING MATERIAL</small></span></div>
+<div class="wm"></div>
 
 <section class="cover">
-<div class="tag">Company Operating System &middot; Version 1.0</div>
+<img src="{{LOGO}}" alt="VEL Software Solutions logo">
+<div class="tag">Company Operating System</div>
 <h1>Cloud Engineering &amp; DevOps<br>Service Division Playbook</h1>
-<p>From zero to professional: beginner training, client project lifecycle, infrastructure engineering, security, reliability, pricing, sales and managed services.</p>
-<div class="meta">Audience: new Cloud / DevOps employees (no prior experience assumed) &middot; Owner: Technical Lead &middot; Status: Controlled document &mdash; review every 6 months<br>
-Prices, limits and tool versions change. Always verify against official provider documentation and pricing calculators before quoting or building.</div>
+<p class="sub">From Zero to Professional: training, client delivery, security, reliability, pricing and sales</p>
+<div class="by">Developed by <b>V. LOKESHWARAN</b><br>VEL Software Solutions<br>velsoftwaresolutions.in@gmail.com</div>
+<div class="meta">Document VEL-CD-001 &middot; Version 1.0 (draft for management approval)<br>Tool versions, limits and cloud prices change. Always verify against official provider documentation and pricing calculators before building or quoting.</div>
 </section>
 <div class="wrap">
