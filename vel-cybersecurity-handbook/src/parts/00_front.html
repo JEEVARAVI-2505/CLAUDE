@@ -1,0 +1,77 @@
+<section class="cover">
+  <img src="{{LOGO}}" alt="VEL Software Solutions logo">
+  <div class="stripe"></div>
+  <div class="ttl">Cybersecurity Engineering &amp; Managed Security<br>Department Handbook</div>
+  <div class="sub">Training, authorised assessment, hardening and client delivery:<br>from first day to professional practice</div>
+  <div class="meta">
+    Developed by <b style="color:#12306b">V. LOKESHWARAN</b><br>
+    VEL Software Solutions<br>
+    velsoftwaresolutions.in@gmail.com<br>
+    <span class="small">Document {{DOCID}} &middot; Version 1.0 (draft for management approval) &middot; 4 November 2026</span>
+  </div>
+  <div class="legal"><b>Defensive and authorised use only.</b> Every activity in this handbook must be owned, authorised, scoped and documented. Nothing here permits scanning, testing or accessing a system without written permission from its owner.</div>
+</section>
+
+<h1 class="first" style="break-before:auto">Contents</h1>
+{{TOC}}
+
+<h1>VEL Cybersecurity Department Handbook</h1>
+<p><b>Cybersecurity Engineering &amp; Managed Security Department: Module 1 (Foundation Pack)</b></p>
+
+<table class="kv">
+<tr><td>Document ID</td><td>VEL-CS-001</td></tr>
+<tr><td>Version</td><td>1.0 (draft for management approval)</td></tr>
+<tr><td>Owner</td><td>V. LOKESHWARAN, Founder (acting Security Lead until one is appointed)</td></tr>
+<tr><td>Audience</td><td>Beginner and junior security staff, project managers, QA reviewers, and management</td></tr>
+<tr><td>Review cycle</td><td>Every quarter, after any security incident, and after any change in law or client contract terms</td></tr>
+<tr><td>Companion document</td><td>VEL Delivery Handbook (VEL-DH-001): general software delivery procedure</td></tr>
+<tr><td>Contact</td><td>velsoftwaresolutions.in@gmail.com</td></tr>
+</table>
+
+<h2>0.1 What this handbook is</h2>
+<p>This handbook sets up a professional cybersecurity services department inside VEL Software Solutions. It tells every employee <b>what the department does, who may do what, how beginners are trained, and how a client engagement runs from first call to handover</b>. It is written for people who start with basic IT knowledge and must become safe, effective defenders.</p>
+<p>It is delivered <b>one module at a time</b>, because quality and legal safety matter more than speed. This first module contains the six items needed before any security work begins.</p>
+
+<h2>0.2 What is in Module 1 (this edition)</h2>
+<table class="t">
+<thead><tr><th style="width:5%">#</th><th style="width:33%">Deliverable</th><th>Where</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><b>Cybersecurity Department Handbook</b></td><td>Parts 1, 7 and 8: charter, service portfolio, 15-stage client lifecycle, incident response</td></tr>
+<tr><td>2</td><td><b>Beginner onboarding programme</b></td><td>Part 4</td></tr>
+<tr><td>3</td><td><b>Employee responsibility matrix</b></td><td>Part 2 (roles, authority ladder, RACI)</td></tr>
+<tr><td>4</td><td><b>90-day training roadmap</b></td><td>Part 5, with the teaching format and sample modules in Part 6</td></tr>
+<tr><td>5</td><td><b>Authorised testing policy</b></td><td>Part 3 (policy, tiers, authorisation pack, stop-work rules)</td></tr>
+<tr><td>6</td><td><b>First isolated security lab</b></td><td>Part 9: Linux Server Hardening Lab (Training Project 1)</td></tr>
+</tbody></table>
+<p>Appendices hold the official sources, glossary, ready-to-copy templates, the sign-off sheet and the plan for the next modules.</p>
+
+<h2>0.3 How to use it</h2>
+<ol>
+<li>Read <b>Part 3 (Authorised Testing Policy)</b> and sign the acknowledgement <b>before touching any tool</b>.</li>
+<li>Follow Part 4 for your first week, then the 90-day roadmap in Part 5.</li>
+<li>Check Part 2 to learn what you may do alone, what needs approval, and what you must never do.</li>
+<li>When a client project starts, work through the stages in Part 7 in order and do not skip a gate.</li>
+<li>If you are unsure, <b>stop and ask</b> your Security Lead. Stopping is never a mistake; guessing about authorisation is.</li>
+</ol>
+
+<h2>0.4 The twelve golden rules</h2>
+<ol>
+<li><b>No written authorisation, no testing.</b> Verbal permission, a friendly email, or "it is our own client's website" is not authorisation.</li>
+<li><b>Stay inside the scope.</b> Only the exact targets, methods and time window written in the Rules of Engagement.</li>
+<li><b>Practise only in owned or intentionally vulnerable labs.</b> Learning never happens on real third-party systems.</li>
+<li><b>Beginners do not perform high-risk testing alone</b> and never approve their own critical findings.</li>
+<li><b>Do no harm.</b> Prefer the least intrusive method that answers the question. Back up before changing anything.</li>
+<li><b>Stop first, explain later</b> if something unexpected happens: an outage, real customer data, signs of a real attacker.</li>
+<li><b>Verify before you report.</b> A scanner alert is a lead, not a finding.</li>
+<li><b>Protect evidence and client data.</b> Encrypt it, minimise it, never put it in an ordinary Git repository.</li>
+<li><b>Tell the truth in reports.</b> No exaggeration, no hidden limitations, no invented certainty.</li>
+<li><b>Never claim what we do not hold.</b> No certification, audit authority, "guaranteed secure", 24/7 SOC or structural-style safety claims we cannot back up.</li>
+<li><b>Never make legal decisions.</b> Breach notification and legal interpretation belong to the client and qualified legal or compliance specialists.</li>
+<li><b>Write it down.</b> If it is not in a ticket, a log or a document, it did not happen.</li>
+</ol>
+
+<div class="box rule"><b>Important legal notice</b>
+<p>This handbook is an internal operating procedure, not legal advice. Laws on computer misuse, data protection and incident reporting differ by country and change over time. The department must confirm applicable requirements with qualified legal counsel (for India this includes the Information Technology Act, 2000, the Digital Personal Data Protection Act, 2023, and CERT-In directions) before offering services or signing client contracts. Items marked <i>"suggested default"</i> are proposals for management approval.</p></div>
+
+<div class="box warn"><b>Claims policy</b>
+<p>VEL does not claim certification, independent-audit authority, accreditation, or 24/7 monitoring unless the company and named personnel actually hold the credentials and have the staffing and systems to deliver. Every proposal, website line and report must be checked against this rule by the Security Lead.</p></div>

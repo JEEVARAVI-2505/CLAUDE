@@ -1,0 +1,156 @@
+<h1>Appendices</h1>
+
+<h2>Appendix A: Official sources and references</h2>
+<p>Use <b>current</b> official guidance and applicable law. Standards change: check the version date before quoting a control or clause in a client document.</p>
+<table class="t">
+<thead><tr><th style="width:30%">Source</th><th style="width:38%">Link</th><th>Used for</th></tr></thead>
+<tbody>
+<tr><td>OWASP</td><td>https://owasp.org/</td><td>Top 10, ASVS, cheat sheets, Juice Shop</td></tr>
+<tr><td>OWASP Web Security Testing Guide</td><td>https://owasp.org/www-project-web-security-testing-guide/</td><td>Web and API testing methodology</td></tr>
+<tr><td>NIST Cybersecurity Framework</td><td>https://www.nist.gov/cyberframework</td><td>Govern, Identify, Protect, Detect, Respond, Recover outcomes</td></tr>
+<tr><td>CIS (Center for Internet Security)</td><td>https://www.cisecurity.org/</td><td>CIS Benchmarks and Controls (check licence terms)</td></tr>
+<tr><td>MITRE ATT&amp;CK</td><td>https://attack.mitre.org/</td><td>Adversary behaviour for detection mapping</td></tr>
+<tr><td>NIST NICE Framework</td><td>https://www.nist.gov/itl/applied-cybersecurity/nice</td><td>Role and skills mapping</td></tr>
+<tr><td>AWS Security</td><td>https://docs.aws.amazon.com/security/</td><td>AWS best practice and shared responsibility</td></tr>
+<tr><td>Microsoft Security</td><td>https://learn.microsoft.com/security/</td><td>Azure and Windows security guidance</td></tr>
+<tr><td>Google Cloud Security</td><td>https://cloud.google.com/security</td><td>GCP security guidance</td></tr>
+</tbody></table>
+<h3>Tool project sites (verify downloads from these official sources)</h3>
+<table class="t tight">
+<thead><tr><th style="width:26%">Tool</th><th>Official site</th></tr></thead>
+<tbody>
+<tr><td>OWASP ZAP</td><td>https://www.zaproxy.org/</td></tr>
+<tr><td>Burp Suite (PortSwigger; licence as purchased or Community edition terms)</td><td>https://portswigger.net/burp</td></tr>
+<tr><td>Nmap</td><td>https://nmap.org/</td></tr>
+<tr><td>Wireshark</td><td>https://www.wireshark.org/</td></tr>
+<tr><td>Greenbone / OpenVAS</td><td>https://www.greenbone.net/</td></tr>
+<tr><td>Trivy</td><td>https://github.com/aquasecurity/trivy</td></tr>
+<tr><td>Gitleaks</td><td>https://github.com/gitleaks/gitleaks</td></tr>
+<tr><td>Semgrep</td><td>https://semgrep.dev/</td></tr>
+<tr><td>SonarQube</td><td>https://www.sonarsource.com/products/sonarqube/</td></tr>
+<tr><td>Wazuh</td><td>https://wazuh.com/</td></tr>
+<tr><td>Security Onion</td><td>https://securityonionsolutions.com/</td></tr>
+<tr><td>OWASP Juice Shop</td><td>https://owasp.org/www-project-juice-shop/</td></tr>
+</tbody></table>
+<p class="small">Check each tool's current licence and edition limits before using it commercially. Record the licence in the tool register.</p>
+
+<h2>Appendix B: Glossary</h2>
+<table class="t tight">
+<thead><tr><th style="width:24%">Term</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>Asset</td><td>Anything of value to protect: system, data, application, account, process</td></tr>
+<tr><td>Authorisation (testing)</td><td>Written permission from the asset owner defining scope, methods and time</td></tr>
+<tr><td>Attack surface</td><td>All points where an unauthorised party could try to enter or extract data</td></tr>
+<tr><td>CIA triad</td><td>Confidentiality, integrity, availability</td></tr>
+<tr><td>CVE / CVSS</td><td>Public vulnerability identifier / standard severity scoring system</td></tr>
+<tr><td>DAST / SAST / SCA</td><td>Testing a running app / analysing source code / checking third-party components</td></tr>
+<tr><td>EDR</td><td>Endpoint detection and response software</td></tr>
+<tr><td>False positive</td><td>A scanner alert that is not a real vulnerability</td></tr>
+<tr><td>Hardening</td><td>Reducing a system's attack surface by tightening configuration</td></tr>
+<tr><td>IAM</td><td>Identity and access management</td></tr>
+<tr><td>IDS / IPS</td><td>System that detects / detects and blocks suspicious network activity</td></tr>
+<tr><td>Least privilege</td><td>Giving only the access needed to do the job</td></tr>
+<tr><td>MFA</td><td>Multi-factor authentication: two or more kinds of proof of identity</td></tr>
+<tr><td>Residual risk</td><td>Risk that remains after controls are applied</td></tr>
+<tr><td>RoE</td><td>Rules of Engagement, the signed testing rules for an engagement</td></tr>
+<tr><td>SIEM</td><td>Security information and event management: central log analysis</td></tr>
+<tr><td>Snapshot</td><td>Saved state of a virtual machine that can be restored</td></tr>
+<tr><td>SSRF / CSRF / XSS</td><td>Server-side request forgery / cross-site request forgery / cross-site scripting (concepts taught on vulnerable training apps)</td></tr>
+<tr><td>Stop-work</td><td>Immediate halt of testing under agreed conditions</td></tr>
+<tr><td>Threat model</td><td>Structured analysis of what can go wrong, who might cause it, and what stops it</td></tr>
+<tr><td>Tier (T0–T3)</td><td>VEL risk classification of testing activity</td></tr>
+<tr><td>Trust boundary</td><td>Line where data or control passes between zones of different trust</td></tr>
+</tbody></table>
+
+<h2>Appendix C: Ready-to-copy templates</h2>
+<h3>C1. Lab Authorisation Record</h3>
+<table class="kv">
+<tr><td>Trainee / Lab ID</td><td>________________________ / LAB-___</td></tr>
+<tr><td>Purpose</td><td>Training exercise: ______________________</td></tr>
+<tr><td>Owned environment</td><td>VEL-owned VMs on host-only network ________ (no bridged adapter)</td></tr>
+<tr><td>Permitted targets</td><td>VM name / IP: __________ ; __________</td></tr>
+<tr><td>Permitted tools</td><td>__________________________________</td></tr>
+<tr><td>Dates</td><td>From ________ to ________</td></tr>
+<tr><td>Isolation proof attached</td><td>☐ Network config ☐ Internet-unreachable test ☐ Snapshot</td></tr>
+<tr><td>Signatures</td><td>Trainee ______ Mentor ______ Security Lead ______ Date ______</td></tr>
+</table>
+
+<h3>C2. Test authorisation (client engagement): minimum content</h3>
+<table class="kv">
+<tr><td>Client / legal entity</td><td>_____________ · authorised signatory (name, title)</td></tr>
+<tr><td>Ownership statement</td><td>"The client owns or controls the assets listed and may authorise their testing."</td></tr>
+<tr><td>Targets / exclusions</td><td>See <code>approved-targets.csv</code> (attached)</td></tr>
+<tr><td>Methods &amp; tier</td><td>☐ T0 ☐ T1 ☐ T2 ☐ T3 (named activity: ______)</td></tr>
+<tr><td>Window</td><td>_______ to _______ (time zone) · blackout: _______</td></tr>
+<tr><td>VEL testers</td><td>_______ (authority level) · source IPs: _______</td></tr>
+<tr><td>Emergency contacts</td><td>Client: _______ phone _______ · VEL: _______ phone _______</td></tr>
+<tr><td>Stop-work</td><td>As Part 3.8, plus: __________</td></tr>
+<tr><td>Data handling</td><td>Data types: ____ · storage: ____ · retention: ____ · deletion proof: ☐</td></tr>
+<tr><td>Signatures</td><td>Client ______ VEL Security Lead ______ Date ______</td></tr>
+</table>
+
+<h3>C3. Finding record</h3>
+<pre>ID: F-___          Title: ________________________   Date: ________
+Asset(s): A-____   Environment: ______   Status: Open / Fixed / Retested / Accepted / False positive
+Description: ___________________________________________________
+Evidence ref (file + SHA-256): ______________________________
+CVSS (vector/score, if applicable): _______   Likelihood (1-5): __  Impact (1-5): __  Rating: ________
+Business impact: _______________________________________________
+Reproduction conditions (within scope, minimum detail): ________
+Remediation: ___________________________________________________
+Owner: __________  Target date: ________
+Author: ________   Reviewer (second person, required for Critical/High): ________</pre>
+
+<h3>C4. Chain-of-custody log</h3>
+<table class="t tight">
+<thead><tr><th>Item ID</th><th>Description / source</th><th>Collected by</th><th>Date/time (TZ)</th><th>SHA-256</th><th>Transfer (from → to, why)</th></tr></thead>
+<tbody><tr><td style="height:26px"></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td style="height:26px"></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+
+<h3>C5. Change log (hardening)</h3>
+<table class="t tight">
+<thead><tr><th>#</th><th>Control</th><th>Change (command / file)</th><th>Reason</th><th>Verification</th><th>Rollback</th><th>Approver</th></tr></thead>
+<tbody><tr><td style="height:26px"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td style="height:26px"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+
+<h3>C6. Tool register</h3>
+<table class="t tight">
+<thead><tr><th>Tool</th><th>Version</th><th>Source / hash</th><th>Licence</th><th>Installed on</th><th>Approved by</th></tr></thead>
+<tbody><tr><td style="height:26px"></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td style="height:26px"></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+
+<h2>Appendix D: Beginner quick-reference card</h2>
+<table class="t">
+<thead><tr><th style="width:36%">Before I run anything, I ask&hellip;</th><th>If the answer is "no" or "not sure"</th></tr></thead>
+<tbody>
+<tr><td>Is this target in my signed authorisation or Lab record?</td><td>Stop. Do not run it.</td></tr>
+<tr><td>Is today and now inside the permitted window?</td><td>Stop.</td></tr>
+<tr><td>Does my authority level allow this tier?</td><td>Ask the Security Lead.</td></tr>
+<tr><td>Do I know what traffic this will send and what it could break?</td><td>Read the module; ask the mentor.</td></tr>
+<tr><td>Have I backed up and can I roll back?</td><td>Take the snapshot or backup first.</td></tr>
+<tr><td>Where will the output be stored, and does it contain secrets?</td><td>Use the restricted store; redact.</td></tr>
+</tbody></table>
+
+<h2>Appendix E: What comes next (module plan)</h2>
+<p>The department is built one module at a time. Each module is released only after the previous one is reviewed and approved.</p>
+<table class="t">
+<thead><tr><th style="width:12%">Module</th><th style="width:34%">Content</th><th>Gate to start</th></tr></thead>
+<tbody>
+<tr><td><b>1 (this)</b></td><td>Handbook, onboarding, responsibility matrix, 90-day roadmap, testing policy, Lab 01</td><td>Management approval of POL-SEC-001</td></tr>
+<tr><td>2</td><td>Level 1–2 full lessons (14-point format), Windows hardening lab, Lab 02 network fundamentals</td><td>Module 1 approved</td></tr>
+<tr><td>3</td><td>Commercial engine: proposal, SoW, pricing model (consultant and reviewer hours, licences, storage, retests), margins and recurring revenue</td><td>Module 1 approved; insurance confirmed</td></tr>
+<tr><td>4</td><td>Level 3–4 lessons, incident response runbooks, tabletop kit</td><td>Gate 60 design agreed</td></tr>
+<tr><td>5</td><td>Level 5 appsec: Juice Shop and secure API labs, secure coding guidance</td><td>Lab host approved</td></tr>
+<tr><td>6</td><td>Level 6–7: tool playbooks, cloud IAM lab, monitoring dashboard, frameworks mapping</td><td>Tool licences recorded</td></tr>
+<tr><td>7</td><td>Complete simulated client assessment (Project 8) and report templates</td><td>Modules 1–6 complete</td></tr>
+</tbody></table>
+
+<h2>Appendix F: Document approval and revision history</h2>
+<table class="t">
+<thead><tr><th style="width:12%">Version</th><th style="width:16%">Date</th><th>Change</th><th style="width:24%">Author</th></tr></thead>
+<tbody><tr><td>1.0 draft</td><td>4 Nov 2026</td><td>Module 1 foundation pack issued for management approval</td><td>V. LOKESHWARAN</td></tr></tbody></table>
+<table class="t">
+<thead><tr><th>Approval</th><th style="width:22%">Name</th><th style="width:18%">Signature</th><th style="width:14%">Date</th></tr></thead>
+<tbody>
+<tr><td>Founder</td><td></td><td></td><td></td></tr>
+<tr><td>Security Lead</td><td></td><td></td><td></td></tr>
+<tr><td>Legal counsel review (policy and templates)</td><td></td><td></td><td></td></tr>
+</tbody></table>
+<p class="small">This handbook is an internal training and operating document. It is not legal advice and does not constitute certification, accreditation or assurance of any client's security.</p>

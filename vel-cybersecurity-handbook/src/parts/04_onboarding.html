@@ -1,0 +1,102 @@
+<h1>Part 4 — Beginner Onboarding Programme</h1>
+<p>Goal: in the first week every new employee is <b>legally briefed, equipped with a secure workstation, assigned a mentor, and able to practise safely</b> in the isolated lab. Technical depth comes later (Part 5). Trust comes before tools.</p>
+
+<h2>4.1 Programme at a glance</h2>
+<table class="t">
+<thead><tr><th style="width:17%">Stage</th><th style="width:30%">Outcome</th><th>Key activities</th><th style="width:16%">Owner</th></tr></thead>
+<tbody>
+<tr><td><b>Pre-boarding</b><br>(before Day 1)</td><td>Contractually and legally ready</td><td>Signed employment terms, NDA, acceptable-use policy, code of ethics; identity and eligibility checks as permitted by law</td><td>PM + Founder</td></tr>
+<tr><td><b>Day 1</b></td><td>Welcomed, briefed, equipped</td><td>Company and department tour; mentor assigned; accounts created with least privilege; workstation baseline</td><td>PM + Mentor</td></tr>
+<tr><td><b>Days 2–3</b></td><td>Understands the legal line</td><td>Authorised Testing Policy (Part 3) workshop; legal and ethics quiz; case studies of unauthorised-testing consequences</td><td>Security Lead</td></tr>
+<tr><td><b>Days 4–5</b></td><td>Can work in the lab safely</td><td>Virtualisation setup; isolated lab network; first snapshot and rollback; evidence and note-taking habits</td><td>Mentor</td></tr>
+<tr><td><b>Week 2</b></td><td>Enters the 90-day roadmap</td><td>Starts Level 1 modules; weekly 1:1; progress tracker opened</td><td>Mentor</td></tr>
+<tr><td><b>Day 30 / 60 / 90</b></td><td>Gated progression</td><td>Written and practical assessments; authority level reviewed</td><td>Security Lead</td></tr>
+</tbody></table>
+
+<h2>4.2 Pre-boarding checklist (HR / PM)</h2>
+<table class="t">
+<thead><tr><th style="width:5%"></th><th>Item</th><th style="width:26%">Evidence</th></tr></thead>
+<tbody>
+<tr><td>☐</td><td>Employment or contractor agreement signed, including confidentiality and intellectual-property terms</td><td>Signed copy in HR file</td></tr>
+<tr><td>☐</td><td>Non-disclosure agreement and Acceptable Use Policy signed</td><td>Signed copies</td></tr>
+<tr><td>☐</td><td>Code of Ethics (4.4) read and signed</td><td>Signed copy</td></tr>
+<tr><td>☐</td><td>Identity and eligibility verification per applicable law; background checks only as lawful and proportionate</td><td>HR record</td></tr>
+<tr><td>☐</td><td>Mentor ("buddy") named, introduction email sent with Day 1 agenda</td><td>Email</td></tr>
+<tr><td>☐</td><td>Workstation ordered or prepared (see 4.5); no real client data on it</td><td>Asset record</td></tr>
+</tbody></table>
+
+<h2>4.3 Week 1 day-by-day plan</h2>
+<table class="t">
+<thead><tr><th style="width:9%">Day</th><th style="width:26%">Morning</th><th style="width:28%">Afternoon</th><th>Output / sign-off</th></tr></thead>
+<tbody>
+<tr><td><b>1</b></td><td>Welcome; company, services, department structure (Part 1–2); meet mentor</td><td>Accounts and MFA; password manager; workstation baseline (4.5)</td><td>Baseline checklist signed by Mentor</td></tr>
+<tr><td><b>2</b></td><td>Why security testing is legal only with authorisation; real-world cases; Authorised Testing Policy read-through</td><td>Rules of Engagement and scope exercises on paper (identify in-scope/out-of-scope from sample documents)</td><td>Exercise answers reviewed</td></tr>
+<tr><td><b>3</b></td><td>Data protection basics; evidence and data handling; reporting and escalation</td><td>Legal and ethics quiz (<b>100% pass mark</b>; retake after coaching); policy acknowledgement signed</td><td>Quiz record + signed POL-SEC-001</td></tr>
+<tr><td><b>4</b></td><td>Virtualisation basics; install hypervisor; create isolated host-only network</td><td>Build a blank test VM; snapshot; rollback exercise</td><td>Lab isolation check (Part 9, Phase A)</td></tr>
+<tr><td><b>5</b></td><td>Note-taking, documentation templates, tickets, Git for documentation (no secrets)</td><td>Week review with mentor; plan weeks 2–4; <b>Lab Authorisation Record</b> signed by Security Lead</td><td>Week 1 sign-off (4.8)</td></tr>
+</tbody></table>
+<div class="box info"><b>Why legal training comes before tools</b><p>A beginner with a scanner and no legal understanding is a risk to the client, the company and themselves. No trainee receives tool access or lab credentials until the quiz and acknowledgement are on file.</p></div>
+
+<h2>4.4 Code of Ethics (sign on Day 1)</h2>
+<ol>
+<li>I will test only with written authorisation and only inside the agreed scope.</li>
+<li>I will protect client data and evidence as if it were my own most sensitive information.</li>
+<li>I will use my skills to defend, never to harm, and I will report discoveries only to authorised contacts.</li>
+<li>I will be honest in findings, including about what I do not know or did not test.</li>
+<li>I will stop work and report if I see danger, an unexpected impact, or a doubt about authority.</li>
+<li>I will not boast about, trade in or publish vulnerabilities or client details.</li>
+<li>I will keep learning and ask for supervision when I reach the edge of my competence.</li>
+<li>I will not discriminate against, harass or intimidate colleagues, clients or the public.</li>
+<li>I will declare conflicts of interest, including any personal link to a client or target.</li>
+<li>I accept that breaches of this code may lead to dismissal and legal action.</li>
+</ol>
+
+<h2>4.5 Secure workstation baseline</h2>
+<table class="t">
+<thead><tr><th style="width:5%"></th><th style="width:28%">Control</th><th>Required setting</th></tr></thead>
+<tbody>
+<tr><td>☐</td><td>Operating system</td><td>Supported version, automatic updates on, local admin used only when needed</td></tr>
+<tr><td>☐</td><td>Disk encryption</td><td>Full-disk encryption enabled (BitLocker / FileVault / LUKS); recovery key stored in the company vault</td></tr>
+<tr><td>☐</td><td>Endpoint protection</td><td>Company-approved antivirus/EDR active and updating</td></tr>
+<tr><td>☐</td><td>Multi-factor authentication</td><td>Enabled on email, code hosting, password manager, VPN, cloud consoles; authenticator app or hardware key preferred over SMS</td></tr>
+<tr><td>☐</td><td>Password manager</td><td>Company-approved; unique strong passwords; master secret protected with MFA</td></tr>
+<tr><td>☐</td><td>Screen lock &amp; firewall</td><td>Lock after 5 minutes or less; host firewall on</td></tr>
+<tr><td>☐</td><td>Separate lab environment</td><td>Hypervisor (e.g. VirtualBox, VMware, KVM) with lab VMs only on a host-only network; no bridging to office or home LAN</td></tr>
+<tr><td>☐</td><td>Browser profiles</td><td>One profile for work, one for lab testing tools; no saved work passwords in lab profile</td></tr>
+<tr><td>☐</td><td>Backups &amp; storage</td><td>Documents in approved encrypted storage; no client data on USB or personal cloud</td></tr>
+<tr><td>☐</td><td>Tool inventory</td><td>Tools installed from official sources; versions recorded in the tool register</td></tr>
+</tbody></table>
+
+<h2>4.6 Accounts and access (least privilege)</h2>
+<table class="t">
+<thead><tr><th style="width:26%">System</th><th style="width:26%">Day 1 access</th><th>Granted later (needs Security Lead approval)</th></tr></thead>
+<tbody>
+<tr><td>Email, chat, training portal</td><td>Standard user, MFA</td><td>—</td></tr>
+<tr><td>Documentation repository</td><td>Read/write to training and internal docs</td><td>Engagement documents (no evidence)</td></tr>
+<tr><td>Lab environment</td><td>Own local VMs only</td><td>Shared training range (VEL-owned)</td></tr>
+<tr><td>Evidence store</td><td><b>None</b></td><td>Per engagement, A1 and above, time-limited</td></tr>
+<tr><td>Client systems or credentials</td><td><b>None</b></td><td>Per engagement authorisation and authority level</td></tr>
+<tr><td>Cloud consoles of VEL</td><td>None</td><td>Read-only roles after Level 3 and approval</td></tr>
+</tbody></table>
+
+<h2>4.7 Mentor, supervision and probation</h2>
+<ul>
+<li><b>Mentor:</b> a Consultant or Engineer at A2+ who meets the trainee weekly (30 minutes), reviews work products and signs weekly progress.</li>
+<li><b>Observer rule:</b> trainees shadow real engagements as <i>silent observers</i> only after Day 30 and only if the client has been told a trainee is present.</li>
+<li><b>Probation reviews:</b> Day 30, 60 and 90 with Security Lead; outcome recorded as <i>Proceed / Proceed with support plan / Extend / Stop</i>.</li>
+<li><b>Escalation:</b> concerns about workload, ethics or a colleague's behaviour go to the mentor or Security Lead; retaliation is not tolerated.</li>
+</ul>
+
+<h2>4.8 Week 1 sign-off sheet</h2>
+<table class="t">
+<thead><tr><th style="width:5%"></th><th>Completed item</th><th style="width:16%">Trainee</th><th style="width:16%">Mentor</th><th style="width:16%">Security Lead</th></tr></thead>
+<tbody>
+<tr><td>☐</td><td>Contract, NDA, Acceptable Use and Code of Ethics signed</td><td></td><td></td><td></td></tr>
+<tr><td>☐</td><td>Workstation baseline (4.5) verified</td><td></td><td></td><td></td></tr>
+<tr><td>☐</td><td>MFA and password manager active on all accounts</td><td></td><td></td><td></td></tr>
+<tr><td>☐</td><td>POL-SEC-001 acknowledged; legal and ethics quiz passed (100%)</td><td></td><td></td><td></td></tr>
+<tr><td>☐</td><td>Isolated lab network built and verified (Part 9 Phase A)</td><td></td><td></td><td></td></tr>
+<tr><td>☐</td><td>Lab Authorisation Record signed</td><td></td><td></td><td></td></tr>
+<tr><td>☐</td><td>Mentor 1:1 held; 90-day plan opened (Part 5)</td><td></td><td></td><td></td></tr>
+</tbody></table>
+<div class="verify">Authority level after Week 1: A0 (Trainee). Lab only. No client systems.</div>

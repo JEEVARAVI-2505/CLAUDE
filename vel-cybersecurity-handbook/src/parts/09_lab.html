@@ -1,0 +1,262 @@
+<h1>Part 9 — Lab 01: Isolated Linux Server Hardening Lab</h1>
+<table class="kv">
+<tr><td>Lab ID</td><td>LAB-01 · Training Project 1 · Roadmap Week 4 · Level 2</td></tr>
+<tr><td>Environment</td><td>VEL-owned virtual machines on a <b>host-only</b> network. No client systems. No internet-exposed services.</td></tr>
+<tr><td>Authority required</td><td>A0 (trainee) with a signed Lab Authorisation Record</td></tr>
+<tr><td>Estimated time</td><td>12–16 hours over 5 days</td></tr>
+<tr><td>Approval to complete</td><td>Mentor review, QA Reviewer check of report, Security Lead sign-off (Gate 30)</td></tr>
+</table>
+
+<div class="box rule"><b>Lab rule</b><p>Every IP address you scan, probe or log in to in this lab must be one of your <b>own lab VMs</b>, listed in your Lab Authorisation Record. If a command could reach any other address, stop and ask.</p></div>
+
+<h2>9.1 Objectives and learning outcomes</h2>
+<ul>
+<li>Build an isolated lab and prove that it is isolated.</li>
+<li>Capture a baseline of a default Linux server and identify its weaknesses.</li>
+<li>Apply ten hardening controls safely, with backups, verification and rollback.</li>
+<li>Compare before and after results and write an evidence-based hardening report.</li>
+<li>Practise the habit: <b>authorise, snapshot, change, verify, document</b>.</li>
+</ul>
+
+<h2>9.2 Lab topology</h2>
+<pre>   Your approved workstation (host)
+   ┌──────────────────────────────────────────────────────────────┐
+   │  Hypervisor (VirtualBox / VMware / KVM)                      │
+   │                                                              │
+   │   host-only network 192.168.56.0/24  (no route to Internet)  │
+   │   ─────────────┬──────────────────────────┬─────────────     │
+   │         ┌──────┴───────┐          ┌───────┴──────┐           │
+   │         │ lab01-analyst│          │ lab01-target │           │
+   │         │ 192.168.56.10│          │192.168.56.101│           │
+   │         │ nmap, ssh    │ ───────▶ │ Ubuntu Server│           │
+   │         └──────────────┘          │ LTS (hardened)│          │
+   │                                   └──────────────┘           │
+   └──────────────────────────────────────────────────────────────┘
+   Temporary: a NAT adapter on lab01-target only for package updates,
+   then REMOVED (Phase A step 5).</pre>
+<p class="small">Addresses are examples. VirtualBox's default host-only range is 192.168.56.0/24; use your hypervisor's real values and put <b>your</b> addresses in the Lab Authorisation Record.</p>
+
+<table class="t">
+<thead><tr><th style="width:20%">VM</th><th style="width:30%">Specification</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td><b>lab01-target</b></td><td>Ubuntu Server LTS (current supported release), 2 vCPU, 2 GB RAM, 20 GB disk, OpenSSH installed during setup</td><td>The server you will harden</td></tr>
+<tr><td><b>lab01-analyst</b></td><td>Ubuntu Server or Desktop LTS, 1–2 vCPU, 2 GB RAM, with <code>nmap</code> and <code>ssh</code></td><td>Plays the role of an outside observer on the lab network</td></tr>
+</tbody></table>
+
+<h2>9.3 Prerequisites and tool register</h2>
+<ul>
+<li>Week 1 sign-off complete (legal quiz 100%, POL-SEC-001 signed).</li>
+<li>Modules L1-01 to L1-06 and L2-01 to L2-04 studied.</li>
+<li>Free software only. Record each tool, version, source and licence in the tool register: hypervisor, Ubuntu Server LTS, OpenSSH, UFW, fail2ban, auditd, nmap, optional Lynis.</li>
+</ul>
+
+<h2>9.4 Phase A: Authorise and isolate (Day 1)</h2>
+<ol class="steps">
+<li><b>Sign the Lab Authorisation Record</b> (Appendix C) listing VM names, IPs, purpose and dates. The Security Lead countersigns.</li>
+<li><b>Create the host-only network</b> in your hypervisor. Do <b>not</b> choose "bridged" for any lab VM.</li>
+<li><b>Install lab01-target and lab01-analyst.</b> Create an admin user <code>labadmin</code> (not <code>root</code>); install OpenSSH server when asked.</li>
+<li><b>Update the target</b> while the temporary NAT adapter is attached: <pre>sudo apt update &amp;&amp; sudo apt full-upgrade -y
+sudo reboot</pre></li>
+<li><b>Remove the NAT adapter</b> from lab01-target (VM powered off, then in the hypervisor network settings). Boot the VM.</li>
+<li><b>Prove isolation</b> on lab01-target: <pre>ip -br addr                 <span class="c"># only the host-only address (e.g. 192.168.56.101)</span>
+ip route                    <span class="c"># no default route</span>
+ping -c 2 -W 2 1.1.1.1      <span class="c"># must FAIL (network unreachable / 100% loss)</span>
+ping -c 2 192.168.56.10     <span class="c"># must succeed (analyst VM)</span></pre></li>
+<li><b>Take snapshot "S0-clean-isolated"</b> of both VMs.</li>
+</ol>
+<div class="verify">Isolation check passed only if the target cannot reach the Internet and no lab VM is bridged to your LAN.</div>
+
+<h2>9.5 Phase B: Baseline (Day 2)</h2>
+<p>Record the "before" state. Save outputs to <code>lab01/evidence/baseline/</code> on your workstation (no real data; safe to store in the training repo).</p>
+<ol class="steps">
+<li><b>Configuration backup</b> on the target: <pre>sudo tar czf /var/backups/etc-baseline-$(date +%F).tgz /etc
+sha256sum /var/backups/etc-baseline-*.tgz | tee ~/etc-baseline.sha256</pre></li>
+<li><b>System facts:</b> <pre>lsb_release -a; uname -r; ssh -V
+getent passwd | awk -F: '$7 !~ /(nologin|false)$/ {print $1,$7}'
+sudo awk -F: '($2==""){print $1}' /etc/shadow
+sudo ss -tulpn
+systemctl list-unit-files --type=service --state=enabled
+sudo sshd -T | grep -Ei '^(permitrootlogin|passwordauthentication|maxauthtries|x11forwarding|logingracetime)'
+sudo ufw status verbose</pre></li>
+<li><b>External view</b> from lab01-analyst (own lab IP only): <pre>nmap -sV --top-ports 1000 -oA ~/lab01-baseline 192.168.56.101</pre></li>
+<li><b>Optional audit score.</b> On the target: <pre>sudo apt install -y lynis    <span class="c"># temporary NAT needed, or use an offline package</span>
+sudo lynis audit system</pre> Note the "Hardening index" and warnings. The audit is read-only.</li>
+<li><b>Write down weaknesses</b> you see (for example: password login enabled, no firewall, unnecessary services) as draft findings with a likelihood and impact rating (Part 7.4).</li>
+<li><b>Snapshot "S1-baseline"</b>.</li>
+</ol>
+<p class="small">If the target has no internet, install packages needed for later steps (<code>ufw fail2ban auditd libpam-pwquality unattended-upgrades lynis</code>) before removing the NAT adapter, or reattach NAT briefly; remove it again and re-run the isolation check.</p>
+
+<h2>9.6 Phase C: Hardening controls H1–H10 (Days 2–4)</h2>
+<div class="box warn"><b>Safety rules for every step</b><ul><li>Keep a <b>second console session</b> (hypervisor console) open when you change SSH or the firewall.</li><li>Change <b>one control at a time</b>, verify, then record in the change log.</li><li>If anything breaks, <b>revert the snapshot</b> or the specific file, and note why.</li></ul></div>
+
+<h3>H1 · Patching and automatic security updates</h3>
+<pre>sudo apt install -y unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades      <span class="c"># choose Yes</span>
+sudo unattended-upgrade --dry-run --debug | tail -n 5</pre>
+<p><b>Why:</b> known vulnerabilities are the easiest way in. <b>Verify:</b> <code>systemctl is-enabled unattended-upgrades</code> returns <code>enabled</code>; the dry run completes without errors. <b>Rollback:</b> <code>sudo apt remove unattended-upgrades</code>.</p>
+
+<h3>H2 · Accounts and password quality</h3>
+<pre>sudo passwd -l root                                   <span class="c"># lock the root password (sudo still works)</span>
+sudo apt install -y libpam-pwquality
+sudo sed -i 's/^# *minlen.*/minlen = 14/' /etc/security/pwquality.conf
+grep -E '^minlen' /etc/security/pwquality.conf
+sudo awk -F: '($2==""){print $1}' /etc/shadow         <span class="c"># expect no output</span></pre>
+<p><b>Why:</b> limits shared or guessable credentials. <b>Verify:</b> <code>sudo passwd -S root</code> shows <code>L</code> (locked); no accounts with empty passwords. <b>Decision log:</b> list each remaining login-capable account with owner and purpose; remove or lock any without one.</p>
+
+<h3>H3 · SSH: key login only, no root, limited attempts</h3>
+<p>On <b>lab01-analyst</b> create a key and copy it:</p>
+<pre>ssh-keygen -t ed25519 -C "lab01-analyst"
+ssh-copy-id labadmin@192.168.56.101
+ssh labadmin@192.168.56.101        <span class="c"># must log in with the key</span></pre>
+<p>On <b>lab01-target</b> create the drop-in file (it must sort <i>before</i> cloud-init files, because the first value wins):</p>
+<pre>sudo tee /etc/ssh/sshd_config.d/10-vel-hardening.conf &gt;/dev/null &lt;&lt;'EOF'
+PermitRootLogin no
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+MaxAuthTries 3
+LoginGraceTime 30
+X11Forwarding no
+AllowUsers labadmin
+EOF
+sudo sshd -t &amp;&amp; sudo systemctl reload ssh</pre>
+<p><b>Verify</b> (from analyst): <code>ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no labadmin@192.168.56.101</code> must give <code>Permission denied (publickey)</code>. On target: <code>sudo sshd -T | grep -Ei '^(permitrootlogin|passwordauthentication|maxauthtries|allowusers)'</code>. <b>Rollback:</b> <code>sudo rm /etc/ssh/sshd_config.d/10-vel-hardening.conf &amp;&amp; sudo systemctl reload ssh</code> (use the hypervisor console if SSH is locked).</p>
+
+<h3>H4 · Host firewall (UFW), default deny</h3>
+<pre>sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow from 192.168.56.0/24 to any port 22 proto tcp
+sudo ufw logging on
+sudo ufw enable
+sudo ufw status verbose</pre>
+<p><b>Always add the SSH allow rule before enabling.</b> <b>Verify:</b> status shows <code>Status: active</code>, default <code>deny (incoming)</code>, and port 22 allowed from the lab subnet. <b>Rollback:</b> <code>sudo ufw disable</code>.</p>
+
+<h3>H5 · Reduce attack surface</h3>
+<pre>sudo ss -tulpn                                         <span class="c"># what listens?</span>
+systemctl list-unit-files --type=service --state=enabled
+<span class="c"># Only after confirming a service is unneeded and recording the decision:</span>
+sudo systemctl disable --now &lt;service-name&gt;</pre>
+<p><b>Why:</b> every listening service is a possible weakness. <b>Verify:</b> only SSH (port 22) listens on the lab address, apart from local-only services such as the system resolver on 127.0.0.53. Never disable a service you cannot explain.</p>
+
+<h3>H6 · Brute-force protection (fail2ban)</h3>
+<pre>sudo apt install -y fail2ban
+sudo tee /etc/fail2ban/jail.d/vel-sshd.local &gt;/dev/null &lt;&lt;'EOF'
+[sshd]
+enabled  = true
+backend  = systemd
+maxretry = 4
+findtime = 10m
+bantime  = 1h
+EOF
+sudo systemctl enable --now fail2ban
+sudo systemctl restart fail2ban
+sudo fail2ban-client status sshd</pre>
+<p><b>Verify:</b> the jail <code>sshd</code> is listed and active. <i>Optional, own lab only:</i> from the analyst VM, try logging in as a non-existent user a few times (<code>ssh nosuchuser@192.168.56.101</code>); check <code>sudo fail2ban-client status sshd</code> for a banned address, then unban with <code>sudo fail2ban-client set sshd unbanip 192.168.56.10</code>.</p>
+
+<h3>H7 · Audit logging (auditd)</h3>
+<pre>sudo apt install -y auditd
+sudo tee /etc/audit/rules.d/vel-lab01.rules &gt;/dev/null &lt;&lt;'EOF'
+-w /etc/passwd -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/sudoers -p wa -k sudoers
+-w /etc/sudoers.d/ -p wa -k sudoers
+-w /etc/ssh/sshd_config -p wa -k sshd
+-w /etc/ssh/sshd_config.d/ -p wa -k sshd
+EOF
+sudo augenrules --load
+sudo auditctl -l</pre>
+<p><b>Verify:</b> create and remove a harmless file <code>sudo touch /etc/ssh/sshd_config.d/zz-test.conf; sudo rm /etc/ssh/sshd_config.d/zz-test.conf</code>, then <code>sudo ausearch -k sshd -ts recent</code> shows the events. <b>Why:</b> you cannot investigate what you did not log.</p>
+
+<h3>H8 · Time synchronisation and kernel network settings</h3>
+<pre>timedatectl                                            <span class="c"># System clock synchronized: yes</span>
+sudo tee /etc/sysctl.d/90-vel-lab01.conf &gt;/dev/null &lt;&lt;'EOF'
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.all.accept_redirects = 0
+net.ipv4.conf.all.send_redirects = 0
+net.ipv6.conf.all.accept_redirects = 0
+net.ipv4.tcp_syncookies = 1
+net.ipv4.conf.all.log_martians = 1
+kernel.randomize_va_space = 2
+EOF
+sudo sysctl --system | tail -n 5</pre>
+<p><b>Verify:</b> <code>sysctl net.ipv4.tcp_syncookies kernel.randomize_va_space</code> returns the values set. <b>Note:</b> accurate time makes logs trustworthy. Without the NAT adapter, time sync may need the hypervisor's guest tools or a lab NTP source; record what you used.</p>
+
+<h3>H9 · File permissions and privileged programmes</h3>
+<pre>ls -l /etc/shadow /etc/passwd /etc/ssh/sshd_config
+sudo find / -xdev -type f -perm -0002 -ls 2&gt;/dev/null       <span class="c"># world-writable files</span>
+sudo find / -xdev -perm -4000 -type f -ls 2&gt;/dev/null      <span class="c"># setuid programmes (review only)</span>
+chmod 700 ~/.ssh &amp;&amp; chmod 600 ~/.ssh/authorized_keys</pre>
+<p><b>Verify:</b> no unexpected world-writable files; each setuid programme is a normal system component you can explain. <b>Do not</b> remove setuid bits you do not understand; note them as questions for your mentor.</p>
+
+<h3>H10 · Backup and configuration baseline</h3>
+<pre>sudo tar czf /var/backups/etc-hardened-$(date +%F).tgz /etc
+sudo sha256sum /var/backups/etc-hardened-*.tgz | tee ~/etc-hardened.sha256
+<p><b>Verify:</b> extract both archives into separate folders and run <code>diff -ru baseline/etc hardened/etc</code>; every difference corresponds to a change-log entry. Take snapshot <b>"S2-hardened"</b>. <b>Proof of rollback:</b> restore <b>S1-baseline</b>, confirm the weak settings are back, then restore S2.</p>
+
+<h2>9.7 Phase D: Verify and compare (Day 5)</h2>
+<ol class="steps">
+<li>Repeat all baseline commands from 9.5 and save to <code>evidence/after/</code>.</li>
+<li>From lab01-analyst scan again (own lab IP only): <pre>nmap -sV --top-ports 1000 --max-retries 1 -oA ~/lab01-after 192.168.56.101</pre> <b>Expected:</b> 22/tcp open (OpenSSH); everything else filtered or closed.</li>
+<li>Compare scans: <code>ndiff ~/lab01-baseline.xml ~/lab01-after.xml</code> (installed with Nmap).</li>
+<li>Re-run Lynis if used; record the new hardening index and remaining suggestions.</li>
+<li>Run a <b>functionality check</b>: legitimate admin login by key works; updates install; logs are written; time is synchronised.</li>
+</ol>
+
+<h3>Expected results summary</h3>
+<table class="t">
+<thead><tr><th style="width:26%">Control</th><th style="width:30%">Before (typical default)</th><th>After (target state)</th></tr></thead>
+<tbody>
+<tr><td>SSH password login</td><td>Enabled</td><td>Disabled; key only; root login disabled</td></tr>
+<tr><td>Host firewall</td><td>Inactive</td><td>Active, default deny, SSH from lab subnet only</td></tr>
+<tr><td>Open ports (external view)</td><td>22/tcp plus any default services</td><td>22/tcp only</td></tr>
+<tr><td>Updates</td><td>Manual</td><td>Automatic security updates configured</td></tr>
+<tr><td>Brute-force protection</td><td>None</td><td>fail2ban sshd jail active</td></tr>
+<tr><td>Audit logging</td><td>No file/identity watches</td><td>auditd rules loaded for identity and SSH files</td></tr>
+<tr><td>Config backup &amp; rollback</td><td>None</td><td>Hashed archives and tested snapshot restore</td></tr>
+</tbody></table>
+
+<h2>9.8 Common mistakes and troubleshooting</h2>
+<table class="t">
+<thead><tr><th style="width:36%">Symptom</th><th>Likely cause / fix</th></tr></thead>
+<tbody>
+<tr><td>Cannot SSH after H3</td><td>Key not copied or <code>AllowUsers</code> wrong. Use the hypervisor console, remove the drop-in, reload, repeat step by step.</td></tr>
+<tr><td><code>sshd -T</code> still shows <code>passwordauthentication yes</code></td><td>Another file set it first. List <code>/etc/ssh/sshd_config.d/</code>; your file must sort earlier (e.g. <code>10-</code>).</td></tr>
+<tr><td>Locked out after enabling UFW</td><td>SSH allow rule missing or wrong subnet. Console: <code>sudo ufw allow from 192.168.56.0/24 to any port 22 proto tcp</code>.</td></tr>
+<tr><td>Nmap scan is very slow after the firewall</td><td>Dropped packets cause retries. Use <code>--top-ports 1000 --max-retries 1</code>.</td></tr>
+<tr><td>Packages fail to install</td><td>No network (NAT removed). Install needed packages first, or briefly re-attach NAT and re-check isolation.</td></tr>
+<tr><td>fail2ban shows no jail</td><td>Check <code>/etc/fail2ban/jail.d/vel-sshd.local</code> spelling and <code>sudo journalctl -u fail2ban -n 30</code>.</td></tr>
+<tr><td>Scanned an IP not in your record</td><td><b>Stop. Report to the Security Lead immediately</b> (Part 3.11).</td></tr>
+</tbody></table>
+
+<h2>9.9 Deliverables: the Lab 01 hardening report</h2>
+<ol>
+<li><b>Lab Authorisation Record</b> (signed) and isolation proof.</li>
+<li><b>Baseline findings</b>: at least five weaknesses with severity reasoning.</li>
+<li><b>Change log</b> table: control, command/file, reason, verification, rollback, time.</li>
+<li><b>Before/after evidence</b> (sanitised) and the Nmap comparison.</li>
+<li><b>Rollback proof</b> (snapshot restore) and functionality test result.</li>
+<li><b>Residual risks and next steps</b> (for example centralised logging, MFA for SSH, CIS Benchmark review).</li>
+<li><b>Reflection</b>: what went wrong, what you would do differently, any near-miss against policy.</li>
+</ol>
+<div class="box info"><b>Reference benchmark</b><p>After completing the lab, compare your choices with the CIS Benchmark for your Ubuntu release and the NIST Cybersecurity Framework "Protect" outcomes. Check the CIS terms of use: some CIS content and tools may require membership for commercial use.</p></div>
+
+<h2>9.10 Assessment and approvals</h2>
+<table class="t">
+<thead><tr><th style="width:30%">Criterion</th><th>Maximum score 4: evidence of</th></tr></thead>
+<tbody>
+<tr><td>Authorisation &amp; isolation</td><td>Signed record; isolation proven before any scan; only listed IPs targeted</td></tr>
+<tr><td>Baseline quality</td><td>Complete, reproducible, correctly interpreted</td></tr>
+<tr><td>Hardening correctness</td><td>All ten controls applied, each verified by output</td></tr>
+<tr><td>Safety</td><td>Backups, snapshots, rollback demonstrated; no lockout without recovery</td></tr>
+<tr><td>Documentation</td><td>Clear change log; honest limitations; sanitised evidence</td></tr>
+<tr><td>Understanding</td><td>Can explain <i>why</i> each control matters and its side effects</td></tr>
+</tbody></table>
+<table class="t">
+<thead><tr><th>Sign-off</th><th style="width:20%">Name</th><th style="width:16%">Signature</th><th style="width:14%">Date</th></tr></thead>
+<tbody>
+<tr><td>Trainee: submitted</td><td></td><td></td><td></td></tr>
+<tr><td>Mentor: practical reviewed</td><td></td><td></td><td></td></tr>
+<tr><td>QA Reviewer: report checked</td><td></td><td></td><td></td></tr>
+<tr><td>Security Lead: Lab 01 approved (counts toward Gate 30)</td><td></td><td></td><td></td></tr>
+</tbody></table>
+<div class="verify">Lab 01 complete does not grant client-system authority. Authority remains A0 until Gate 90.</div>

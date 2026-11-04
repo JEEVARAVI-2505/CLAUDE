@@ -1,0 +1,107 @@
+<h1>Part 7 — Client Engagement Lifecycle (Stages 01–15)</h1>
+<p>Every client engagement follows the same fifteen stages. A stage is finished only when its output exists and its gate is signed. <b>No testing happens before Stage 02 is complete.</b></p>
+
+<h2>7.1 Stage map</h2>
+<table class="t tight">
+<thead><tr><th style="width:5%">#</th><th style="width:20%">Stage</th><th style="width:37%">Key activities</th><th style="width:24%">Output</th><th>Gate</th></tr></thead>
+<tbody>
+<tr><td>01</td><td>Client qualification</td><td>Collect company details, industry, systems, concerns, compliance needs, critical assets, business impact, budget, timeline</td><td>Qualification record</td><td>Lead: fit and capability</td></tr>
+<tr><td>02</td><td>Written authorisation</td><td>Signed agreement, ownership confirmation, scope, methods, exclusions, window, emergency contact, stop-work, data handling</td><td>Authorisation pack (Part 3.3)</td><td><b>Hard gate:</b> Lead + QA</td></tr>
+<tr><td>03</td><td>Security discovery</td><td>Understand infrastructure, apps, APIs, cloud, network, databases, identity, controls, logging, backups, incident history</td><td>Architecture notes, interview records</td><td>Consultant</td></tr>
+<tr><td>04</td><td>Asset inventory</td><td>Register of every asset (7.2)</td><td><code>asset-inventory.csv</code></td><td>Consultant + client owner</td></tr>
+<tr><td>05</td><td>Threat model &amp; risk assessment</td><td>Assets, threat actors, attack surfaces, trust boundaries, vulnerabilities, impact, existing controls, residual risk; documented method</td><td>Threat model, <code>risk-register.md</code></td><td>Lead</td></tr>
+<tr><td>06</td><td>Scope and cost approval</td><td>Scope, methodology, deliverables, timeline, personnel, tools, third-party costs, retest terms, exclusions, pricing; one-time vs managed fees separated</td><td>Proposal and SoW</td><td>Lead + client</td></tr>
+<tr><td>07</td><td>Assessment environment</td><td>Approved workstation, secure OS, MFA, password manager, encrypted storage, approved VPN, logging, evidence management, tool versions</td><td>Environment checklist, tool register</td><td>Consultant + QA</td></tr>
+<tr><td>08</td><td>Repository &amp; documentation</td><td>Create project structure (7.3); restricted store for sensitive evidence</td><td>Project repository</td><td>Consultant</td></tr>
+<tr><td>09</td><td>Security testing</td><td>Only RoE-permitted methods: configuration review, vulnerability, dependency, SAST, DAST, API, access control, authentication, cloud, network exposure</td><td>Raw results (restricted), test log</td><td>Consultant per tier</td></tr>
+<tr><td>10</td><td>Vulnerability classification</td><td>Verify, de-duplicate, rate (7.4), assign owners and dates</td><td>Findings (confirmed, false-positive)</td><td>Lead (Critical/High)</td></tr>
+<tr><td>11</td><td>Security hardening</td><td>Approved changes: MFA, least privilege, firewall, config, patching, TLS, encryption, headers, secrets, DB restrictions, logging, backups</td><td>Change records, rollback notes</td><td>Client system owner</td></tr>
+<tr><td>12</td><td>Security QA</td><td>Verify fixes, no regressions, functionality, access restrictions, logging, configuration, backups, evidence integrity</td><td>QA checklist, retest results</td><td>QA + Lead</td></tr>
+<tr><td>13</td><td>Reporting</td><td>Executive summary, scope, method, assets, findings, ratings, impact, plan, limitations, retest status</td><td>Final report (7.5)</td><td>Lead + QA</td></tr>
+<tr><td>14</td><td>Client handover</td><td>Report, risk register, remediation tracker, configuration advice, evidence index, roadmap, retest plan, support proposal</td><td>Handover pack</td><td>Lead + client</td></tr>
+<tr><td>15</td><td>Managed security</td><td>Monitoring, vulnerability tracking, patch verification, access reviews, configuration checks, incident coordination, monthly reports, periodic reassessment</td><td>Monthly report</td><td>Lead</td></tr>
+</tbody></table>
+
+<h2>7.2 Asset inventory fields</h2>
+<table class="t">
+<thead><tr><th style="width:24%">Field</th><th>Description / example</th></tr></thead>
+<tbody>
+<tr><td>Asset ID</td><td>A-0001 (unique, never reused)</td></tr>
+<tr><td>Asset type</td><td>Server, workstation, web app, API, database, cloud account, network device, SaaS</td></tr>
+<tr><td>Owner / responsible team</td><td>Named person and team accountable for the asset</td></tr>
+<tr><td>Environment</td><td>Production, staging, development, lab</td></tr>
+<tr><td>IP or approved identifier</td><td>Address, hostname, URL or cloud resource ID as agreed</td></tr>
+<tr><td>Business criticality</td><td>Critical / High / Medium / Low, with a one-line reason</td></tr>
+<tr><td>Data classification</td><td>Public, internal, confidential, restricted (personal or regulated)</td></tr>
+<tr><td>Technology</td><td>OS, framework, database, versions</td></tr>
+<tr><td>Exposure</td><td>Internet-facing, internal, partner-only</td></tr>
+</tbody></table>
+
+<h2>7.3 Repository and documentation structure</h2>
+<pre>cybersecurity-project/
+├── README.md
+├── docs/            scope.md  authorisation.md  rules-of-engagement.md  architecture.md
+│                    methodology.md  risk-register.md  final-report.md
+├── assets/          asset-inventory.csv  approved-targets.csv
+├── assessments/     application/  api/  cloud/  network/  configuration/
+├── evidence/        screenshots/  sanitised-logs/        (sanitised only)
+├── findings/        confirmed/  false-positives/  remediation/
+├── remediation/     recommendations.md  retest-results.md
+├── policies/        access-control.md  data-handling.md  retention.md
+└── reports/</pre>
+<div class="box rule"><b>Never commit sensitive material</b><p>Passwords, tokens, customer data, raw scanner output with exploitable detail, and unsanitised evidence do <b>not</b> go into an ordinary Git repository. They live in the approved, restricted-access, encrypted evidence store. The repository holds only sanitised documents and references. Add secret scanning and a pre-commit hook to every project repository.</p></div>
+
+<h2>7.4 Finding record and rating</h2>
+<table class="t">
+<thead><tr><th style="width:24%">Finding field</th><th>Content</th></tr></thead>
+<tbody>
+<tr><td>Finding ID / title</td><td>F-001 · short, neutral title</td></tr>
+<tr><td>Affected asset</td><td>Asset ID(s) from the inventory</td></tr>
+<tr><td>Description</td><td>What is wrong, in plain language</td></tr>
+<tr><td>Evidence</td><td>Sanitised reference (file name, hash)</td></tr>
+<tr><td>Severity / likelihood / business impact</td><td>Rating with reasoning (see below)</td></tr>
+<tr><td>Reproduction conditions</td><td>Steps <b>within the authorised scope</b>, with the minimum detail needed to confirm; no weaponised exploit code</td></tr>
+<tr><td>Remediation</td><td>Specific, testable fix; alternative mitigation</td></tr>
+<tr><td>Owner / target date</td><td>Named client owner; date agreed</td></tr>
+<tr><td>Status</td><td>Open, in progress, fixed, retested, accepted risk, false positive</td></tr>
+</tbody></table>
+<p><b>Rating method.</b> Where a CVE or weakness exists, record the <b>CVSS</b> base score and vector; then apply <b>business context</b> using a 5×5 likelihood × impact matrix. The final rating is the reasoned combination, never the scanner label alone.</p>
+<table class="t tight">
+<thead><tr><th>Likelihood ↓ / Impact →</th><th class="c">1 Minor</th><th class="c">2 Moderate</th><th class="c">3 Major</th><th class="c">4 Severe</th><th class="c">5 Critical</th></tr></thead>
+<tbody>
+<tr><td>5 Almost certain</td><td class="c sev3">5</td><td class="c sev2">10</td><td class="c sev2">15</td><td class="c sev1">20</td><td class="c sev1">25</td></tr>
+<tr><td>4 Likely</td><td class="c sev4">4</td><td class="c sev3">8</td><td class="c sev2">12</td><td class="c sev1">16</td><td class="c sev1">20</td></tr>
+<tr><td>3 Possible</td><td class="c sev4">3</td><td class="c sev3">6</td><td class="c sev3">9</td><td class="c sev2">12</td><td class="c sev2">15</td></tr>
+<tr><td>2 Unlikely</td><td class="c sev4">2</td><td class="c sev4">4</td><td class="c sev3">6</td><td class="c sev3">8</td><td class="c sev2">10</td></tr>
+<tr><td>1 Rare</td><td class="c sev4">1</td><td class="c sev4">2</td><td class="c sev4">3</td><td class="c sev4">4</td><td class="c sev3">5</td></tr>
+</tbody></table>
+<table class="t tight">
+<thead><tr><th>Rating</th><th>Score band</th><th>CVSS band (guide)</th><th>Suggested remediation target</th><th>Approval</th></tr></thead>
+<tbody>
+<tr><td class="sev1">Critical</td><td>16–25</td><td>9.0–10.0</td><td>7 days, interim mitigation immediately</td><td>Lead + second reviewer</td></tr>
+<tr><td class="sev2">High</td><td>10–15</td><td>7.0–8.9</td><td>30 days</td><td>Lead + second reviewer</td></tr>
+<tr><td class="sev3">Medium</td><td>5–9</td><td>4.0–6.9</td><td>90 days</td><td>Consultant</td></tr>
+<tr><td class="sev4">Low</td><td>1–4</td><td>0.1–3.9</td><td>180 days or next cycle</td><td>Consultant</td></tr>
+</tbody></table>
+<p class="small">Targets are suggested defaults; the client's risk appetite and contract prevail. Scanner alerts are labelled <i>unconfirmed</i> until manually verified (where safe) or confirmed from configuration evidence.</p>
+
+<h2>7.5 Final report outline</h2>
+<ol>
+<li><b>Executive summary:</b> overall posture, top risks, decisions needed; no exploit detail.</li>
+<li>Scope, authorisation reference and limitations (what was <b>not</b> tested).</li>
+<li>Methodology and tools (with versions) and standards used (OWASP WSTG, CIS, NIST).</li>
+<li>Assets assessed and risk summary chart.</li>
+<li>Findings by severity, using the record in 7.4.</li>
+<li>Business impact and risk ratings explained.</li>
+<li>Remediation plan with owners, dates and quick wins.</li>
+<li>Retest status and residual risk.</li>
+<li>Restricted technical annex (need-to-know), evidence index.</li>
+</ol>
+<div class="box warn"><b>Honest limitations</b><p>State the testing window, access level, excluded systems and the fact that an assessment is a point-in-time sample. Never claim the client is "secure" or "compliant". Say what was found, what was fixed and what remains.</p></div>
+
+<h2>7.6 Managed security: what is and is not included</h2>
+<table class="t">
+<thead><tr><th style="width:50%">Typically included (when contracted)</th><th>Not included unless explicitly agreed</th></tr></thead>
+<tbody><tr><td><ul><li>Vulnerability tracking and monthly rescans (T1/T2 per RoE)</li><li>Patch verification and configuration checks</li><li>Alert triage within stated business hours</li><li>Quarterly access reviews</li><li>Incident coordination and evidence guidance</li><li>Monthly security report; periodic reassessment</li></ul></td>
+<td><ul><li><b>24/7 monitoring</b> (only if staffed and tooled to deliver it)</li><li>Hands-on forensic investigation or legal advice</li><li>Regulatory notification decisions</li><li>Fixing client application code</li><li>Third-party licence costs and cloud platform costs</li><li>Certification or independent audit</li></ul></td></tr></tbody></table>
+<p>Pricing, margins and recurring revenue (hours, licences, storage, retests, support) are the subject of Module 3. One-time assessment fees and monthly managed fees are always quoted separately.</p>

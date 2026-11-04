@@ -1,0 +1,153 @@
+<h1>Part 6 — Teaching Format and Module Catalogue</h1>
+
+<h2>6.1 The 14-point teaching format</h2>
+<p>Every training module follows the same structure so learners know what to expect and reviewers know what to check.</p>
+<table class="t">
+<thead><tr><th style="width:5%">#</th><th style="width:22%">Element</th><th>What it contains</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Definition</td><td>What the topic is, in one or two plain sentences</td></tr>
+<tr><td>2</td><td>Business purpose</td><td>Why a client or the company cares</td></tr>
+<tr><td>3</td><td>Threat or risk addressed</td><td>What can go wrong without it</td></tr>
+<tr><td>4</td><td>Prerequisites</td><td>Earlier modules, knowledge and access needed</td></tr>
+<tr><td>5</td><td>Tool installation</td><td>Official source, version to record, licence</td></tr>
+<tr><td>6</td><td>Safe configuration</td><td>Isolation, rate limits, authorisation and legal/operational impact</td></tr>
+<tr><td>7</td><td>Step-by-step procedure</td><td>Numbered actions with exact commands</td></tr>
+<tr><td>8</td><td>Expected output</td><td>What correct looks like</td></tr>
+<tr><td>9</td><td>Verification</td><td>How to prove it worked</td></tr>
+<tr><td>10</td><td>Common mistakes</td><td>Where beginners go wrong</td></tr>
+<tr><td>11</td><td>Documentation</td><td>What to record, where to file it</td></tr>
+<tr><td>12</td><td>Practical assignment</td><td>A task in an owned/vulnerable environment</td></tr>
+<tr><td>13</td><td>Assessment</td><td>Questions and a practical rubric</td></tr>
+<tr><td>14</td><td>Approval requirement</td><td>Who must sign before the learner proceeds, and what authority results</td></tr>
+</tbody></table>
+<div class="box info"><b>Rule for every module</b><p>Before any tool is used, the module states its <b>legal and operational impact</b>: what traffic it sends, what it may break, and what authorisation it needs. Learners must be able to explain this before they are allowed to run the tool.</p></div>
+
+<h2>6.2 Sample module M-L2-04: Linux accounts, permissions and SSH hardening</h2>
+<div class="module"><div class="mh">M-L2-04 · Level 2 · Linux and Windows Security · Lab-only (A0)</div>
+<table class="t">
+<tr><td>1. Definition</td><td>Linux controls who can log in, what they can read, write or run through accounts, groups, file permissions and the SSH remote-login service. Hardening means removing unneeded access and tightening defaults.</td></tr>
+<tr><td>2. Business purpose</td><td>Servers hold client data and run client applications. Weak accounts or open SSH are the commonest route to unauthorised access, outage and loss of trust.</td></tr>
+<tr><td>3. Threat / risk</td><td>Password guessing against SSH, shared or stale accounts, over-permissive files, privilege escalation through misconfigured sudo or setuid programmes.</td></tr>
+<tr><td>4. Prerequisites</td><td>M-L1 modules on operating systems, TCP/IP and ports; legal quiz passed; lab isolation verified.</td></tr>
+<tr><td>5. Tool installation</td><td>Built into Ubuntu Server LTS: <code>openssh-server</code>, <code>sudo</code>, <code>ufw</code>. Record OS version (<code>lsb_release -a</code>) and OpenSSH version (<code>ssh -V</code>) in the tool register.</td></tr>
+<tr><td>6. Safe configuration</td><td>Lab VM on host-only network only. <b>Snapshot first.</b> Keep a second console session open while changing SSH, so a mistake cannot lock you out.</td></tr>
+<tr><td>7. Procedure</td><td>
+<ol style="margin:0;padding-left:16px">
+<li>Review accounts: <code>getent passwd | awk -F: '$7 !~ /(nologin|false)$/ {print $1,$7}'</code></li>
+<li>Find accounts with empty passwords: <code>sudo awk -F: '($2==""){print $1}' /etc/shadow</code> (expected: no output)</li>
+<li>Review sudo rights: <code>sudo -l</code> and <code>getent group sudo</code></li>
+<li>Check file permissions on sensitive files: <code>ls -l /etc/shadow /etc/ssh/sshd_config</code> (shadow should not be world-readable)</li>
+<li>List setuid files to understand them (read-only): <code>sudo find / -xdev -perm -4000 -type f -ls 2>/dev/null</code></li>
+<li>Create the SSH hardening drop-in <code>/etc/ssh/sshd_config.d/10-vel-hardening.conf</code> as in Part 9, step H3.</li>
+<li>Validate syntax before applying: <code>sudo sshd -t</code> (no output means valid), then <code>sudo systemctl reload ssh</code></li>
+</ol></td></tr>
+<tr><td>8. Expected output</td><td><code>sudo sshd -T</code> shows <code>permitrootlogin no</code>, <code>passwordauthentication no</code>, <code>maxauthtries 3</code>; key login works; password login is refused.</td></tr>
+<tr><td>9. Verification</td><td>From the analyst VM: <code>ssh -o PreferredAuthentications=password -o PubkeyAuthentication=no labadmin@&lt;lab-ip&gt;</code> must return <code>Permission denied (publickey)</code>. Check <code>/var/log/auth.log</code> for the attempt.</td></tr>
+<tr><td>10. Common mistakes</td><td>Disabling password login before a key works; editing the main file when an included file overrides it (first value wins); forgetting <code>sshd -t</code>; closing the only session.</td></tr>
+<tr><td>11. Documentation</td><td>Change log (what, why, before/after), command output excerpts, rollback steps, tool register entry.</td></tr>
+<tr><td>12. Practical assignment</td><td>Harden SSH on a fresh lab VM, then restore the snapshot and repeat from your own notes without the guide.</td></tr>
+<tr><td>13. Assessment</td><td>Five written questions (why disable root login? what is "first value wins"? what does <code>sshd -t</code> do?); practical rubric (Part 5.5).</td></tr>
+<tr><td>14. Approval</td><td>Mentor signs; module counts toward Gate 30. Authority remains A0.</td></tr>
+</table></div>
+
+<h2>6.3 Sample module M-L6-02: Nmap: safe, authorised network discovery</h2>
+<div class="module"><div class="mh">M-L6-02 · Level 6 · Security Tools · Lab-only until engagement-authorised (T1/T2)</div>
+<table class="t">
+<tr><td>1. Definition</td><td>Nmap is a free network scanner that discovers hosts and reports open ports and services. It sends packets to the target; therefore it is an <b>active</b> tool.</td></tr>
+<tr><td>2. Business purpose</td><td>Shows the client what is exposed to a network so unnecessary services can be closed and firewall rules verified.</td></tr>
+<tr><td>3. Threat / risk</td><td>Unknown or forgotten services, misconfigured firewalls, shadow systems.</td></tr>
+<tr><td>4. Prerequisites</td><td>M-L1 TCP/IP and ports; M-L3 firewalls; policy acknowledgement; for any non-lab target, a signed authorisation and A2 authority (T2).</td></tr>
+<tr><td>5. Tool installation</td><td>Official project: <b>nmap.org</b>. Ubuntu: <code>sudo apt install -y nmap</code>. Record version with <code>nmap --version</code>. Licence: Nmap Public Source License (check terms for redistribution).</td></tr>
+<tr><td>6. Legal &amp; operational impact</td><td>Scanning someone else's network without permission may be illegal in your jurisdiction. Scans can trigger alarms, fill logs, and occasionally crash fragile devices. Use rate limits and agreed windows.</td></tr>
+<tr><td>7. Procedure (lab)</td><td>
+<ol style="margin:0;padding-left:16px">
+<li>Confirm the target IP is in your Lab Authorisation Record and is a VEL lab VM.</li>
+<li>Host discovery on the lab subnet only: <code>nmap -sn 192.168.56.0/24</code></li>
+<li>Top-port scan with service versions: <code>nmap -sV --top-ports 1000 -oA lab01-baseline 192.168.56.101</code></li>
+<li>Compare scans before and after hardening using the saved <code>.nmap</code> files.</li>
+<li>For firewalled targets, add <code>--max-retries 1</code> to avoid long waits.</li>
+</ol></td></tr>
+<tr><td>8. Expected output</td><td>Before hardening: SSH plus any lab services listed as open. After hardening: only the intended ports open; others filtered.</td></tr>
+<tr><td>9. Verification</td><td>Cross-check with <code>ss -tulpn</code> on the target. Anything Nmap reports but the host does not list is investigated (NAT, firewall, container).</td></tr>
+<tr><td>10. Common mistakes</td><td>Scanning the whole home or office LAN; typing a wrong subnet; scanning a public IP "to test"; running aggressive scripts without approval; forgetting to save output.</td></tr>
+<tr><td>11. Documentation</td><td>Command, version, time, target, output files (hash), person, approval reference.</td></tr>
+<tr><td>12. Practical assignment</td><td>Write a one-page "scan plan" for the lab (targets, settings, impact, stop conditions), have it approved, then execute and report.</td></tr>
+<tr><td>13. Assessment</td><td>Explain the impact of <code>-sn</code>, <code>-sV</code> and <code>--top-ports</code>; identify out-of-scope IPs in a sample list.</td></tr>
+<tr><td>14. Approval</td><td>Security Lead approval of the scan plan for each non-lab use; Tier follows Part 3.</td></tr>
+</table></div>
+
+<h2>6.4 Sample module M-L6-05: Secret scanning with Gitleaks</h2>
+<div class="module"><div class="mh">M-L6-05 · Level 6 · Dependency and secret scanning · Lab (Project 5) then Tier 1</div>
+<table class="t">
+<tr><td>1. Definition</td><td>Gitleaks searches files and Git history for strings that look like passwords, API keys or tokens.</td></tr>
+<tr><td>2. Business purpose</td><td>Leaked credentials let outsiders sign in as the company. Finding them early lets the client revoke them.</td></tr>
+<tr><td>3. Threat / risk</td><td>Hard-coded cloud keys, database passwords and tokens committed to repositories, including old commits.</td></tr>
+<tr><td>4. Prerequisites</td><td>Git basics; M-L4 authentication concepts; for client repositories: authorisation naming the repositories and a read-only clone.</td></tr>
+<tr><td>5. Tool installation</td><td>Official project: <b>github.com/gitleaks/gitleaks</b> (releases or package manager). MIT licence. Record version with <code>gitleaks version</code>.</td></tr>
+<tr><td>6. Safe configuration</td><td>Run on a local read-only clone. Use <code>--redact</code> so reports do not store full secrets. Never paste real secrets in tickets or chat.</td></tr>
+<tr><td>7. Procedure</td><td>
+<ol style="margin:0;padding-left:16px">
+<li>Create a training repo with fake secrets only. For example, AWS's documented example key <code>AKIAIOSFODNN7EXAMPLE</code> in a file, committed, then deleted in a later commit.</li>
+<li>Scan including history: <code>gitleaks detect --source . --redact --report-format json --report-path gitleaks-report.json</code></li>
+<li>Newer versions also provide <code>gitleaks git</code> and <code>gitleaks dir</code>; check <code>gitleaks --help</code> for your version.</li>
+<li>Review each hit: real secret, example, or false positive? Record the decision.</li>
+<li>Recommend: revoke and rotate the credential, remove from code, use a secrets manager, add a pre-commit scan.</li>
+</ol></td></tr>
+<tr><td>8. Expected output</td><td>A report listing rule ID, file, commit and line, with the secret value redacted.</td></tr>
+<tr><td>9. Verification</td><td>Delete the fake key from the current file: the history scan <b>still</b> finds it in the old commit. This shows why rotation matters more than deletion.</td></tr>
+<tr><td>10. Common mistakes</td><td>Believing deletion fixes a leak; sharing the unredacted report; ignoring false positives without a recorded reason; testing a real secret to "see if it works" (this is unauthorised access).</td></tr>
+<tr><td>11. Documentation</td><td>Finding record with commit hash, location, status (confirmed/false positive), recommended action; reports kept in restricted store.</td></tr>
+<tr><td>12. Practical assignment</td><td>Scan the training repo, triage ten hits, write a one-page remediation plan including a pre-commit hook configuration.</td></tr>
+<tr><td>13. Assessment</td><td>Why can a "deleted" secret still be dangerous? What must never be done with a discovered credential?</td></tr>
+<tr><td>14. Approval</td><td>Lab: mentor sign-off. Client repos: Security Lead confirms the repository is named in scope (T1).</td></tr>
+</table></div>
+<div class="box rule"><b>Never validate a discovered credential</b><p>Do not try a found key or password against a live system to see whether it works, unless the RoE explicitly permits that exact check. Report it, recommend revocation, and let the owner decide.</p></div>
+
+<h2>6.5 Module catalogue (Levels 1–7)</h2>
+<p>Every module follows the 14-point format. IDs follow <code>M-L{level}-{nn}</code>. "Env." shows where practice happens: <b>Lab</b> = isolated VM or container; <b>Cloud</b> = VEL-owned sandbox account; <b>Doc</b> = paper/exercise. No module in Levels 1–5 involves a client system.</p>
+<table class="t tight">
+<thead><tr><th style="width:9%">ID</th><th style="width:25%">Topic</th><th>Core content</th><th style="width:7%">Env.</th><th style="width:9%">Week</th></tr></thead>
+<tbody>
+<tr class="sec"><td colspan="5">Level 1 — IT Fundamentals</td></tr>
+<tr><td>L1-01</td><td>Operating systems</td><td>Kernel, users, processes, file systems; Windows, Linux, macOS differences</td><td>Lab</td><td>2</td></tr>
+<tr><td>L1-02</td><td>Networking, TCP/IP, ports</td><td>OSI/TCP-IP layers, IP addressing, subnets, ports, TCP handshake</td><td>Lab</td><td>2</td></tr>
+<tr><td>L1-03</td><td>DNS</td><td>Records, resolution, caching; <code>dig</code>/<code>nslookup</code> on own domains</td><td>Lab</td><td>2</td></tr>
+<tr><td>L1-04</td><td>HTTP/HTTPS</td><td>Methods, headers, cookies, status codes, TLS handshake overview</td><td>Lab</td><td>2</td></tr>
+<tr><td>L1-05</td><td>Servers and databases</td><td>Web and application servers; relational databases; backups</td><td>Lab</td><td>3</td></tr>
+<tr><td>L1-06</td><td>Virtualisation and cloud</td><td>Hypervisors, containers, IaaS/PaaS/SaaS, shared responsibility</td><td>Lab/Cloud</td><td>3</td></tr>
+<tr class="sec"><td colspan="5">Level 2 — Linux and Windows Security</td></tr>
+<tr><td>L2-01</td><td>Users and permissions</td><td>UIDs, groups, <code>chmod</code>/<code>chown</code>, sudo, least privilege</td><td>Lab</td><td>4</td></tr>
+<tr><td>L2-02</td><td>Services and processes</td><td><code>systemctl</code>, listening ports, reducing attack surface</td><td>Lab</td><td>4</td></tr>
+<tr><td>L2-03</td><td>Logs and updates</td><td>journald, auth logs, auditd basics, patch cycles</td><td>Lab</td><td>4</td></tr>
+<tr><td>L2-04</td><td>Firewall and SSH</td><td>UFW/nftables basics; SSH keys and hardening (sample module 6.2)</td><td>Lab</td><td>4</td></tr>
+<tr><td>L2-05</td><td>Windows security configuration</td><td>Local policy, Defender, BitLocker, event logs, firewall profiles</td><td>Lab</td><td>4</td></tr>
+<tr class="sec"><td colspan="5">Level 3 — Network Security</td></tr>
+<tr><td>L3-01</td><td>Firewalls and segmentation</td><td>Default-deny, zones, rule hygiene, review</td><td>Lab</td><td>5</td></tr>
+<tr><td>L3-02</td><td>Routing, VPN and secure remote access</td><td>Site-to-site vs remote access VPN; MFA; bastion hosts</td><td>Lab</td><td>5</td></tr>
+<tr><td>L3-03</td><td>TLS and certificates</td><td>Certificate chains, protocol versions, HSTS, expiry monitoring</td><td>Lab</td><td>6</td></tr>
+<tr><td>L3-04</td><td>DNS security</td><td>DNSSEC overview, resolver hygiene, takeover risks</td><td>Lab</td><td>6</td></tr>
+<tr><td>L3-05</td><td>IDS/IPS fundamentals</td><td>Signature vs anomaly; placement; tuning; alert fatigue</td><td>Lab</td><td>6</td></tr>
+<tr class="sec"><td colspan="5">Level 4 — Cybersecurity Fundamentals</td></tr>
+<tr><td>L4-01</td><td>CIA and AAA</td><td>Confidentiality, integrity, availability; authentication, authorisation, accounting</td><td>Doc</td><td>7</td></tr>
+<tr><td>L4-02</td><td>Encryption, hashing, MFA</td><td>Symmetric/asymmetric, password hashing, key management basics</td><td>Lab</td><td>7</td></tr>
+<tr><td>L4-03</td><td>Threats, vulnerabilities and risk</td><td>Threat actors, CVE/CVSS, likelihood×impact, risk register</td><td>Doc</td><td>8</td></tr>
+<tr><td>L4-04</td><td>Security controls and incident response</td><td>Preventive/detective/corrective; IR phases (Part 8)</td><td>Doc</td><td>8</td></tr>
+<tr class="sec"><td colspan="5">Level 5 — Application Security (deliberately vulnerable apps only)</td></tr>
+<tr><td>L5-01</td><td>OWASP Top 10 overview</td><td>Categories, real-world causes, mitigations</td><td>Lab</td><td>9</td></tr>
+<tr><td>L5-02</td><td>Authentication and session management</td><td>Password storage, MFA, cookie flags, session expiry</td><td>Lab</td><td>9</td></tr>
+<tr><td>L5-03</td><td>Access control and input validation</td><td>Broken access control, injection and XSS <b>concepts</b>, output encoding, parameterised queries</td><td>Lab</td><td>9</td></tr>
+<tr><td>L5-04</td><td>CSRF and SSRF</td><td>Anti-CSRF tokens, SameSite, egress allow-lists, metadata protections</td><td>Lab</td><td>9</td></tr>
+<tr><td>L5-05</td><td>API security</td><td>Object-level authorisation, rate limiting, schema validation, key handling</td><td>Lab</td><td>10</td></tr>
+<tr><td>L5-06</td><td>Secure file upload and dependencies</td><td>Type/size checks, storage outside web root, SCA, patching</td><td>Lab</td><td>10</td></tr>
+<tr class="sec"><td colspan="5">Level 6 — Security Tools (legal and operational impact first)</td></tr>
+<tr><td>L6-01</td><td>OWASP ZAP and Burp Suite</td><td>Proxying own browser traffic; passive vs active scanning; licence terms</td><td>Lab</td><td>11</td></tr>
+<tr><td>L6-02</td><td>Nmap and Wireshark</td><td>Discovery plan; packet capture of own lab traffic (sample module 6.3)</td><td>Lab</td><td>11</td></tr>
+<tr><td>L6-03</td><td>OpenVAS / Greenbone</td><td>Scan policies, credentials, scan load, report triage</td><td>Lab</td><td>11</td></tr>
+<tr><td>L6-04</td><td>Trivy, Semgrep, SonarQube</td><td>Image, dependency, IaC and code scanning; false-positive handling</td><td>Lab</td><td>11</td></tr>
+<tr><td>L6-05</td><td>Gitleaks</td><td>Secret scanning; remediation (sample module 6.4)</td><td>Lab</td><td>11</td></tr>
+<tr><td>L6-06</td><td>Wazuh, Security Onion, cloud-native tools</td><td>Agents, rules, dashboards, alert triage; AWS/Azure/GCP security services</td><td>Lab/Cloud</td><td>12</td></tr>
+<tr class="sec"><td colspan="5">Level 7 — Security Frameworks</td></tr>
+<tr><td>L7-01</td><td>OWASP, NIST CSF, CIS Benchmarks</td><td>Using standards as checklists; mapping findings to controls</td><td>Doc</td><td>12</td></tr>
+<tr><td>L7-02</td><td>ISO/IEC 27001 and MITRE ATT&amp;CK</td><td>ISMS concepts; readiness vs certification; mapping detections to techniques</td><td>Doc</td><td>12</td></tr>
+<tr><td>L7-03</td><td>Cloud best practices and data protection law</td><td>AWS, Azure, GCP guidance; privacy principles; role of counsel</td><td>Doc</td><td>12</td></tr>
+</tbody></table>

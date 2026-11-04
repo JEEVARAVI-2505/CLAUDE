@@ -1,0 +1,88 @@
+<h1>Part 5 — 90-Day Training Roadmap</h1>
+<p>The roadmap takes a beginner through the seven training levels and eight practical projects in thirteen weeks. It assumes about 40 hours a week: roughly <b>35% learning, 45% hands-on lab, 10% documentation, 10% mentoring and review</b>. Pass marks and times are <i>suggested defaults</i> for management approval.</p>
+
+<h2>5.1 Roadmap overview</h2>
+<table class="t">
+<thead><tr><th style="width:13%">Phase</th><th style="width:24%">Levels covered</th><th style="width:30%">Practical projects</th><th>Gate at end</th></tr></thead>
+<tbody>
+<tr><td><b>Phase 1</b><br>Days 1–30</td><td>Week 1 onboarding · L1 IT Fundamentals · L2 Linux &amp; Windows Security</td><td>Project 1: Linux server hardening lab</td><td><b>Gate 30:</b> fundamentals exam + Lab 01 report</td></tr>
+<tr><td><b>Phase 2</b><br>Days 31–60</td><td>L3 Networking Security · L4 Cybersecurity Fundamentals</td><td>Project 2: Network security fundamentals lab · incident-response tabletop</td><td><b>Gate 60:</b> networking and risk exam + tabletop role</td></tr>
+<tr><td><b>Phase 3</b><br>Days 61–90</td><td>L5 Application Security · L6 Security Tools · L7 Frameworks</td><td>Projects 3–8: Juice Shop lab, secure API lab, dependency and secret scanning, cloud IAM assessment, monitoring dashboard, simulated client assessment</td><td><b>Gate 90:</b> capstone report + oral review</td></tr>
+</tbody></table>
+
+<h2>5.2 Week-by-week plan</h2>
+<table class="t">
+<thead><tr><th style="width:8%">Week</th><th style="width:26%">Learning focus</th><th style="width:30%">Hands-on</th><th>Deliverable / check</th></tr></thead>
+<tbody>
+<tr class="sec"><td colspan="4">Phase 1: Foundations (Days 1–30)</td></tr>
+<tr><td><b>1</b></td><td>Onboarding (Part 4): legal basis, ethics, workstation, lab</td><td>Isolated lab network; snapshots</td><td>Week 1 sign-off sheet; legal quiz 100%</td></tr>
+<tr><td><b>2</b></td><td>L1: operating systems, networking basics, DNS, TCP/IP, HTTP/HTTPS, ports</td><td>Packet capture of <i>own</i> lab traffic; DNS lookups; port listing on own VM</td><td>Notes + 10-question quiz</td></tr>
+<tr><td><b>3</b></td><td>L1: servers, databases, virtualisation, cloud fundamentals (IaaS/PaaS/SaaS, shared responsibility)</td><td>Install a web server and a small database in lab; free-tier cloud account with billing alerts (VEL-owned)</td><td>Architecture sketch of lab + cloud</td></tr>
+<tr><td><b>4</b></td><td>L2: accounts, permissions, services, processes, logs, updates, firewall, SSH, Windows configuration, endpoint protection</td><td><b>Project 1:</b> Linux hardening lab (Part 9)</td><td><b>Gate 30</b></td></tr>
+<tr class="sec"><td colspan="4">Phase 2: Defence in depth (Days 31–60)</td></tr>
+<tr><td><b>5</b></td><td>L3: firewalls, segmentation, routing, VPN</td><td>Segmented lab with two host-only networks; firewall rules between them</td><td>Network diagram + rule table</td></tr>
+<tr><td><b>6</b></td><td>L3: TLS, DNS security, secure remote access, IDS/IPS fundamentals</td><td><b>Project 2:</b> network security fundamentals lab: TLS configuration check on own server; simple IDS in lab</td><td>Lab 02 report</td></tr>
+<tr><td><b>7</b></td><td>L4: CIA triad, authentication, authorisation, encryption, hashing, MFA</td><td>Hashing and encryption exercises; MFA setup on lab app</td><td>Concept map + quiz</td></tr>
+<tr><td><b>8</b></td><td>L4: threats, vulnerabilities, risk, security controls, incident response (Part 8)</td><td>Risk scoring exercise; <b>tabletop</b> incident exercise</td><td><b>Gate 60</b></td></tr>
+<tr class="sec"><td colspan="4">Phase 3: Applications, tools and frameworks (Days 61–90)</td></tr>
+<tr><td><b>9</b></td><td>L5: OWASP Top 10; authentication; access control; input validation; injection and XSS concepts; CSRF; SSRF; sessions</td><td><b>Project 3:</b> OWASP Juice Shop learning lab (local container, isolated)</td><td>Lab 03 write-up of five issues with fixes</td></tr>
+<tr><td><b>10</b></td><td>L5: API security; secure file upload; dependency security</td><td><b>Project 4:</b> secure API assessment lab on a self-built training API</td><td>Lab 04 report</td></tr>
+<tr><td><b>11</b></td><td>L6: tools, with legal and operational impact before use: ZAP, Burp (as licensed), Nmap, Wireshark, OpenVAS/Greenbone, Trivy, Gitleaks, Semgrep, SonarQube, Wazuh, Security Onion</td><td><b>Project 5:</b> dependency and secret scanning on a deliberately flawed training repo</td><td>Tool register + Lab 05 report</td></tr>
+<tr><td><b>12</b></td><td>L7: OWASP, NIST CSF, CIS Benchmarks, ISO/IEC 27001, MITRE ATT&amp;CK, cloud best practice, data protection law</td><td><b>Project 6:</b> cloud IAM configuration assessment (own cloud account, read-only role) · <b>Project 7:</b> security monitoring dashboard (Wazuh or similar, in lab)</td><td>Framework mapping sheet; Lab 06/07 outputs</td></tr>
+<tr><td><b>13</b></td><td>Consolidation: reporting, remediation tracking, client communication</td><td><b>Project 8:</b> complete simulated client assessment: authorisation pack to final report, using the lab as the "client"</td><td><b>Gate 90:</b> capstone + oral review</td></tr>
+</tbody></table>
+
+<h2>5.3 Weekly rhythm</h2>
+<table class="t">
+<thead><tr><th style="width:15%">Day</th><th>Pattern</th></tr></thead>
+<tbody>
+<tr><td>Monday</td><td>Plan the week with the mentor (30 min); read the module; check lab snapshots</td></tr>
+<tr><td>Tuesday–Wednesday</td><td>Theory and guided practice; record commands, outputs and screenshots (sanitised)</td></tr>
+<tr><td>Thursday</td><td>Independent lab or project work; ask questions early</td></tr>
+<tr><td>Friday</td><td>Write up; update progress tracker; peer review; mentor sign-off</td></tr>
+</tbody></table>
+
+<h2>5.4 Gates and assessment standards</h2>
+<table class="t">
+<thead><tr><th style="width:15%">Gate</th><th style="width:36%">Assessment</th><th style="width:25%">Pass standard (suggested)</th><th>Authority after pass</th></tr></thead>
+<tbody>
+<tr><td><b>Week 1</b></td><td>Legal and ethics quiz; policy acknowledgement; lab isolation check</td><td>100% on legal quiz; isolation verified</td><td>A0</td></tr>
+<tr><td><b>Gate 30</b></td><td>Written exam on L1–L2 (40 questions); Lab 01 report reviewed; practical: harden and verify a fresh VM from a checklist</td><td>≥ 70% written; practical rubric ≥ 3/4 in every criterion; zero policy breaches</td><td>A0 → A0+ (may observe low-risk engagements)</td></tr>
+<tr><td><b>Gate 60</b></td><td>L3–L4 exam; segmentation lab; tabletop participation; risk scoring exercise</td><td>≥ 70% written; practical ≥ 3/4</td><td>A0 → <b>A1 candidate</b></td></tr>
+<tr><td><b>Gate 90</b></td><td>Capstone assessment (Project 8) with report; oral defence of three findings and one limitation; QA review of capstone</td><td>Report passes QA; all Critical/High findings correctly rated; honest limitations stated</td><td><b>A1</b> (supervised Tier 0–1) if Security Lead approves</td></tr>
+</tbody></table>
+<p><b>Failing a gate</b> is not a punishment: the trainee receives a support plan and re-attempts after 2 weeks. A policy breach (such as scanning a non-lab target) triggers an immediate Security Lead review regardless of scores.</p>
+
+<h2>5.5 Rubric for practical work (score 0–4 per criterion)</h2>
+<table class="t">
+<thead><tr><th style="width:22%">Criterion</th><th style="width:6%" class="c">0–1</th><th>3–4 looks like</th></tr></thead>
+<tbody>
+<tr><td>Authorisation &amp; scope</td><td class="c">Missing</td><td>Lab Authorisation Record complete; targets verified before each tool run</td></tr>
+<tr><td>Safety &amp; rollback</td><td class="c">None</td><td>Backups/snapshots taken; rollback proven; no outage caused</td></tr>
+<tr><td>Technical accuracy</td><td class="c">Wrong</td><td>Settings correct, verified with commands, explanation of <i>why</i></td></tr>
+<tr><td>Evidence quality</td><td class="c">Poor</td><td>Before/after outputs; sanitised; hashes for key items; reproducible</td></tr>
+<tr><td>Risk reasoning</td><td class="c">Absent</td><td>Likelihood and impact stated; severity justified</td></tr>
+<tr><td>Communication</td><td class="c">Unclear</td><td>Clear, honest report a manager and an engineer can both use; limitations stated</td></tr>
+</tbody></table>
+
+<h2>5.6 Training project schedule and approvals</h2>
+<table class="t">
+<thead><tr><th style="width:5%">#</th><th style="width:29%">Project</th><th style="width:13%">Week</th><th style="width:30%">Environment (owned or intentionally vulnerable only)</th><th>Approver</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Linux server hardening lab</td><td>4</td><td>Local VM on host-only network (Part 9)</td><td>Security Lead (lab record) + QA</td></tr>
+<tr><td>2</td><td>Network security fundamentals lab</td><td>6</td><td>Two-subnet virtual lab; own firewall VM</td><td>Security Lead</td></tr>
+<tr><td>3</td><td>OWASP Juice Shop learning lab</td><td>9</td><td>Juice Shop container on localhost only</td><td>Security Lead</td></tr>
+<tr><td>4</td><td>Secure API assessment lab</td><td>10</td><td>VEL-built training API on lab network</td><td>Security Lead</td></tr>
+<tr><td>5</td><td>Dependency and secret scanning</td><td>11</td><td>Training repo with fake secrets and old dependencies</td><td>Security Lead</td></tr>
+<tr><td>6</td><td>Cloud IAM configuration assessment</td><td>12</td><td>VEL-owned cloud sandbox account; read-only role; billing alerts</td><td>Security Lead + Cloud Engineer</td></tr>
+<tr><td>7</td><td>Security monitoring dashboard</td><td>12</td><td>Lab SIEM/agents on lab VMs</td><td>Security Lead</td></tr>
+<tr><td>8</td><td>Simulated client security assessment and report</td><td>13</td><td>Lab built to resemble a small-company estate; mock client documents</td><td>Security Lead + QA Reviewer</td></tr>
+</tbody></table>
+
+<h2>5.7 After day 90: continuing professional growth</h2>
+<ul>
+<li>Months 4–6: join three supervised real engagements as A1 (Tier 0–1 tasks), write draft findings, attend client debriefs as observer.</li>
+<li>Months 6–12: pursue recognised external certifications or training suited to the chosen role. Certifications are the individual's earned credentials, listed in proposals only when actually held.</li>
+<li>Promotion to A2 requires at least three engagements with QA-reviewed work, a clean policy record, and Security Lead approval.</li>
+<li>Map roles to the NIST NICE framework to guide development and hiring.</li>
+</ul>

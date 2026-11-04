@@ -1,0 +1,157 @@
+<h1>Part 3 — Authorised Testing Policy (POL-SEC-001)</h1>
+<table class="kv">
+<tr><td>Policy ID</td><td>POL-SEC-001 · Version 1.0 · effective on management approval</td></tr>
+<tr><td>Applies to</td><td>All VEL employees, contractors and trainees who perform or support security assessment, scanning, testing, hardening or monitoring</td></tr>
+<tr><td>Policy owner</td><td>Security Lead · approved by Founder</td></tr>
+<tr><td>Breach of policy</td><td>May result in disciplinary action, termination and legal liability. Unauthorised access to computer systems can be a criminal offence.</td></tr>
+</table>
+
+<div class="box rule"><b>The one-sentence policy</b><p>We test, scan or access <b>only</b> systems that the owner has authorised <b>in writing</b>, <b>only</b> the targets, methods and times named in that authorisation, and <b>only</b> by people whose authority level permits the activity.</p></div>
+
+<h2>3.1 Purpose and principles</h2>
+<ol>
+<li><b>Legality:</b> security testing without permission can break criminal and civil law, even with good intentions.</li>
+<li><b>Safety:</b> testing can slow, crash or corrupt systems and expose personal data. The client's business comes first.</li>
+<li><b>Proportionality:</b> use the least intrusive method that answers the question.</li>
+<li><b>Accountability:</b> every action can be traced to a person, an approval and a record.</li>
+</ol>
+
+<h2>3.2 Definitions</h2>
+<table class="t">
+<thead><tr><th style="width:24%">Term</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td>Authorised testing</td><td>Testing covered by a signed agreement, asset ownership confirmation and written test authorisation naming exact scope, methods and window.</td></tr>
+<tr><td>Scope / in-scope</td><td>The exact systems (identifiers) listed in <code>approved-targets.csv</code>. Anything not listed is out of scope.</td></tr>
+<tr><td>Rules of Engagement (RoE)</td><td>The signed document that states permitted methods, exclusions, time window, contacts and stop-work conditions.</td></tr>
+<tr><td>Owned lab</td><td>A VEL-owned, network-isolated environment built for training (for example Part 9). Includes intentionally vulnerable applications run locally.</td></tr>
+<tr><td>Stop-work condition</td><td>An event that halts all testing immediately until the Security Lead and client contact agree to resume.</td></tr>
+<tr><td>Production / staging</td><td>The live system real users depend on / a safe copy used for trials. Staging is preferred for anything active.</td></tr>
+</tbody></table>
+
+<h2>3.3 Mandatory preconditions (the "no-go until" list)</h2>
+<p>No scan, probe, login or test of a client system may start until <b>every</b> item is complete and filed. The QA Reviewer checks the pack before the Security Lead releases the "Authorised to start" marker.</p>
+<table class="t">
+<thead><tr><th style="width:5%"></th><th style="width:30%">Item</th><th>Requirement</th></tr></thead>
+<tbody>
+<tr><td>☐</td><td><b>1. Signed agreement</b></td><td>MSA/SoW signed by an authorised signatory of the client; confidentiality and data handling terms included.</td></tr>
+<tr><td>☐</td><td><b>2. Asset ownership confirmation</b></td><td>Client confirms in writing that it owns or has authority to authorise testing of every target. Third-party hosting, SaaS, cloud and managed providers: their testing rules are checked and, where needed, their permission obtained.</td></tr>
+<tr><td>☐</td><td><b>3. Written testing authorisation</b></td><td>Names VEL, named testers, purpose and duration; signed and dated.</td></tr>
+<tr><td>☐</td><td><b>4. Exact target scope</b></td><td>Domains, IPs/ranges, applications, API endpoints, cloud account IDs, environments: no wildcards without written agreement.</td></tr>
+<tr><td>☐</td><td><b>5. Permitted test methods</b></td><td>Listed by tier (3.5). Anything not listed is not permitted.</td></tr>
+<tr><td>☐</td><td><b>6. Excluded systems</b></td><td>Systems, data, networks and methods that are off-limits (e.g. payment processors, safety-critical systems, third-party SaaS).</td></tr>
+<tr><td>☐</td><td><b>7. Testing time window</b></td><td>Start/end date and time with time zone; blackout periods (month-end, sales events).</td></tr>
+<tr><td>☐</td><td><b>8. Emergency contact</b></td><td>24-hour reachable named client contact with phone number, plus VEL on-call lead.</td></tr>
+<tr><td>☐</td><td><b>9. Stop-work conditions</b></td><td>Agreed list (3.8) and who can invoke it.</td></tr>
+<tr><td>☐</td><td><b>10. Data handling agreement</b></td><td>What data may be viewed, copied, stored, where, for how long; how it is deleted; who may access it.</td></tr>
+<tr><td>☐</td><td><b>11. Backups and rollback</b></td><td>Client confirms current backups for any system to be changed; rollback plan agreed.</td></tr>
+<tr><td>☐</td><td><b>12. Tester authority check</b></td><td>Each tester's authority level (A0–A3) covers the tiers approved.</td></tr>
+</tbody></table>
+
+<h2>3.4 Testing is not allowed if&hellip;</h2>
+<ul>
+<li>the target is not on the approved list, even if it "looks like" the client's;</li>
+<li>the authorisation is expired, unsigned, or signed by someone without authority over the asset;</li>
+<li>the target is run by a third party who has not agreed (cloud provider rules, SaaS vendors, shared hosting neighbours);</li>
+<li>a stop-work condition is active; or</li>
+<li>you are unsure. <b>Uncertainty is a stop, not a green light.</b></li>
+</ul>
+
+<h2>3.5 Risk tiers of testing activity</h2>
+<table class="t">
+<thead><tr><th style="width:11%">Tier</th><th style="width:26%">Examples (all in-scope and authorised)</th><th style="width:20%">Minimum authority</th><th>Extra approval</th></tr></thead>
+<tbody>
+<tr><td><span class="badge g">T0</span> Passive</td><td>Document and policy review; architecture review; reviewing client-provided exports, configs, diagrams, logs (sanitised)</td><td>A1 (supervised)</td><td>None beyond authorisation pack</td></tr>
+<tr><td><span class="badge">T1</span> Low-impact active</td><td>SAST and dependency/secret scanning on provided code; image scanning; read-only cloud configuration audit using a read-only role; TLS/header checks of in-scope sites; authenticated read-only configuration checks</td><td>A1 (senior present) / A2 independent</td><td>Consultant confirms tool settings before run</td></tr>
+<tr><td><span class="badge o">T2</span> Moderate active</td><td>Network vulnerability scanning in agreed window; DAST/web scanning of <b>staging</b>; authenticated application testing with test accounts; manual verification of a scanner finding when safe</td><td>A2</td><td>Written approval from Security Lead per window; client notified; rate limits set; monitoring contact on call</td></tr>
+<tr><td><span class="badge r">T3</span> High risk</td><td>Testing in production with active scanning; verification that could alter data or availability; anything involving credentials against live systems; social-engineering or physical elements; load or stress effects</td><td>A3 only; <b>never trainees</b></td><td>Written client authorisation naming the exact activity, Security Lead + management approval, legal advice on file, enabled service</td></tr>
+<tr><td><span class="badge k">Prohibited</span></td><td>Denial-of-service, malware deployment, credential attacks on third parties, data exfiltration beyond minimal proof, persistence, pivoting outside scope, testing of unconfirmed owners</td><td>Nobody</td><td>Not offered by the department</td></tr>
+</tbody></table>
+
+<h2>3.6 Mandatory safe-testing practice</h2>
+<ol class="steps">
+<li><b>Re-read the RoE</b> at the start of each session; confirm the date, window and target list.</li>
+<li><b>Verify the target</b> against <code>approved-targets.csv</code>; check IP/domain ownership before running a tool. DNS can change.</li>
+<li><b>Choose the gentlest tool setting.</b> Set rate limits and thread counts; exclude dangerous checks (e.g. destructive or denial-of-service plugins).</li>
+<li><b>Use a recorded, approved workstation</b> (Stage 07): encrypted disk, MFA, logging, tool versions recorded.</li>
+<li><b>Log every run:</b> who, what, command/settings, target, start/end time, result file name.</li>
+<li><b>Verify manually only where safe</b> and permitted; stop at the minimum proof needed. Do not read, copy or modify real customer data beyond what the RoE allows.</li>
+<li><b>Handle credentials correctly:</b> use test accounts; store in the approved password manager; never reuse; never place in tickets, chats or repositories.</li>
+<li><b>Report promptly:</b> a Critical finding that is actively exploitable or exposes personal data is reported to the Security Lead immediately, then to the client contact the same day through the agreed channel.</li>
+<li><b>Clean up:</b> remove test accounts, uploaded files and scan artefacts as agreed; confirm in writing.</li>
+</ol>
+
+<h2>3.7 Prohibited actions (regardless of who asks)</h2>
+<table class="t">
+<thead><tr><th style="width:5%"></th><th>Never</th></tr></thead>
+<tbody>
+<tr><td>✗</td><td>Test a system for "practice" or "to impress" without written authority, including your former employer, friends' sites, public bug-bounty targets outside their published programme rules, or government/critical infrastructure.</td></tr>
+<tr><td>✗</td><td>Run unreviewed scripts, exploits or tools downloaded from the internet on a client system or on the company network.</td></tr>
+<tr><td>✗</td><td>Guess, brute-force or reuse passwords on accounts you were not given for the test.</td></tr>
+<tr><td>✗</td><td>Deploy malware, backdoors or persistence mechanisms on any client system.</td></tr>
+<tr><td>✗</td><td>Access, download or share real customer personal data beyond the minimum evidence agreed.</td></tr>
+<tr><td>✗</td><td>Exceed the time window, rate limits or methods in the RoE; or continue after a stop-work call.</td></tr>
+<tr><td>✗</td><td>Disclose vulnerabilities to anyone but the authorised client contacts and VEL's named reviewers.</td></tr>
+<tr><td>✗</td><td>Commit evidence, passwords, tokens, client data or exploitable detail to an ordinary Git repository, personal drive, messaging app or AI chat tool.</td></tr>
+</tbody></table>
+
+<h2>3.8 Stop-work conditions</h2>
+<p>Stop <b>all active testing at once</b> (do not "just finish this one request"), preserve notes, and call the Security Lead. The Security Lead informs the client's emergency contact.</p>
+<ul>
+<li>Target slows, errors, or becomes unavailable during testing.</li>
+<li>You discover a target not on the list, or the owner of a target is not the client.</li>
+<li>You encounter personal, financial or health data not covered by the data handling agreement.</li>
+<li>You find signs of a real attack or prior compromise (unknown accounts, unexpected processes, webshells).</li>
+<li>The client contact or VEL lead calls stop, or the time window ends.</li>
+<li>A tool behaves unexpectedly (sends traffic you did not intend).</li>
+<li>A legal, safety or contractual doubt arises.</li>
+</ul>
+
+<h2>3.9 Evidence and data handling</h2>
+<ul>
+<li>Collect the <b>minimum</b> evidence that proves the issue: sanitised screenshots, truncated logs, configuration excerpts. Mask secrets, tokens and personal data.</li>
+<li>Store evidence only in the approved, access-controlled, encrypted store. Record a SHA-256 hash and collection time for important items.</li>
+<li>Retain and delete according to the signed data handling agreement and <code>policies/retention.md</code>; record deletion.</li>
+<li>Reports for executives must not contain unnecessary exploit detail. Technical detail goes in a restricted annex with need-to-know access.</li>
+</ul>
+
+<h2>3.10 Training and lab rule</h2>
+<p>All practice for learning, tool testing or demonstrations uses <b>owned or intentionally vulnerable environments</b>, built on an isolated network (Part 9), with a signed <i>Lab Authorisation Record</i> (Appendix C). Intentionally vulnerable apps (for example OWASP Juice Shop) are run <b>locally</b> and never exposed to the internet or company LAN. Training skills are never tried on "real" targets.</p>
+
+<h2>3.11 Disclosure, incidents and breach of policy</h2>
+<ul>
+<li>Vulnerabilities found are disclosed only to the client's authorised contact via the agreed secure channel.</li>
+<li>Accidental out-of-scope contact (for example a mistyped IP) is reported to the Security Lead <b>immediately</b>, with exact time and action. Honest early reporting is protected; concealment is a serious breach.</li>
+<li>Policy violations are investigated by the Security Lead and Founder. Outcomes range from retraining to dismissal and, where required, legal reporting.</li>
+</ul>
+
+<h2>3.12 Acknowledgement</h2>
+<p>I have read and understood POL-SEC-001. I will not test, scan or access any system without written authorisation, and I will stop and ask if I am unsure.</p>
+<table class="t">
+<thead><tr><th>Name</th><th>Role / level</th><th>Signature</th><th>Date</th></tr></thead>
+<tbody><tr><td style="height:30px"></td><td></td><td></td><td></td></tr><tr><td style="height:30px"></td><td></td><td></td><td></td></tr></tbody></table>
+
+<h2>3.13 Rules of Engagement: required contents</h2>
+<table class="t">
+<thead><tr><th style="width:5%">#</th><th style="width:30%">Section</th><th>What it must state</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Parties &amp; authority</td><td>Legal names, signatories, VEL testers (names and levels)</td></tr>
+<tr><td>2</td><td>Objectives</td><td>What questions the assessment answers and what is not being assessed</td></tr>
+<tr><td>3</td><td>In-scope assets</td><td>Table copied from <code>approved-targets.csv</code>, with owner and environment</td></tr>
+<tr><td>4</td><td>Out-of-scope assets</td><td>Named exclusions, third-party services, data stores</td></tr>
+<tr><td>5</td><td>Permitted methods</td><td>By tier; rate limits; tools and settings; credentials provided</td></tr>
+<tr><td>6</td><td>Time window</td><td>Dates, hours, time zone, blackout periods, source IPs used by VEL</td></tr>
+<tr><td>7</td><td>Contacts</td><td>Primary, emergency (24h), escalation; communication channels</td></tr>
+<tr><td>8</td><td>Stop-work &amp; escalation</td><td>Conditions (3.8), who can invoke, restart procedure</td></tr>
+<tr><td>9</td><td>Data handling</td><td>Data types, storage, encryption, retention, deletion, sub-processors</td></tr>
+<tr><td>10</td><td>Reporting</td><td>Report type, delivery, severity method, retest terms</td></tr>
+<tr><td>11</td><td>Liability &amp; legal</td><td>Reviewed by counsel; third-party permissions attached</td></tr>
+<tr><td>12</td><td>Signatures</td><td>Client authorised signatory, VEL Security Lead, dates</td></tr>
+</tbody></table>
+
+<h3>Sample <code>approved-targets.csv</code> (documentation addresses only)</h3>
+<pre>target_id,type,identifier,environment,owner,tier_max,window_start,window_end,notes
+T-001,web_app,https://staging.example.com,staging,Client IT Head,T2,2026-12-01T09:00+05:30,2026-12-05T18:00+05:30,test accounts provided
+T-002,host,192.0.2.10,staging,Client IT Head,T2,2026-12-01T09:00+05:30,2026-12-05T18:00+05:30,Linux app server
+T-003,api,https://api-staging.example.com/v1,staging,Client App Owner,T1,2026-12-01T09:00+05:30,2026-12-05T18:00+05:30,read-only token
+X-001,excluded,https://pay.example-gateway.com,production,Third party,NONE,,,"payment provider - EXCLUDED"</pre>
+<p class="small"><code>example.com</code> and <code>192.0.2.0/24</code> are reserved for documentation (RFC 6761 and RFC 5737). Real engagements use the client's actual identifiers.</p>

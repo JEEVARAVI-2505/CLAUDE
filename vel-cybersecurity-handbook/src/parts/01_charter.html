@@ -1,0 +1,60 @@
+<h1>Part 1 — Department Charter and Service Portfolio</h1>
+
+<h2>1.1 Mission and operating principles</h2>
+<p><b>Mission:</b> help clients find, understand and reduce security risk through authorised, documented, defensive security work, delivered by well-trained people working under qualified supervision.</p>
+<table class="t">
+<thead><tr><th style="width:24%">Principle</th><th>What it means in daily work</th></tr></thead>
+<tbody>
+<tr><td>Authorised only</td><td>Every test, scan and access has a signed authorisation and a defined scope.</td></tr>
+<tr><td>Defensive purpose</td><td>We find weaknesses so they can be fixed. We do not build or deploy attack tools against third parties.</td></tr>
+<tr><td>Least intrusive method</td><td>Configuration review before scanning; scanning before manual verification; manual verification only where safe.</td></tr>
+<tr><td>Supervised growth</td><td>Authority is earned through training, assessment and observed practice (the authority ladder in Part 2).</td></tr>
+<tr><td>Evidence-based</td><td>Findings are confirmed, reproducible within scope, and backed by sanitised evidence.</td></tr>
+<tr><td>Honest limits</td><td>Reports state what was and was not tested, and what we cannot conclude.</td></tr>
+<tr><td>Client data is sacred</td><td>Minimise, encrypt, restrict, retain only as agreed, then securely delete.</td></tr>
+</tbody></table>
+
+<h2>1.2 Service portfolio</h2>
+<p>Services are grouped A to F. A service may be sold only when the delivering team has the trained people, tools and approvals listed in Part 2 and Part 3.</p>
+<table class="t">
+<thead><tr><th style="width:20%">Category</th><th style="width:46%">Services</th><th>Delivery notes and limits</th></tr></thead>
+<tbody>
+<tr><td><b>A. Security Assessment</b></td><td>Website, web application, API, cloud configuration, network and infrastructure assessments; vulnerability assessment; security posture assessment</td><td>Written authorisation and agreed rules of engagement first. Findings verified manually where safe. Report states limitations.</td></tr>
+<tr><td><b>B. Security Hardening</b></td><td>Linux and Windows server hardening; cloud hardening; database security; firewall configuration; IAM; MFA; secure configuration management</td><td>Back up configuration first; test in staging; change approved by client owner; rollback plan written.</td></tr>
+<tr><td><b>C. Application Security</b></td><td>Secure code review; OWASP Top 10 assessment; authentication, authorisation and session reviews; dependency scanning; SAST; DAST; software composition analysis</td><td>DAST against staging by default. Production testing needs separate approval (Tier 2 or higher, Part 3).</td></tr>
+<tr><td><b>D. Cloud Security</b></td><td>AWS, Azure and GCP assessments; IAM review; storage and network security; secrets management; audit logging; compliance readiness</td><td>Read-only audit roles. We never ask for owner or root credentials. "Readiness" is not certification.</td></tr>
+<tr><td><b>E. Managed Security</b></td><td>Continuous monitoring, vulnerability and patch management, security alerts, configuration reviews, incident response support, reporting</td><td>Defined hours, alert volumes and response targets in contract. <b>No 24/7 SOC claim</b> without staffing and systems to deliver it.</td></tr>
+<tr><td><b>F. Governance &amp; Compliance</b></td><td>Security policies, risk registers, asset inventories, access reviews, vendor assessments, audit preparation, ISO 27001 readiness, privacy process support</td><td>"Readiness support" only. VEL does not certify, and does not act as an independent auditor unless properly accredited.</td></tr>
+</tbody></table>
+
+<h2>1.3 What we will not do</h2>
+<ul>
+<li>Scan, test, log in to, or probe any system we do not have written authority to test.</li>
+<li>Run credential attacks, malware deployment, denial-of-service, social engineering or physical intrusion unless management has formally added that service (with legal and insurance review) and the client has authorised that exact activity in writing (Tier 3).</li>
+<li>Access, copy or keep more client data than the assessment needs.</li>
+<li>Sell "guaranteed secure" or "unhackable" outcomes. No assessment proves the absence of vulnerabilities.</li>
+<li>Make legal decisions, including whether a breach must be notified to a regulator.</li>
+</ul>
+
+<h2>1.4 Department structure and reporting</h2>
+<table class="t">
+<thead><tr><th style="width:26%">Function</th><th>Roles</th><th style="width:30%">Reports to</th></tr></thead>
+<tbody>
+<tr><td>Leadership and quality</td><td>Security Lead; QA Reviewer</td><td>Founder / management</td></tr>
+<tr><td>Assessment and engineering</td><td>Security Consultant; Application Security Engineer; Cloud Security Engineer</td><td>Security Lead</td></tr>
+<tr><td>Operations</td><td>SOC Analyst; Security Analyst (entry level)</td><td>Security Lead</td></tr>
+<tr><td>Delivery management</td><td>Project Manager</td><td>Founder (dotted line to Security Lead)</td></tr>
+</tbody></table>
+<div class="box info"><b>Small-team note</b><p>In a startup one person may fill several roles. Duties still exist separately. <b>Independence rule:</b> the person who writes a critical finding must not be the only person who approves it, and nobody approves their own work.</p></div>
+
+<h2>1.5 Management decisions needed before launch</h2>
+<table class="t">
+<thead><tr><th style="width:5%">#</th><th>Decision</th><th style="width:22%">Owner</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Appoint an accountable Security Lead (internal or external senior adviser)</td><td>Founder</td></tr>
+<tr><td>2</td><td>Confirm professional indemnity / cyber liability insurance covers security testing services</td><td>Founder + insurer</td></tr>
+<tr><td>3</td><td>Approve standard contract templates (MSA, SoW, testing authorisation, NDA, data processing terms) reviewed by counsel</td><td>Founder + legal</td></tr>
+<tr><td>4</td><td>Approve this policy set (Part 3) and the Code of Ethics (Part 4)</td><td>Founder</td></tr>
+<tr><td>5</td><td>Decide which services are in the launch portfolio (suggested: A, B, C and F first; E after staffing is proven)</td><td>Founder + Security Lead</td></tr>
+<tr><td>6</td><td>Fund approved lab hardware, licences and encrypted evidence storage</td><td>Founder</td></tr>
+</tbody></table>

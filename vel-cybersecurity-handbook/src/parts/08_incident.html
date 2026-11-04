@@ -1,0 +1,77 @@
+<h1>Part 8 — Security Incident Response</h1>
+<p>This part trains employees to respond calmly and consistently. The department <b>supports</b> the client's incident response; it does not make legal decisions and does not take actions outside its contract.</p>
+
+<h2>8.1 The six phases</h2>
+<table class="t">
+<thead><tr><th style="width:5%">#</th><th style="width:17%">Phase</th><th style="width:38%">Goal and key actions</th><th>Beginner's role (A0/A1)</th></tr></thead>
+<tbody>
+<tr><td>1</td><td><b>Preparation</b></td><td>Contacts list, roles, tools, logging enabled, backups tested, playbooks, training and exercises</td><td>Know the escalation list; join tabletops</td></tr>
+<tr><td>2</td><td><b>Identification</b></td><td>Detect and confirm an incident; record time, source, symptoms; assign severity</td><td>Report immediately; do not investigate alone</td></tr>
+<tr><td>3</td><td><b>Containment</b></td><td>Limit spread without destroying evidence: isolate host, disable account, block address, as the client owner approves</td><td>Observe; take notes; follow instructions</td></tr>
+<tr><td>4</td><td><b>Eradication</b></td><td>Remove cause: patch, remove malicious access, reset credentials, rebuild from trusted images</td><td>Support with checklists</td></tr>
+<tr><td>5</td><td><b>Recovery</b></td><td>Restore services from verified backups; monitor closely; confirm normal operation</td><td>Support monitoring and verification</td></tr>
+<tr><td>6</td><td><b>Lessons learned</b></td><td>Blameless review within 5 working days; update controls, runbooks and training</td><td>Contribute observations</td></tr>
+</tbody></table>
+
+<h2>8.2 Severity levels (suggested defaults)</h2>
+<table class="t">
+<thead><tr><th style="width:11%">Level</th><th style="width:34%">Definition</th><th style="width:19%">Examples</th><th style="width:16%">VEL response target*</th><th>Escalate to</th></tr></thead>
+<tbody>
+<tr><td class="sev1">SEV-1 Critical</td><td>Confirmed compromise of critical systems or personal data; ongoing active attacker; major outage</td><td>Ransomware; data exfiltration confirmed</td><td>Immediate (within 30 min of awareness)</td><td>Security Lead, Founder, client emergency contact</td></tr>
+<tr><td class="sev2">SEV-2 High</td><td>Likely compromise or serious exposure; limited impact so far</td><td>Compromised admin account; exposed database</td><td>Within 1 hour</td><td>Security Lead, client contact</td></tr>
+<tr><td class="sev3">SEV-3 Medium</td><td>Suspicious activity or policy violation, impact contained</td><td>Malware on one workstation; repeated failed logins</td><td>Same business day</td><td>Consultant / SOC</td></tr>
+<tr><td class="sev4">SEV-4 Low</td><td>Minor event, no evidence of impact</td><td>Blocked phishing email; scan noise</td><td>Within 2 business days</td><td>SOC Analyst</td></tr>
+</tbody></table>
+<p class="small">* Applies only within contracted hours. Managed-service contracts must state exact hours; do not promise round-the-clock cover that is not staffed.</p>
+
+<h2>8.3 Escalation procedure</h2>
+<ol class="steps">
+<li><b>Detect and record:</b> note exact time (with time zone), what you saw, which asset, who told you.</li>
+<li><b>Tell your Security Lead at once</b> (phone, then message). Do not wait to be sure.</li>
+<li><b>Assign provisional severity</b> using 8.2; the Security Lead confirms.</li>
+<li><b>Notify the client's authorised contact</b> through the agreed channel; the PM keeps a timeline.</li>
+<li><b>Decide containment</b> with the client system owner. VEL recommends; the owner approves changes on their systems.</li>
+<li><b>Escalate to legal/compliance:</b> the Security Lead alerts the client's legal or compliance contact when personal data, regulated data or third parties may be affected.</li>
+<li><b>Record every action</b> in the incident log; close with a lessons-learned review.</li>
+</ol>
+
+<h2>8.4 Evidence preservation</h2>
+<table class="t">
+<thead><tr><th style="width:5%"></th><th>Requirement</th></tr></thead>
+<tbody>
+<tr><td>☐</td><td><b>Do not power off or rebuild</b> an affected system until the owner and Security Lead decide; memory and running state may be needed.</td></tr>
+<tr><td>☐</td><td><b>Work on copies.</b> Preserve originals; copy logs, images and files to the restricted store.</td></tr>
+<tr><td>☐</td><td><b>Hash and record.</b> Compute SHA-256 (<code>sha256sum file</code>) when collected; note collector, date/time, time zone and source.</td></tr>
+<tr><td>☐</td><td><b>Chain of custody:</b> every transfer logged (from, to, when, why). Fields in Appendix C.</td></tr>
+<tr><td>☐</td><td><b>Time synchronisation:</b> note clock offsets between systems so timelines are reliable.</td></tr>
+<tr><td>☐</td><td><b>Minimise personal data:</b> collect only what the investigation needs; restrict access.</td></tr>
+<tr><td>☐</td><td><b>No unauthorised "hack back"</b> or contact with the suspected attacker.</td></tr>
+</tbody></table>
+
+<h2>8.5 Client notification responsibilities</h2>
+<table class="t">
+<thead><tr><th style="width:40%">VEL does</th><th>VEL does not</th></tr></thead>
+<tbody><tr><td><ul><li>Tell the client's authorised contact promptly and factually</li><li>Provide timeline, facts known, unknowns, and recommended containment</li><li>Provide evidence in the agreed format</li><li>Remind the client to involve legal/compliance and, where applicable, their regulator-facing contact</li><li>Keep a written record of what was communicated and when</li></ul></td>
+<td><ul><li><b>Decide whether a breach must be notified</b> to a regulator, customers or the public</li><li>Contact regulators, media or affected individuals on the client's behalf unless contractually instructed in writing</li><li>Give legal conclusions or speculate on cause or blame</li><li>Share incident details with anyone outside the authorised list</li></ul></td></tr></tbody></table>
+<div class="box info"><b>For awareness only: notification clocks exist</b><p>Some laws and directions set short deadlines, for example CERT-In directions in India (six hours for specified cyber incident types), the DPDP Act, 2023, and GDPR's 72-hour rule for personal data breaches. <b>VEL never decides if or when these apply.</b> The Security Lead alerts the client and their counsel immediately so they can decide in time.</p></div>
+
+<h2>8.6 Incidents during an engagement</h2>
+<ul>
+<li>If you find signs of a <b>real compromise</b>, treat it as a stop-work condition (Part 3.8): stop, preserve what you saw, call the Security Lead.</li>
+<li>If <b>your testing</b> causes an outage, stop, tell the client emergency contact at once, assist restoration and document honestly. Early honesty is protected.</li>
+<li>If you encounter <b>unexpected personal data</b>, stop, do not copy it, and report; the data handling agreement governs next steps.</li>
+</ul>
+
+<h2>8.7 Tabletop exercise 01 (Training Week 8)</h2>
+<p><b>Scenario (fictional):</b> a small accounting firm reports that three staff cannot open files and a note demands payment. One staff member says they clicked a link yesterday.</p>
+<table class="t">
+<thead><tr><th style="width:5%">#</th><th>Questions the group must answer</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>What do we know, and what do we not know? What is the provisional severity and why?</td></tr>
+<tr><td>2</td><td>Whom do we tell first, second and third? Who approves containment?</td></tr>
+<tr><td>3</td><td>What evidence must be preserved before any action, and who may touch the machines?</td></tr>
+<tr><td>4</td><td>Which backups exist, and how would we verify them before restoring?</td></tr>
+<tr><td>5</td><td>What do we say to the client contact, and what must we <b>not</b> say (legal decisions, blame, payment advice)?</td></tr>
+<tr><td>6</td><td>What lessons and control changes would we recommend afterwards?</td></tr>
+</tbody></table>
+<p>Scoring: participants are assessed on following escalation, evidence discipline, clear communication and respecting limits (Part 5.5).</p>

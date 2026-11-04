@@ -1,0 +1,77 @@
+<h1>Part 2 — Team Structure and Employee Responsibility Matrix</h1>
+
+<h2>2.1 Roles</h2>
+<table class="t">
+<thead><tr><th style="width:17%">Role</th><th style="width:33%">Mission</th><th>Typical responsibilities</th></tr></thead>
+<tbody>
+<tr><td><b>Security Analyst</b><br><span class="small">entry level</span></td><td>Learn and support: collect, document and triage under supervision</td><td>Asset inventory, evidence handling, scanner runs within approved tiers, draft findings, lab work, documentation</td></tr>
+<tr><td><b>Application Security Engineer</b></td><td>Secure the software layer</td><td>OWASP Top 10 reviews, code review, SAST/DAST/SCA setup and triage, auth and session reviews, API checks, secure-coding guidance</td></tr>
+<tr><td><b>Cloud Security Engineer</b></td><td>Secure cloud accounts and infrastructure</td><td>AWS/Azure/GCP configuration review, IAM, storage, network, secrets, logging, hardening implementation</td></tr>
+<tr><td><b>Security Consultant</b></td><td>Own the client engagement technically</td><td>Qualification, scope, methodology, threat modelling, finding validation, client briefings, report authorship</td></tr>
+<tr><td><b>SOC Analyst</b></td><td>Monitor and respond</td><td>Alert triage, log review, vulnerability tracking, patch verification, incident coordination, monthly reports</td></tr>
+<tr><td><b>QA Reviewer</b></td><td>Independent quality check</td><td>Reviews authorisation completeness, evidence integrity, finding accuracy, report quality, retest results</td></tr>
+<tr><td><b>Security Lead</b></td><td>Accountable for safety, quality and legality</td><td>Approves scope, tiers, critical findings and reports; owns policies; signs training gates; escalation point</td></tr>
+<tr><td><b>Project Manager</b></td><td>Deliver on time and within agreement</td><td>Client communication, schedule, change control, invoices, stop-work coordination, handover</td></tr>
+</tbody></table>
+
+<h2>2.2 The authority ladder (what each person may do alone)</h2>
+<p>Authority depends on <b>demonstrated competence</b>, not job title. Each level is granted in writing by the Security Lead after the gates in Part 5.</p>
+<table class="t">
+<thead><tr><th style="width:9%">Level</th><th style="width:19%">Name</th><th style="width:36%">May do</th><th>Must not do</th></tr></thead>
+<tbody>
+<tr><td class="c"><b>A0</b></td><td>Trainee</td><td>Learn and practise <b>only</b> in the owned isolated lab (Part 9) and intentionally vulnerable training apps. Write documentation. Shadow engagements as observer.</td><td>Touch any client system, even read-only. Run any scan on a non-lab network.</td></tr>
+<tr><td class="c"><b>A1</b></td><td>Supervised junior</td><td>On an authorised engagement, <b>with a named senior present or reviewing live</b>: Tier 0 and Tier 1 work (Part 3). Draft findings.</td><td>Tier 2 or 3 testing. Close or rate Critical/High findings. Contact the client technically without the Consultant.</td></tr>
+<tr><td class="c"><b>A2</b></td><td>Practitioner</td><td>Tier 0 and 1 independently; Tier 2 inside an approved window with written approval from Security Lead. Own findings drafts and hardening tasks.</td><td>Tier 3. Approve their own Critical/High findings. Change scope.</td></tr>
+<tr><td class="c"><b>A3</b></td><td>Senior / Lead</td><td>Recommend and run Tier 3 only where management has enabled the service and the client has specifically authorised it. Approve findings, reports, scope.</td><td>Operate outside contracted scope. Make legal notification decisions.</td></tr>
+</tbody></table>
+<div class="box rule"><b>Hard rule</b><p>A beginner (A0 or A1) must <b>never independently perform high-risk security testing</b> and must <b>never approve their own critical findings</b>. Critical and High findings need a second person (Consultant or Security Lead) to confirm before the client sees them.</p></div>
+
+<h2>2.3 RACI matrix: client lifecycle</h2>
+<p><b>R</b> = does the work · <b>A</b> = accountable, approves (exactly one per row) · <b>C</b> = consulted · <b>I</b> = informed · "—" = not involved. The client's authorised signatory is outside this table but must sign the authorisation.</p>
+<table class="t tight">
+<thead><tr><th style="width:31%">Stage / activity</th><th class="c">Analyst</th><th class="c">AppSec</th><th class="c">Cloud</th><th class="c">Consult.</th><th class="c">SOC</th><th class="c">QA</th><th class="c">Sec Lead</th><th class="c">PM</th></tr></thead>
+<tbody>
+<tr><td>01 Client qualification</td><td class="c I">—</td><td class="c I">—</td><td class="c I">—</td><td class="c R">R</td><td class="c I">—</td><td class="c I">—</td><td class="c A">A</td><td class="c R">R</td></tr>
+<tr><td>02 Written authorisation</td><td class="c I">I</td><td class="c I">I</td><td class="c I">I</td><td class="c R">R</td><td class="c I">—</td><td class="c C">C</td><td class="c A">A</td><td class="c R">R</td></tr>
+<tr><td>03 Security discovery</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c A">A</td><td class="c C">C</td><td class="c I">I</td><td class="c C">C</td><td class="c I">I</td></tr>
+<tr><td>04 Asset inventory</td><td class="c R">R</td><td class="c C">C</td><td class="c C">C</td><td class="c A">A</td><td class="c C">C</td><td class="c C">C</td><td class="c I">I</td><td class="c I">I</td></tr>
+<tr><td>05 Threat model &amp; risk assessment</td><td class="c C">C</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c C">C</td><td class="c C">C</td><td class="c A">A</td><td class="c I">I</td></tr>
+<tr><td>06 Scope &amp; cost approval</td><td class="c I">I</td><td class="c C">C</td><td class="c C">C</td><td class="c R">R</td><td class="c I">I</td><td class="c C">C</td><td class="c A">A</td><td class="c R">R</td></tr>
+<tr><td>07 Assessment environment</td><td class="c R">R</td><td class="c C">C</td><td class="c C">C</td><td class="c A">A</td><td class="c C">C</td><td class="c C">C</td><td class="c I">I</td><td class="c I">I</td></tr>
+<tr><td>08 Repository &amp; documentation</td><td class="c R">R</td><td class="c C">C</td><td class="c C">C</td><td class="c A">A</td><td class="c I">I</td><td class="c C">C</td><td class="c I">I</td><td class="c C">C</td></tr>
+<tr><td>09 Security testing (authorised tiers)</td><td class="c R">R*</td><td class="c R">R</td><td class="c R">R</td><td class="c A">A</td><td class="c C">C</td><td class="c I">I</td><td class="c C">C</td><td class="c I">I</td></tr>
+<tr><td>10 Vulnerability classification</td><td class="c R">R*</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c I">I</td><td class="c C">C</td><td class="c A">A</td><td class="c I">I</td></tr>
+<tr><td>11 Security hardening</td><td class="c R">R*</td><td class="c R">R</td><td class="c R">R</td><td class="c A">A</td><td class="c C">C</td><td class="c C">C</td><td class="c C">C</td><td class="c I">I</td></tr>
+<tr><td>12 Security QA</td><td class="c I">I</td><td class="c C">C</td><td class="c C">C</td><td class="c C">C</td><td class="c I">I</td><td class="c R">R</td><td class="c A">A</td><td class="c I">I</td></tr>
+<tr><td>13 Reporting</td><td class="c R">R*</td><td class="c C">C</td><td class="c C">C</td><td class="c R">R</td><td class="c I">I</td><td class="c C">C</td><td class="c A">A</td><td class="c C">C</td></tr>
+<tr><td>14 Client handover</td><td class="c I">I</td><td class="c I">I</td><td class="c I">I</td><td class="c R">R</td><td class="c I">I</td><td class="c I">I</td><td class="c A">A</td><td class="c R">R</td></tr>
+<tr><td>15 Managed security (monthly)</td><td class="c R">R*</td><td class="c C">C</td><td class="c C">C</td><td class="c C">C</td><td class="c R">R</td><td class="c C">C</td><td class="c A">A</td><td class="c R">R</td></tr>
+<tr class="sec"><td colspan="9">Cross-cutting</td></tr>
+<tr><td>Incident response (Part 8)</td><td class="c C">C</td><td class="c C">C</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c I">I</td><td class="c A">A</td><td class="c R">R</td></tr>
+<tr><td>Stop-work decision</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c R">R</td><td class="c A">A</td><td class="c C">C</td></tr>
+<tr><td>Training &amp; authority-ladder changes</td><td class="c C">C</td><td class="c C">C</td><td class="c C">C</td><td class="c R">R</td><td class="c C">C</td><td class="c C">C</td><td class="c A">A</td><td class="c R">R</td></tr>
+<tr><td>Policy maintenance</td><td class="c C">C</td><td class="c C">C</td><td class="c C">C</td><td class="c R">R</td><td class="c C">C</td><td class="c R">R</td><td class="c A">A</td><td class="c I">I</td></tr>
+</tbody></table>
+<p class="small">* Analysts act at level A0/A1 only: supervised, within Tier 0–1, drafts only. <b>Stop-work:</b> every person has the right and duty to stop; the Security Lead is accountable for the decision to resume.</p>
+
+<h2>2.4 Who approves what (approval register)</h2>
+<table class="t">
+<thead><tr><th style="width:35%">Item</th><th style="width:25%">Prepared by</th><th style="width:20%">Approved by</th><th>Second person</th></tr></thead>
+<tbody>
+<tr><td>Rules of Engagement and authorisation pack</td><td>Consultant</td><td>Security Lead + client signatory</td><td>QA Reviewer</td></tr>
+<tr><td>Tier 2 test window</td><td>Engineer</td><td>Security Lead</td><td>PM (client notice)</td></tr>
+<tr><td>Tier 3 activity</td><td>Consultant</td><td>Security Lead + client + management</td><td>Legal advice on file</td></tr>
+<tr><td>Critical / High finding</td><td>Any author</td><td>Security Lead</td><td>Consultant (not the author)</td></tr>
+<tr><td>Hardening change</td><td>Engineer</td><td>Client system owner</td><td>Consultant; rollback plan reviewed</td></tr>
+<tr><td>Final report</td><td>Consultant</td><td>Security Lead</td><td>QA Reviewer</td></tr>
+<tr><td>Authority-ladder promotion</td><td>Consultant (mentor)</td><td>Security Lead</td><td>Founder (record)</td></tr>
+<tr><td>Client breach / legal notification</td><td>—</td><td><b>Client and their counsel</b></td><td>VEL escalates only</td></tr>
+</tbody></table>
+
+<h2>2.5 Separation of duties</h2>
+<ul>
+<li>Authors do not approve their own Critical or High findings or reports.</li>
+<li>The person who performs a hardening change is not the sole verifier of that change.</li>
+<li>Access to client evidence is granted per engagement, reviewed monthly, and removed at close-out.</li>
+<li>Administrative access to VEL's evidence store is held by the Security Lead and one named deputy only.</li>
+</ul>
