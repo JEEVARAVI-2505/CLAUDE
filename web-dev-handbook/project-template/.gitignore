@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.next/
+__pycache__/
+.venv/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.sqlite3
+*.dump
+terraform.tfstate*
+.DS_Store
+.idea/
+playwright-report/
+coverage/

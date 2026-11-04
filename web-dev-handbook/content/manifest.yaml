@@ -1,0 +1,56 @@
+company:
+  name: VEL Software Solutions
+  author: V. LOKESHWARAN
+  email: velsoftwaresolutions.in@gmail.com
+  version: "1.0"
+  status: draft for management approval
+  disclaimer: Tool versions, limits and vendor prices change. Always verify against official documentation and pricing calculators before building or quoting.
+parts:
+  A: Foundations
+  B: Client Delivery
+  C: Business and People
+  D: Practice and Sources
+  E: Toolkit
+  S: Supporting Materials
+handbook:
+  title: Web Development Department Handbook
+  subtitle: "From Zero to Professional: training, engineering standards, client delivery, costing and maintenance"
+  doc_no: VEL-WD-001
+  short: Web Development Department Handbook
+sections:
+  - {file: 00-how-to-use.md, num: "", title: How to Use This Handbook, part: A}
+  - {file: 01-portfolio.md, num: "1", title: Department and Service Portfolio, part: A}
+  - {file: 02-onboarding.md, num: "2", title: Employee Onboarding Programme, part: A}
+  - {file: 03-roadmap.md, num: "3", title: "Learning Roadmap: Levels 1-5", part: A}
+  - {file: 04-stack.md, num: "4", title: Technology Stack and Tool Selection, part: A}
+  - {file: 05-lifecycle.md, num: "5", title: "Client Project Lifecycle: Stages 01-27", part: B}
+  - {file: 06-structure.md, num: "6", title: Project Structure and Repository Standards, part: B}
+  - {file: 07-standards.md, num: "7", title: Professional Delivery Standards, part: B}
+  - {file: 08-costing.md, num: "8", title: Commercial Costing and Pricing, part: C}
+  - {file: 09-roles.md, num: "9", title: "Roles, Procedures and Escalation", part: C}
+  - {file: 10-projects.md, num: "10", title: Practical Employee Projects and Certification, part: D}
+  - {file: 11-sources.md, num: "11", title: Official Learning Sources, part: D}
+  - {file: A1-onboarding-checklist.md, num: "A1", title: Employee Onboarding Checklist, part: E}
+  - {file: A2-training-plan.md, num: "A2", title: 90-Day Training Plan, part: E}
+  - {file: A3-discovery-questionnaire.md, num: "A3", title: Project Discovery Questionnaire, part: E}
+  - {file: A4-requirements-template.md, num: "A4", title: Requirements Template, part: E}
+  - {file: A5-sow-template.md, num: "A5", title: Statement of Work Template, part: E}
+  - {file: A6-qa-checklist.md, num: "A6", title: QA Checklist, part: E}
+  - {file: A7-deployment-checklist.md, num: "A7", title: Deployment Checklist, part: E}
+  - {file: A8-handover-checklist.md, num: "A8", title: Client Handover Checklist, part: E}
+  - {file: A9-costing-spec.md, num: "A9", title: Project Costing Spreadsheet Specification, part: E}
+  - {file: A10-glossary.md, num: "A10", title: Glossary, part: E}
+support:
+  doc_no: VEL-WD-001-SM
+  subtitle: Checklists, templates and specifications that accompany the Web Development Department Handbook
+  defaults: {}
+  docs:
+    - {file: A1-onboarding-checklist.md, num: "SM-01", slug: SM-01-Employee-Onboarding-Checklist, title: Employee Onboarding Checklist, doc_no: VEL-WD-001-SM01, subtitle: Day-1 to day-90 access, tools and gate tracking}
+    - {file: A2-training-plan.md, num: "SM-02", slug: SM-02-90-Day-Training-Plan, title: 90-Day Training Plan, doc_no: VEL-WD-001-SM02, subtitle: Week-by-week learning plan with gates}
+    - {file: A3-discovery-questionnaire.md, num: "SM-03", slug: SM-03-Project-Discovery-Questionnaire, title: Project Discovery Questionnaire, doc_no: VEL-WD-001-SM03, subtitle: Structured questions for client discovery meetings}
+    - {file: A4-requirements-template.md, num: "SM-04", slug: SM-04-Requirements-Template, title: Requirements Template, doc_no: VEL-WD-001-SM04, subtitle: Functional and non-functional requirements with acceptance criteria}
+    - {file: A5-sow-template.md, num: "SM-05", slug: SM-05-SOW-Template, title: Statement of Work Template, doc_no: VEL-WD-001-SM05, subtitle: Scope, price, milestones, acceptance and change control}
+    - {file: A6-qa-checklist.md, num: "SM-06", slug: SM-06-QA-Checklist, title: QA Checklist, doc_no: VEL-WD-001-SM06, subtitle: Functional, security, accessibility, performance and reliability checks}
+    - {file: A7-deployment-checklist.md, num: "SM-07", slug: SM-07-Deployment-Checklist, title: Deployment Checklist, doc_no: VEL-WD-001-SM07, subtitle: Pre-deployment, deployment and post-deployment verification}
+    - {file: A8-handover-checklist.md, num: "SM-08", slug: SM-08-Client-Handover-Checklist, title: Client Handover Checklist, doc_no: VEL-WD-001-SM08, subtitle: Deliverables, ownership transfer, competence check and acceptance}
+    - {file: A9-costing-spec.md, num: "SM-09", slug: SM-09-Costing-Spreadsheet-Specification, title: Project Costing Spreadsheet Specification, doc_no: VEL-WD-001-SM09, subtitle: Sheets, formulas, validation and controls}

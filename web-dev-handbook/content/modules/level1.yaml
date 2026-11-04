@@ -1,0 +1,309 @@
+modules:
+  - id: L1.1
+    title: Internet and Web Architecture
+    time: 3 h
+    tags: [Essential, Free]
+    definition: The **internet** is the global network of connected computers. The **web** is one service that runs on it - pages and apps delivered over HTTP. A **web architecture** is the set of parts (browser, DNS, CDN, server, application, database) that cooperate to answer one request.
+    purpose: Every client problem ("the site is slow", "the form does not save") lives in one of these parts. An employee who can name the parts can find the fault in minutes instead of guessing for days.
+    example: A customer opens a bakery website. The browser asks DNS for the address, the CDN returns cached images, the web server passes the order form to the application, and the application saves the order in the database.
+    prereq: Basic computer use; ability to open a browser and a terminal.
+    tools: "Chrome or Firefox (free), a terminal (Windows Terminal/WSL, macOS Terminal, Linux shell), draw.io or Excalidraw (free) for diagrams."
+    procedure:
+      - Open any public website and open DevTools (F12), tab **Network**.
+      - Reload the page and list every request - note the first one (the HTML document) and the later ones (CSS, JS, images, API calls).
+      - Draw the path on paper - browser, DNS, CDN, server, app, database - and write one sentence per hop.
+      - Label where each request could fail (DNS error, TLS error, 404, 500, database timeout).
+    code:
+      lang: text
+      text: |
+        Browser --DNS lookup--> DNS resolver  (name -> IP)
+        Browser --HTTPS-------> CDN / WAF     (cache, DDoS filter)
+        CDN     --HTTP--------> Web server    (Nginx)
+        Web server ----------> Application    (Node.js / FastAPI)
+        Application ---SQL---> Database       (PostgreSQL)
+    output: |
+      A hand-drawn diagram with 6 boxes and arrows, plus a table:
+      Hop | What can fail | Symptom the client sees
+      DNS | wrong record | "Server not found"
+      TLS | expired certificate | browser security warning
+      App | unhandled exception | HTTP 500
+    verify: The Technical Lead can pick any hop and the employee explains what it does and one way it fails.
+    errors: Treating "the website" as one thing; confusing the web (HTTP) with the internet (all traffic); forgetting that a CDN may serve a stale copy.
+    security: Every hop is an attack surface. Only the web server/CDN should be public; the database must never be reachable from the internet.
+    docs: Save the diagram as `docs/architecture.md` in the training repository.
+    assignment: Choose three real websites. For each, record in a table which hops you can identify from DevTools (CDN header, server header, API calls).
+    assessment: 10-question quiz (pass 80%) plus a 5-minute whiteboard of the request path.
+    gate: Technical Lead signs Level 1 checklist item 1.
+    refs: [["MDN - How the web works", "https://developer.mozilla.org/en-US/docs/Learn_web_development"]]
+
+  - id: L1.2
+    title: Browser and Server
+    time: 3 h
+    tags: [Essential, Free]
+    definition: A **browser** is a client program that requests, downloads and renders web resources. A **server** is a computer or program that listens for requests and returns responses.
+    purpose: Knowing which side runs which code decides where bugs are fixed, where secrets may live and what the client can see.
+    example: HTML/CSS/JS download to every visitor and run in the browser (public). Python or Node code runs only on our server (private) and may use secret keys.
+    prereq: L1.1.
+    tools: "Browser DevTools; Node.js LTS (free) to run a tiny server; VS Code."
+    procedure:
+      - Install Node.js LTS and verify with `node -v`.
+      - Create `server.js` with the example below.
+      - Run `node server.js` and open `http://localhost:3000`.
+      - In DevTools > Network, click the request and read the request and response headers.
+    code:
+      lang: js
+      text: |
+        // server.js - a server is just a program that listens on a port
+        const http = require('node:http');
+        http.createServer((req, res) => {
+          console.log(req.method, req.url);
+          res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+          res.end('<h1>Hello from the server</h1>');
+        }).listen(3000, () => console.log('Listening on http://localhost:3000'));
+    output: |
+      Terminal:  Listening on http://localhost:3000
+      Terminal:  GET /
+      Browser:   a page showing the heading "Hello from the server"
+    verify: Change the text, restart the server, reload the page; the new text appears. Stop the server and reload - the browser shows "connection refused".
+    errors: Port already in use (EADDRINUSE); opening the file with `file://` instead of `http://`; forgetting to restart after editing.
+    security: Never put API keys in browser-delivered code - anyone can read it via View Source or DevTools.
+    docs: README section "Run locally" with the exact commands.
+    assignment: Extend the server to return different text for `/about` and a 404 for unknown paths.
+    assessment: Explain in 3 sentences why a payment secret key cannot live in JavaScript sent to the browser.
+    gate: Demo to a mentor; mentor signs the log.
+
+  - id: L1.3
+    title: HTTP and HTTPS
+    time: 4 h
+    tags: [Essential, Free]
+    definition: "**HTTP** is the request/response protocol of the web: a method (GET, POST...), a path, headers and an optional body go out; a status code, headers and a body come back. **HTTPS** is HTTP inside a TLS-encrypted channel that also proves the server's identity with a certificate."
+    purpose: Clients expect the padlock; search engines and browsers penalise plain HTTP; payment and login pages must be encrypted. Status codes are also the common language for debugging.
+    example: "A login form sends `POST /api/login`. The server answers `200` with a cookie, or `401` if the password is wrong."
+    prereq: L1.2.
+    tools: "`curl` (preinstalled on most systems), browser DevTools, Postman (free tier)."
+    procedure:
+      - Run `curl -I https://example.com` and read the status line and headers.
+      - Run `curl -v https://example.com 2>&1 | head -30` and find the TLS handshake lines.
+      - Request a path that does not exist and record the status code.
+      - Memorise the status families - 2xx success, 3xx redirect, 4xx client error, 5xx server error.
+    code:
+      lang: bash
+      text: |
+        curl -I https://example.com               # headers only
+        curl -i https://example.com/missing-page   # headers + body of a 404
+        curl -X POST https://httpbin.org/post -H "Content-Type: application/json" -d '{"name":"Asha"}'
+    output: |
+      HTTP/2 200
+      content-type: text/html
+      cache-control: max-age=...
+      (exact headers vary by site and date)
+    verify: For five different URLs, state the status code before you run curl, then confirm.
+    errors: "Confusing 401 (not logged in) with 403 (logged in but not allowed); using GET to change data; ignoring redirect chains (301 > 302 > 200)."
+    security: Redirect all HTTP to HTTPS; enable HSTS only after HTTPS works everywhere; never send passwords in a URL query string.
+    docs: Table of the status codes our APIs return, kept in `docs/api-specification.md`.
+    assignment: Make a one-page cheat sheet - 10 status codes, when we use each, example response body.
+    assessment: Quiz - choose the correct status for 12 scenarios (e.g. validation failed = 422/400, duplicate email = 409).
+    gate: Quiz pass (80%) recorded by the Technical Lead.
+    refs: [["MDN - HTTP", "https://developer.mozilla.org/en-US/docs/Web/HTTP"]]
+
+  - id: L1.4
+    title: DNS and Domains
+    time: 3 h
+    tags: [Essential, Paid]
+    definition: "**DNS** (Domain Name System) translates names such as `example.com` into IP addresses. A **domain** is a name registered through a registrar. Common records: **A** (IPv4), **AAAA** (IPv6), **CNAME** (alias), **MX** (mail), **TXT** (verification, SPF/DKIM)."
+    purpose: Wrong DNS is the most common cause of "the new site is not showing" and "emails go to spam". Domain ownership must also be in the client's name.
+    example: We deploy the client site to `203.0.113.10`. We add an **A** record `www -> 203.0.113.10` at the registrar; within the TTL, visitors reach the site.
+    prereq: L1.3.
+    tools: "`dig` or `nslookup`; a registrar account (paid, usually yearly); Cloudflare DNS (free plan available - verify current plan terms)."
+    procedure:
+      - Run `dig example.com A +short` and `dig example.com MX +short`.
+      - Find the nameservers with `dig example.com NS +short`.
+      - In a sandbox domain (or Cloudflare test zone), add an A record and a CNAME and watch propagation with `dig`.
+      - Lower the TTL to 300 seconds 24 hours before any planned cut-over.
+    code:
+      lang: bash
+      text: |
+        dig yourdomain.com A +short
+        dig www.yourdomain.com CNAME +short
+        dig yourdomain.com MX +short
+        nslookup yourdomain.com 1.1.1.1
+    output: |
+      203.0.113.10            <- A record (documentation IP - yours will differ)
+      yourdomain.com.         <- CNAME target
+      10 mail.provider.net.   <- MX priority + host
+    verify: The record returned by two different public resolvers (1.1.1.1 and 8.8.8.8) matches what you configured.
+    errors: "Editing records at the wrong place (registrar vs. DNS host); CNAME on the root domain; forgetting `www`; expecting instant propagation."
+    security: Enable registrar lock and 2FA; domain registered to the **client**, never an employee's personal account; keep a record of renewal dates.
+    docs: DNS record table in `docs/deployment.md` - type, name, value, TTL, owner, date.
+    assignment: Write the DNS plan for a client migrating from shared hosting to a new server with zero email downtime.
+    assessment: Given five broken-symptom scenarios, name the record type to inspect.
+    gate: Mentor review of the DNS plan.
+    refs: [["MDN - What is a domain name", "https://developer.mozilla.org/en-US/docs/Glossary/DNS"]]
+
+  - id: L1.5
+    title: Hosting
+    time: 4 h
+    tags: [Essential, Paid]
+    definition: "**Hosting** is the computer and network capacity that runs a website. Models: static/CDN hosting, shared hosting, VPS, managed platform (PaaS), containers, serverless, and dedicated cloud."
+    purpose: The hosting choice sets cost, speed, security and maintenance effort for years. It must match the project, not the developer's habit.
+    example: A 5-page brochure site goes on static hosting + CDN. A booking system with a database goes on a managed platform or a small cloud VM with automated backups.
+    prereq: L1.4.
+    tools: "Cloudflare Pages, Vercel, Netlify, AWS, Azure, GCP, DigitalOcean, a cPanel host. Free tiers exist but **limits and prices change - check the vendor's current pricing page**."
+    procedure:
+      - Classify the project - static, dynamic, or stateful with a database.
+      - List non-functional needs - traffic, uptime target, data location, budget, who maintains it.
+      - Compare three hosts in a table (cost, backup, scaling, region, support) using each vendor's official pricing page and record the date.
+      - Pick one and write the reason in an Architecture Decision Record.
+    code:
+      lang: text
+      text: |
+        ADR-001: Hosting choice
+        Context : 8-page site + contact form, ~2,000 visits/month, owner non-technical
+        Options : A static host + serverless form   B shared hosting   C VPS
+        Decision: A - lowest maintenance, automatic TLS, global CDN
+        Consequences: form handled by serverless function; no server patching by us
+        Verified pricing on: <date> from <vendor pricing URL>
+    output: "A one-page comparison table and a signed ADR stored in `docs/adr/`."
+    verify: Another employee can re-derive the same cost figure from the linked vendor page.
+    errors: Choosing by price alone; ignoring bandwidth/egress charges; no backup on a VPS; quoting prices from memory.
+    security: Least-privilege access; separate accounts per environment; automatic OS and runtime patching decided before go-live.
+    docs: ADR + cost table in `docs/architecture.md`.
+    assignment: Produce hosting recommendations for three client types - dentist brochure site, online shop, SaaS dashboard.
+    assessment: Tech Lead questions the ADR for 10 minutes; employee defends the decision.
+    gate: ADR approved by Technical Lead.
+
+  - id: L1.6
+    title: Frontend and Backend
+    time: 3 h
+    tags: [Essential, Free]
+    definition: The **frontend** is everything the user sees and interacts with in the browser (HTML, CSS, JavaScript/TypeScript, React). The **backend** is the server-side code and services that apply business rules, talk to the database and protect secrets.
+    purpose: Clear separation lets frontend and backend developers work in parallel, lets us change one without breaking the other, and keeps secrets safe.
+    example: "Frontend: a booking form validates the date for convenience. Backend: re-validates the date, checks the slot is free, charges the card, saves the booking."
+    prereq: L1.2, L1.3.
+    tools: VS Code, Node.js LTS, a browser.
+    procedure:
+      - Take a feature such as "add to cart".
+      - List what the frontend does (button, UI state, call API).
+      - List what the backend does (check stock, price, save, respond).
+      - Mark every rule that must be enforced on the server even if the browser also checks it.
+    code:
+      lang: text
+      text: |
+        FEATURE: Apply discount code
+        Frontend : input box, "Apply" button, show new total, show error text
+        Backend  : find code, check expiry + usage limit + minimum order,
+                   recalculate total from DB prices (never trust browser total),
+                   store discount on the order, return updated total
+        Rule     : price and discount are ALWAYS computed on the server
+    output: A two-column responsibility table for three features of your choice.
+    verify: Mentor picks one rule; employee shows where it is enforced on the server.
+    errors: Trusting browser-supplied prices or roles; duplicating business rules in both places and letting them drift.
+    security: "All validation is repeated on the server; frontend validation is only for user comfort."
+    docs: Responsibility table in the feature's section of `docs/requirements.md`.
+    assignment: Split "user registration with email verification" into frontend/backend tasks with estimates.
+    assessment: Three scenario questions - where does this logic belong and why.
+    gate: Mentor sign-off.
+
+  - id: L1.7
+    title: Databases (concepts)
+    time: 3 h
+    tags: [Essential, Free]
+    definition: A **database** is organised, durable storage for application data. A **relational** database (PostgreSQL, MySQL) stores rows in tables linked by keys and is queried with SQL. Other types (document, key-value, search) exist for specific needs.
+    purpose: Business data - customers, orders, bookings - is the client's most valuable asset. Wrong design is expensive to fix later; lost data is a business-ending event.
+    example: "A shop has `customers`, `orders` and `order_items` tables. One customer can have many orders; each order has many items."
+    prereq: L1.6.
+    tools: SQLite (built in to Python, free) for first exercises; later PostgreSQL.
+    procedure:
+      - Choose a business (clinic, school, shop) and list the "things" it tracks (entities).
+      - For each entity list its attributes and a unique identifier.
+      - Draw relationships (one-to-many, many-to-many).
+      - Create the tables in SQLite and insert 5 sample rows each.
+    code:
+      lang: python
+      text: |
+        import sqlite3
+        db = sqlite3.connect(":memory:")
+        db.executescript("""
+        CREATE TABLE customers(id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL);
+        CREATE TABLE orders(id INTEGER PRIMARY KEY, customer_id INTEGER NOT NULL REFERENCES customers(id), total_minor INTEGER NOT NULL);
+        INSERT INTO customers(name,email) VALUES ('Asha','asha@example.com');
+        INSERT INTO orders(customer_id,total_minor) VALUES (1, 129900);
+        """)
+        print(db.execute("SELECT c.name, o.total_minor FROM orders o JOIN customers c ON c.id=o.customer_id").fetchall())
+    output: "[('Asha', 129900)]"
+    verify: Try inserting an order with `customer_id = 99` - the database rejects it (foreign key). Insert a duplicate email - rejected (UNIQUE).
+    errors: Storing money as floating point (use integer minor units or DECIMAL); storing comma-separated lists in one column; no primary key.
+    security: Never expose a database port to the internet; use a dedicated low-privilege application user; never string-concatenate SQL.
+    docs: ER diagram in `docs/database-design.md`.
+    assignment: Model a clinic appointment system with at least five tables.
+    assessment: Whiteboard review - find three weaknesses in a deliberately flawed schema.
+    gate: Mentor approves the ER diagram.
+
+  - id: L1.8
+    title: APIs
+    time: 3 h
+    tags: [Essential, Free]
+    definition: An **API** (Application Programming Interface) is a defined way for one program to talk to another. A **REST API** exposes resources at URLs (`/api/products/12`) and uses HTTP methods - GET (read), POST (create), PUT/PATCH (update), DELETE (remove) - usually exchanging **JSON**.
+    purpose: The frontend, mobile apps, payment providers and the client's other systems all connect through APIs. A clear contract lets teams build in parallel.
+    example: "The shop frontend calls `GET /api/products?category=shoes` and receives a JSON list it renders as cards."
+    prereq: L1.3, L1.6.
+    tools: Postman (free tier) or `curl`; the public JSONPlaceholder test API; browser DevTools.
+    procedure:
+      - Call a public API with GET and read the JSON.
+      - Call it with POST and a JSON body.
+      - Record method, URL, headers, body, status and response in a Postman collection.
+      - Write the contract for one new endpoint before any code exists.
+    code:
+      lang: bash
+      text: |
+        curl -s https://jsonplaceholder.typicode.com/posts/1
+        curl -s -X POST https://jsonplaceholder.typicode.com/posts \
+          -H "Content-Type: application/json" \
+          -d '{"title":"Hello","body":"First post","userId":1}'
+    output: |
+      {
+        "userId": 1,
+        "id": 1,
+        "title": "sunt aut facere ...",
+        "body": "quia et suscipit ..."
+      }
+      (second call returns the created object with "id": 101)
+    verify: Your Postman collection runs end to end with no manual edits.
+    errors: Missing `Content-Type` header; sending invalid JSON (trailing comma); treating a 200 with an error message as success.
+    security: APIs need authentication, authorisation, rate limits and validation (OWASP API Security Top 10).
+    docs: Endpoint table - method, path, auth, request, response, errors - in `docs/api-specification.md`.
+    assignment: Design (on paper) a REST API for a library - books, members, loans - with request/response examples.
+    assessment: Review a flawed API (verbs in URLs, wrong status codes) and list corrections.
+    gate: Tech Lead reviews API design.
+    refs: [["OWASP API Security Top 10", "https://owasp.org/API-Security/"]]
+
+  - id: L1.9
+    title: Responsive Design (concepts)
+    time: 3 h
+    tags: [Essential, Free]
+    definition: "**Responsive design** makes one site work well on every screen size - phone, tablet, laptop, large monitor - using flexible layouts, flexible media and CSS media queries. The strategy is **mobile-first**: design for the smallest screen, then enhance."
+    purpose: Most client traffic is on phones. A site that needs pinch-zoom loses customers and search ranking.
+    example: A three-column feature grid collapses to one column on a 360 px phone, two on a tablet and three on a desktop.
+    prereq: L1.6.
+    tools: Browser DevTools device toolbar, a real phone, Lighthouse (built into Chrome DevTools).
+    procedure:
+      - Add `<meta name="viewport" content="width=device-width, initial-scale=1">` to every page.
+      - Use relative units (`rem`, `%`, `fr`) and `max-width`, not fixed pixel widths.
+      - "Write base CSS for 360 px, then add `@media (min-width: 768px)` and `(min-width: 1024px)` enhancements."
+      - Test at 360, 768, 1024 and 1440 px, then on a real phone.
+    code:
+      lang: css
+      text: |
+        .grid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+        @media (min-width: 768px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+        img { max-width: 100%; height: auto; }
+    output: 1 column at 360 px, 2 columns at 800 px, 3 columns at 1200 px; no horizontal scrollbar at any width.
+    verify: DevTools responsive mode at the four widths plus Lighthouse "Best practices/Accessibility" with no layout errors.
+    errors: Missing viewport meta tag; fixed-width elements causing horizontal scroll; tap targets smaller than about 44 px; text under 16 px on phones.
+    security: Not directly security-related - but hidden mobile menus must remain keyboard accessible.
+    docs: List the breakpoints chosen in `docs/architecture.md` (frontend section).
+    assignment: Convert a fixed 960 px desktop layout to responsive using only CSS.
+    assessment: Practical test - given a broken page, fix it at all four widths in 30 minutes.
+    gate: Level 1 completion review - all nine modules signed, quiz average at least 80%.
+    refs: [["web.dev - Learn Responsive Design", "https://web.dev/learn/design/"]]

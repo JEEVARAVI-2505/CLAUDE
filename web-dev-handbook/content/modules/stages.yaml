@@ -1,0 +1,492 @@
+stages:
+  - n: 1
+    title: Lead Qualification
+    purpose: Decide quickly and honestly whether an enquiry is a good fit - budget, scope, timeline, decision-maker, risk - before spending delivery effort.
+    owner: Business Development executive (with Project Manager for technical fit).
+    inputs: Enquiry (email, call, form, referral); company profile; rough idea and budget range.
+    procedure:
+      - Log the lead in the CRM with source, contact, need and date.
+      - Call within one working day; confirm who decides and who pays.
+      - Score the lead (budget, urgency, clarity, authority, fit) 1-5 each; pass at 15 or more.
+      - Screen for red flags - no budget, "copy this site exactly", unclear ownership of content, legal or ethical concerns.
+      - Book a discovery call or politely decline with a referral.
+    outputs: Lead record with score; go/no-go decision; discovery meeting invite.
+    tools: CRM or spreadsheet, calendar, email templates.
+    risks: Chasing unqualified leads; promising price or dates before understanding scope; copyright-infringing requests.
+    verification: Second person reviews any lead scoring below 15 that is being pursued.
+    documentation: Lead qualification sheet (Appendix A3, part 1).
+    approval: Project Manager approves go/no-go.
+    gate: Qualified lead recorded and discovery call scheduled.
+
+  - n: 2
+    title: Client Discovery
+    purpose: Understand the client's business, users, goals and constraints before proposing any solution.
+    owner: Project Manager (lead) with Technical Lead and UI/UX Designer attending.
+    inputs: Qualified lead; existing website/system access (read-only); brand materials.
+    procedure:
+      - Send the discovery questionnaire (Appendix A3) 2 days before the meeting.
+      - Run a 60-90 minute structured session - business goals, target users, current process, pain points, success measures.
+      - Ask about content (who writes it), branding, integrations, compliance and data sensitivity.
+      - Record decisions, assumptions and open questions; never assume.
+      - Send meeting minutes within 24 hours for the client to confirm.
+    outputs: Completed questionnaire; confirmed meeting minutes; list of assumptions and open questions.
+    tools: Discovery questionnaire, video call, shared notes, Miro/FigJam.
+    risks: Hidden stakeholders; vague goals; "we will know it when we see it"; undisclosed legacy systems.
+    verification: Client replies "confirmed" to the minutes; open questions have owners and dates.
+    documentation: Discovery notes in `docs/requirements.md` (section "Discovery").
+    approval: Project Manager; client sponsor confirms the minutes.
+    gate: Client confirms the problem statement and goals in writing.
+
+  - n: 3
+    title: Business and Technical Requirement Collection
+    purpose: Turn needs into clear, testable requirements - functional, non-functional, content, integration and compliance.
+    owner: Business analyst or Project Manager; Technical Lead for non-functional requirements.
+    inputs: Discovery minutes; existing assets; user stories; stakeholder list.
+    procedure:
+      - Write user stories - "As a [role] I want [goal] so that [benefit]" - each with acceptance criteria.
+      - Capture non-functional requirements - performance targets, availability, browsers/devices, accessibility level (WCAG 2.2 AA), SEO, languages, data retention, privacy.
+      - List integrations (payment, email, SMS, CRM, analytics) and who owns each account.
+      - Prioritise with MoSCoW (must, should, could, won't this time).
+      - Review line by line with the client; mark each requirement as agreed.
+    outputs: Requirements document with unique ids (REQ-001...), priorities and acceptance criteria.
+    tools: Requirements template (Appendix A4), Jira/Linear/GitHub Projects, spreadsheet.
+    risks: Ambiguous words ("fast", "user-friendly"); gold-plating; missing compliance rules; unspoken dependencies.
+    verification: Every requirement is testable; each "must" has at least one acceptance test; Technical Lead confirms feasibility.
+    documentation: "`docs/requirements.md` (versioned in Git)."
+    approval: Technical Lead (feasibility) and Project Manager; client signs off.
+
+  - n: 4
+    title: Competitor and Market Research
+    purpose: Learn what good looks like in the client's market so design and features are informed, not guessed.
+    owner: Project Manager with UI/UX Designer.
+    inputs: Client's competitors, target market, keywords, positioning.
+    procedure:
+      - Identify 3-5 direct competitors and 2 best-in-class references.
+      - Compare features, user journeys, pricing presentation, trust signals, speed and accessibility (Lighthouse, manual).
+      - Check search visibility with free tools (Google Search Console later, keyword planners).
+      - Note what to copy (patterns), what to avoid, and where the client can differentiate.
+      - Never copy text, images or code from competitors (copyright).
+    outputs: Competitor matrix, opportunity list, recommended differentiators.
+    tools: Browser DevTools, Lighthouse, spreadsheet, public SEO tools.
+    risks: Copying; analysis paralysis; confusing taste with evidence.
+    verification: Findings cite specific pages/screenshots with date; claims are checkable.
+    documentation: Research summary in `docs/requirements.md` (section "Market").
+    approval: Project Manager.
+
+  - n: 5
+    title: Scope and Statement of Work (SOW) Approval
+    purpose: Create a binding agreement on what will be built, what will not, for how much and by when.
+    owner: Project Manager (author); Technical Lead (technical review); authorised commercial representative (price).
+    inputs: Approved requirements; estimate (Section 8); risk list; legal templates.
+    procedure:
+      - Use the SOW template (Appendix A5) - objectives, in-scope, out-of-scope, deliverables, assumptions, client responsibilities, timeline, milestones, acceptance criteria, price and payment terms, warranty/support, change control, IP and confidentiality.
+      - Cost it with the costing workbook; include contingency; add a managed-service quote.
+      - Technical Lead reviews feasibility and estimate; PM reviews commercial terms.
+      - Send to client; address comments; obtain a signature (e-sign acceptable).
+    outputs: Signed SOW; approved estimate; project baseline.
+    tools: SOW template, costing workbook, e-signature tool, legal review where needed.
+    risks: Undefined acceptance; scope creep; unlimited revisions; missing client responsibilities (content, access, approvals).
+    verification: Checklist - every requirement mapped to an item; out-of-scope list present; payment milestones tied to deliverables.
+    documentation: Signed SOW archived in the project folder; version recorded.
+    approval: Authorised commercial representative and client signatory.
+    gate: "**No work starts without an approved SOW, agreed commercial terms and written access authorisation.**"
+
+  - n: 6
+    title: Input/Output and Feature Freeze
+    purpose: Lock the inputs the client must supply and the outputs we will deliver, and freeze the feature list so estimates stay valid.
+    owner: Project Manager; Technical Lead.
+    inputs: Signed SOW; requirement list.
+    procedure:
+      - List client inputs - logo, brand colours, text, images, product data, third-party account access - with owners and due dates.
+      - List outputs - screens, endpoints, reports, emails, documentation, training.
+      - Agree the feature freeze date; after it, changes follow the change-request procedure only.
+      - Record the baseline in the project tracker (all items, estimates, acceptance criteria).
+    outputs: Input/output register; frozen feature list; change-control log opened.
+    tools: Project board, register spreadsheet, change-request form.
+    risks: Late content (the top cause of delay); "small additions"; hidden dependencies on third parties.
+    verification: Client confirms the register; each item has an owner and date.
+    documentation: Input/output register in `docs/requirements.md`; change log in `CHANGELOG.md` and tracker.
+    approval: Project Manager and client sponsor.
+    gate: Client signs the feature freeze.
+
+  - n: 7
+    title: Sitemap and Information Architecture
+    purpose: Organise content and navigation so users find things easily and search engines understand the site.
+    owner: UI/UX Designer with Project Manager.
+    inputs: Requirements; content inventory; keyword research; competitor findings.
+    procedure:
+      - Build a content inventory - every page, its owner and purpose.
+      - Draw the sitemap (hierarchy) and key user flows (e.g. visitor -> enquiry; customer -> checkout).
+      - Define navigation, URL structure (short, lowercase, readable) and page templates.
+      - Plan SEO basics - one primary topic per page, titles, meta descriptions, redirects for old URLs.
+      - Review with the client using a clickable outline.
+    outputs: Sitemap diagram, user-flow diagrams, URL map, redirect list.
+    tools: FigJam/Miro/Whimsical, spreadsheet, Screaming Frog (free tier) for existing sites.
+    risks: Too many top-level menu items; orphan pages; breaking old URLs and losing rankings.
+    verification: Card-sort or 5-user quick test on the outline; every page reachable in 3 clicks.
+    documentation: Sitemap and URL map in `docs/requirements.md`.
+    approval: Project Manager; client approves sitemap.
+
+  - n: 8
+    title: UI/UX Design Approval
+    purpose: Agree what the product looks like and how it behaves before any code is written.
+    owner: UI/UX Designer (author); client sponsor (approver).
+    inputs: Sitemap; brand assets; competitor matrix; accessibility requirements.
+    procedure:
+      - Create low-fidelity wireframes for key pages and flows; review with the client.
+      - Build a design system - colours, typography, spacing, components, states.
+      - Produce high-fidelity mock-ups for desktop and mobile (mobile-first).
+      - Check contrast, tap-target size and focus order against WCAG 2.2 AA.
+      - Build a clickable prototype; run a quick usability test; record client approval of final screens.
+    outputs: Wireframes; design tokens; high-fidelity screens; prototype; developer hand-off notes.
+    tools: Figma, accessibility checkers, Stark/contrast tools, Maze or manual user tests.
+    risks: Endless revisions; designs that ignore real content; inaccessible colour choices; no mobile design.
+    verification: Design review checklist; client approves in writing; Frontend Lead confirms feasibility.
+    documentation: Figma link, version, approval email stored with the project.
+    approval: Client sponsor (design); Technical Lead (feasibility).
+    gate: Written design approval - changes after this follow change control.
+
+  - n: 9
+    title: Technical Architecture
+    purpose: Choose and document the stack, structure and infrastructure that will meet the requirements at the agreed cost and risk.
+    owner: Technical Lead (author); DevOps engineer; client's IT contact (review).
+    inputs: Requirements; non-functional targets; budget; team skills; compliance needs.
+    procedure:
+      - Compare at least two options (e.g. CMS vs custom, monolith vs services, managed vs self-hosted) against cost, security, scalability, maintainability.
+      - Draw system, data-flow, deployment and security-boundary diagrams.
+      - Define environments (dev, staging, production), hosting, CDN, email, storage, monitoring.
+      - Record each major choice as an Architecture Decision Record (ADR).
+      - Estimate hosting and third-party running costs from official pricing pages.
+    outputs: Architecture document; ADRs; environment plan; running-cost estimate.
+    tools: draw.io/Excalidraw, ADR template, vendor pricing calculators.
+    risks: Over-engineering; resume-driven technology; hidden vendor lock-in; running costs not shared with the client.
+    verification: Peer review by another senior engineer; cost figures traceable to vendor pages with date.
+    documentation: "`docs/architecture.md` and `docs/adr/`."
+    approval: Technical Lead; client IT contact where applicable.
+
+  - n: 10
+    title: Database Design
+    purpose: Model the client's data correctly, securely and efficiently before building features on top of it.
+    owner: Backend developer or full-stack developer (author); Technical Lead (reviewer).
+    inputs: Requirements; architecture; data-protection requirements.
+    procedure:
+      - Identify entities, attributes and relationships; normalise to 3NF.
+      - Define keys, constraints, indexes for expected queries and audit columns.
+      - Classify personal and sensitive data; define retention and encryption needs.
+      - Write the ER diagram and data dictionary; review with Technical Lead.
+      - Plan migrations and seed data; plan backup (RPO/RTO).
+    outputs: ER diagram; data dictionary; initial migration plan; backup plan.
+    tools: dbdiagram.io/pgModeler, SQL DDL, migration tool.
+    risks: Poor modelling that is expensive to change; money in floats; no constraints; collecting unnecessary personal data.
+    verification: Walk through 10 real scenarios on the model; Technical Lead signs the review checklist.
+    documentation: "`docs/database-design.md`."
+    approval: Technical Lead.
+    gate: Database design review passed before implementation.
+
+  - n: 11
+    title: Development Environment Setup
+    purpose: Give every engineer an identical, secure, reproducible working environment.
+    owner: DevOps engineer or Technical Lead; each developer completes onboarding checks.
+    inputs: Architecture; stack decisions; access list.
+    procedure:
+      - Provision company-approved laptop with disk encryption and screen lock.
+      - Install the toolchain from the README (Node/Python versions pinned, Docker, VS Code extension pack).
+      - Create `.env` from `.env.example` using development-only values.
+      - Run `docker compose up` and the test suite - both must pass on a fresh clone.
+      - Give each person individual accounts (GitHub, cloud, tracker) with MFA.
+    outputs: Working dev environment per developer; verified README setup steps.
+    tools: Git, Docker, VS Code, password manager, MFA app.
+    risks: Shared accounts; "works on my machine"; production credentials on laptops.
+    verification: A new teammate follows the README and runs the app within 30 minutes.
+    documentation: "`README.md` getting-started section."
+    approval: Technical Lead.
+
+  - n: 12
+    title: GitHub Repository Creation
+    purpose: Create the single source of truth for code and documentation with protection and automation in place from day one.
+    owner: Technical Lead or DevOps engineer.
+    inputs: Project name; team list; standard repository template.
+    procedure:
+      - Create a private repository in the company organisation from the template (folder structure, `.gitignore`, `.env.example`, PR template, CI workflow).
+      - Protect `main` and `develop` - PR required, approvals, passing checks, no force push.
+      - Add CODEOWNERS; enable secret scanning and Dependabot.
+      - Create labels, milestones and the initial issues from the frozen requirements.
+      - Add team members with least privilege.
+    outputs: Configured repository; first commit; issue backlog.
+    tools: GitHub, `gh` CLI, template repository.
+    risks: Public repository by mistake; committed secrets; unprotected branches.
+    verification: Repository settings checklist; a test push to `main` is rejected.
+    documentation: "`README.md`, `CONTRIBUTING.md`."
+    approval: Technical Lead.
+
+  - n: 13
+    title: Frontend Development
+    purpose: Build the user interface exactly to the approved design, responsive, accessible and fast.
+    owner: Frontend developer (or full-stack developer); UI/UX Designer reviews.
+    inputs: Approved design and tokens; API specification (or mock server); content.
+    procedure:
+      - Implement design tokens, layout and shared components first.
+      - Build pages from the design with mock data; then connect to the real API.
+      - Handle loading, empty, error and success states for every data view.
+      - Test at 360, 768, 1024 and 1440 px; keyboard-only; screen reader spot check.
+      - Optimise images, fonts and bundle size; add SEO metadata.
+      - Open small pull requests; demo each milestone in staging.
+    outputs: Working UI in staging; component library; unit/component tests.
+    tools: React/Next.js, TypeScript, Tailwind or CSS modules, Storybook (optional), Playwright, Lighthouse.
+    risks: Design drift; inaccessible components; performance regressions; hard-coded content.
+    verification: Design review against mock-ups; Lighthouse targets; accessibility checks; PR reviews.
+    documentation: Component notes in `frontend/README.md`; Storybook where used.
+    approval: UI/UX Designer (visual match); Technical Lead (code).
+
+  - n: 14
+    title: Backend Development
+    purpose: Implement the business rules, API and security controls that make the product work.
+    owner: Backend developer (or full-stack developer).
+    inputs: Approved API specification; database design; business rules.
+    procedure:
+      - Implement endpoints in the order of the critical user journeys.
+      - Keep routes thin; put rules in a tested service layer.
+      - Validate all input; return the standard error format; log with request ids.
+      - Write unit and integration tests alongside each feature.
+      - Add rate limiting, CORS rules and security headers.
+    outputs: Working API in staging; automated tests; OpenAPI document.
+    tools: FastAPI/Django/Node framework, Pytest/Jest, Postman, linters.
+    risks: Logic duplicated in the frontend; missing authorisation checks; unbounded queries; secrets in code.
+    verification: Test suite green in CI; peer code review; API contract tests against the spec.
+    documentation: "`docs/api-specification.md` (kept in sync with OpenAPI)."
+    approval: Technical Lead.
+
+  - n: 15
+    title: API Integration
+    purpose: Connect frontend, backend and the client's other systems through stable, documented, tested interfaces.
+    owner: Full-stack developer; Technical Lead.
+    inputs: API specification; third-party API documentation and sandbox keys.
+    procedure:
+      - Generate or write a typed API client; centralise base URL, auth and error handling.
+      - Integrate screen by screen; remove mocks when the real endpoint passes tests.
+      - Add timeouts, retries (only for safe calls) and circuit-breaking for third parties.
+      - Test failure cases - 401, 403, 404, 422, 500, network down.
+    outputs: Fully integrated flows; integration test results.
+    tools: OpenAPI generators, fetch/axios, Postman/Newman, mock servers.
+    risks: Contract drift; breaking changes; unhandled third-party downtime.
+    verification: End-to-end test of each critical journey in staging.
+    documentation: Integration notes and error handling table in `docs/api-specification.md`.
+    approval: Technical Lead.
+
+  - n: 16
+    title: Database Implementation
+    purpose: Create and manage the real schema through versioned migrations with seed data and backups.
+    owner: Backend developer; DevOps engineer (backup/hosting).
+    inputs: Approved database design; chosen database service.
+    procedure:
+      - Write migrations; run them on a fresh database in CI.
+      - Create least-privilege application and migration users.
+      - Load seed/reference data (no real personal data).
+      - Add indexes for measured queries; review plans with `EXPLAIN`.
+      - Enable automated backups and run a restore test.
+    outputs: Schema in dev and staging built only from migrations; backup/restore evidence.
+    tools: Alembic/Django/Prisma migrations, psql, pgAdmin/DBeaver.
+    risks: Manual schema edits; slow queries; missing backups; data loss during migration.
+    verification: Schema diff between environments is empty; restore test passes within the RTO.
+    documentation: "`docs/database-design.md` updated; migration notes in `database/migrations/`."
+    approval: Technical Lead.
+
+  - n: 17
+    title: Authentication and Permissions
+    purpose: Ensure only the right people can sign in and perform the right actions.
+    owner: Backend developer; Technical Lead reviews every change.
+    inputs: Access matrix (roles x actions); security requirements; identity provider decision.
+    procedure:
+      - Implement registration, login, logout, token/session handling and password reset (or integrate an identity provider).
+      - Implement the access matrix (RBAC + ownership checks) server-side.
+      - Add rate limiting, lockout/backoff, secure cookies and CSRF protection.
+      - Add MFA for admin users where the SOW requires it.
+      - Write tests for every cell of the access matrix and the five standard attacks.
+    outputs: Authentication and authorisation implemented and tested; access matrix document.
+    tools: Argon2/bcrypt, JWT or sessions, OAuth/OIDC provider, OWASP ZAP.
+    risks: "Broken access control (OWASP #1); weak password storage; session fixation; open registration abuse."
+    verification: Security review checklist; negative tests; peer review by the Technical Lead.
+    documentation: "`docs/security.md` (flows, token lifetimes, access matrix)."
+    approval: Technical Lead.
+
+  - n: 18
+    title: Payment and Third-Party Integrations
+    purpose: Safely connect payment gateways and other external services so money, messages and data flow correctly.
+    owner: Backend developer; Technical Lead; Project Manager for client account setup.
+    inputs: Client-owned gateway/provider accounts; sandbox keys; business rules for refunds, taxes and failures.
+    procedure:
+      - Use the provider's hosted checkout or tokenisation so card data never touches our servers (reduces PCI scope).
+      - Create orders server-side; verify payment by a **signed webhook**, not by the browser redirect alone.
+      - Make webhook handling idempotent; store provider ids; handle failed, pending and refunded states.
+      - Test in the sandbox - success, decline, timeout, duplicate webhook, refund.
+      - Store provider API keys in the secret manager; rotate on staff changes.
+    outputs: Working integrations; reconciliation report; sandbox test evidence.
+    tools: Gateway SDKs (for example Razorpay, Stripe, PayPal - confirm availability, fees and compliance for the client's country on each official site), Postman, ngrok-style tunnels for webhooks in dev.
+    risks: Double charging; unverified webhooks; storing card data; wrong tax or rounding; gateway downtime.
+    verification: Test matrix executed and signed; finance contact reconciles test transactions.
+    documentation: Integration runbook and flow diagram in `docs/architecture.md`.
+    approval: Technical Lead and client finance contact.
+
+  - n: 19
+    title: Unit and Integration Testing
+    purpose: Prove with repeatable automated tests that each part and the connected parts behave as required.
+    owner: QA engineer with developers.
+    inputs: Requirements with acceptance criteria; test data; staging build.
+    procedure:
+      - Write a test plan mapping every requirement id to test cases.
+      - Developers maintain unit tests; QA adds integration, API (Postman/Newman) and E2E (Playwright) suites.
+      - Cover happy path, edge cases, invalid input and permission failures.
+      - Run cross-browser (Chrome, Edge, Firefox, Safari) and device checks.
+      - Log defects with steps, evidence and severity; retest after fixes.
+    outputs: Test plan, automated suites, defect log, test report.
+    tools: Pytest/Vitest, Playwright, Postman/Newman, BrowserStack or real devices.
+    risks: Test gaps; flaky tests; testing only on developer machines.
+    verification: 100% of must-have requirements have a passing test; no open critical/high defects.
+    documentation: "`qa/test-plan.md`, `qa/test-report.md`."
+    approval: QA engineer (results); Technical Lead (release readiness).
+
+  - n: 20
+    title: Security and Performance Testing
+    purpose: Find and fix vulnerabilities and slowness before the client's customers do.
+    owner: Technical Lead or security-trained engineer; DevOps for load tests.
+    inputs: Staging environment; threat model; performance targets.
+    procedure:
+      - Scan dependencies, secrets, containers and code (Dependabot/`npm audit`/`pip-audit`, Gitleaks, Trivy, Semgrep).
+      - Run OWASP ZAP baseline against staging; manually test top abuse cases (IDOR, XSS, injection, upload abuse).
+      - Check headers, TLS configuration, cookies and CORS.
+      - Run Lighthouse/WebPageTest; load-test critical endpoints (k6 or Locust) at the agreed traffic with p95 and error-rate targets.
+      - Fix findings by severity; retest; document accepted risks.
+    outputs: Security report, performance report, fixed-findings list.
+    tools: OWASP ZAP, Gitleaks, Trivy, Semgrep, Lighthouse, k6/Locust.
+    risks: Testing production by mistake; ignoring "medium" findings forever; unrealistic load profiles.
+    verification: No open critical or high findings; performance targets met or exceptions agreed in writing.
+    documentation: "`docs/security.md` (results) and `qa/` reports. Never claim the system is \"secure\" - state what was tested."
+    approval: Technical Lead; client acknowledges accepted risks.
+
+  - n: 21
+    title: Staging Deployment
+    purpose: Run the release candidate in a production-like environment for final verification.
+    owner: DevOps engineer.
+    inputs: Release candidate tag; deployment runbook; staging environment.
+    procedure:
+      - Deploy the exact artefact (Docker image) that will go to production via the pipeline.
+      - Apply migrations; load realistic synthetic data (no real personal data).
+      - Configure staging domain with HTTPS and basic protection (password or IP allow-list); block indexing.
+      - Run smoke tests and the full E2E suite.
+      - Rehearse rollback once.
+    outputs: Staging URL; smoke-test results; rehearsed rollback.
+    tools: GitHub Actions, Docker, cloud platform, Cloudflare.
+    risks: Staging differs from production; staging indexed by search engines; real data copied.
+    verification: Same image digest later promoted to production; configuration differences listed and justified.
+    documentation: Release notes draft in `CHANGELOG.md`; deployment log.
+    approval: Technical Lead.
+
+  - n: 22
+    title: Client Review and User Acceptance Testing (UAT)
+    purpose: Let the client verify the product against the agreed acceptance criteria.
+    owner: Project Manager (coordination); QA engineer (support).
+    inputs: Staging URL; UAT script; acceptance criteria from the SOW.
+    procedure:
+      - Hold a demo walkthrough; share the UAT script and test accounts.
+      - Give a fixed review window (for example 5 working days) and one consolidated feedback round.
+      - Triage feedback - defect (fix), change request (quote), or preference (discuss).
+      - Fix defects, redeploy to staging and re-verify.
+      - Obtain written UAT sign-off.
+    outputs: UAT feedback log; fixed defects; signed UAT acceptance.
+    tools: Staging site, shared feedback sheet or issue tracker, screen recordings.
+    risks: Unstructured feedback; new scope disguised as bugs; unavailable client reviewers.
+    verification: Each acceptance criterion marked pass or fail with evidence.
+    documentation: UAT sign-off form in the project folder.
+    approval: Client sponsor.
+    gate: Written UAT acceptance before production deployment.
+
+  - n: 23
+    title: Production Deployment
+    purpose: Release the approved build to the live environment safely, with a rollback ready.
+    owner: DevOps engineer (execute); Technical Lead (go/no-go); Project Manager (client communication).
+    inputs: UAT sign-off; deployment checklist (Appendix A7); backup; rollback plan.
+    procedure:
+      - Agree a low-traffic window and notify the client.
+      - Take a fresh backup and confirm it restores.
+      - Promote the exact staging image through the pipeline with manual approval; run migrations.
+      - Run smoke tests; watch logs, errors and latency for at least 30 minutes.
+      - Record evidence - time, version, approver, results; roll back immediately if the criteria fail.
+    outputs: Live system; deployment record; release tag.
+    tools: CI/CD, cloud console (read-only after deploy), monitoring dashboards.
+    risks: Unplanned downtime; failed migration; forgotten configuration; no rollback.
+    verification: Post-deployment checklist complete; first backup of production taken.
+    documentation: Deployment log and release notes.
+    approval: Technical Lead (go/no-go); client sponsor (change window).
+
+  - n: 24
+    title: DNS and Domain Configuration
+    purpose: Point the client's domain at the live system correctly without breaking email.
+    owner: DevOps engineer; client domain owner (access).
+    inputs: Domain ownership details; DNS plan; production endpoint.
+    procedure:
+      - Document the current DNS records (screenshot/export) before any change.
+      - Lower TTL to 300 seconds at least 24 hours before cut-over.
+      - Add or change A/AAAA/CNAME records; keep MX, SPF, DKIM, DMARC unchanged unless planned.
+      - Configure `www` and apex redirects; set canonical host.
+      - Verify from multiple resolvers; raise TTL after stability.
+    outputs: Live domain; DNS record table; email confirmed working.
+    tools: Registrar/Cloudflare, `dig`, `nslookup`, mail test tools.
+    risks: Email outage; wrong record; domain registered in an employee's name.
+    verification: "`dig` from at least two public resolvers returns the intended records; test email sent and received."
+    documentation: DNS record table and registrar details in `docs/deployment.md`.
+    approval: Technical Lead; client domain owner.
+
+  - n: 25
+    title: SSL/TLS Verification
+    purpose: Confirm all traffic is encrypted with a valid, auto-renewing certificate and a sound configuration.
+    owner: DevOps engineer.
+    inputs: Live domain; certificate source (Let's Encrypt, cloud-managed, Cloudflare, paid certificate if required).
+    procedure:
+      - Confirm HTTPS works for apex and `www`; HTTP redirects to HTTPS.
+      - Check certificate chain, expiry date and automatic renewal.
+      - Test with SSL Labs/Qualys server test and Mozilla Observatory; fix weak protocols.
+      - Add HSTS only after confirming no HTTP-only dependencies.
+      - Add certificate-expiry monitoring (alert at 21 and 7 days).
+    outputs: TLS report; renewal evidence; monitoring alert.
+    tools: SSL Labs, `openssl s_client`, browser padlock details, uptime monitor.
+    risks: Expired certificate; mixed content; misconfigured redirect loop.
+    verification: SSL Labs grade A or better; zero mixed-content warnings in DevTools.
+    documentation: Certificate details and renewal method in `docs/deployment.md`.
+    approval: Technical Lead.
+
+  - n: 26
+    title: Client Handover
+    purpose: Transfer ownership, knowledge and access so the client can run the system - or hand it to us on a managed plan.
+    owner: Project Manager; Technical Lead; DevOps engineer.
+    inputs: Live system; documentation set; handover checklist (Appendix A8).
+    procedure:
+      - Deliver the documentation pack - architecture, database, API, deployment, security, user guide, runbooks.
+      - Transfer repository and cloud-account ownership as agreed; remove temporary access.
+      - Share credentials only through the approved secret manager or expiring secure link.
+      - Run a training session and record it; provide a quick-reference sheet.
+      - Obtain the signed handover/acceptance certificate and confirm the warranty start date.
+    outputs: Documentation pack; ownership transfer record; training recording; signed handover certificate.
+    tools: Handover checklist, password/secret manager, video call recording.
+    risks: Credentials in documents; missing runbooks; client cannot operate without us and does not know it.
+    verification: Client performs three routine tasks (update content, create a user, restore a test backup) unaided.
+    documentation: "Complete `docs/` folder and `CHANGELOG.md` at release version."
+    approval: Client sponsor (acceptance); Project Manager (closure).
+    gate: Signed handover certificate.
+
+  - n: 27
+    title: Maintenance and Support
+    purpose: Keep the system secure, available and improving after launch under a clear service agreement.
+    owner: Support lead / DevOps engineer; Project Manager for account management.
+    inputs: Support plan and SLA from the SOW; monitoring and ticket tools.
+    procedure:
+      - Monitor uptime, errors, certificates and backups; respond to alerts by agreed severity.
+      - Apply security patches and dependency updates monthly (critical issues in the agreed window) through staging first.
+      - Test a restore quarterly; review cost and performance monthly.
+      - Handle support tickets with first-response and resolution targets; classify bug vs change request.
+      - Send a monthly report; review renewal and improvement roadmap quarterly.
+    outputs: Monthly service report; patch log; restore-test log; renewal proposal.
+    tools: Uptime monitor, ticket system, Dependabot, cloud billing alerts.
+    risks: Unpriced "unlimited" support; unpatched components; lapsing domains/certificates.
+    verification: SLA metrics measured and reported; renewals tracked 60 days ahead.
+    documentation: Support log; runbooks updated after every incident (post-incident review).
+    approval: Project Manager; client sponsor for plan changes and renewals.

@@ -1,0 +1,344 @@
+modules:
+  - id: L2.1
+    title: HTML5
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "**HTML** (HyperText Markup Language) describes the structure and meaning of a page using elements such as `<header>`, `<nav>`, `<main>`, `<h1>`, `<p>`, `<img>`, `<a>` and `<form>`. HTML5 added semantic elements, native media and form controls."
+    purpose: Correct semantic HTML gives accessibility, SEO and maintainability for free. Clients lose search traffic when pages are built from anonymous `<div>` soup.
+    example: A clinic homepage uses one `<h1>`, a `<nav>` with a list of links, `<main>` with sections, and a `<footer>` with address markup - screen readers and Google both understand it.
+    prereq: Level 1 complete.
+    tools: VS Code with Live Server and Prettier extensions; Chrome; the W3C Nu HTML Checker (free, online).
+    procedure:
+      - Create `index.html` with `<!doctype html>`, `lang`, charset and viewport meta tags.
+      - Build the layout with `<header>`, `<nav>`, `<main>`, `<section>`, `<article>`, `<footer>`.
+      - Add one `<h1>` and a logical heading order (h2 under h1, h3 under h2).
+      - Add images with meaningful `alt`, a contact form with `<label for>` on every input.
+      - Validate with the W3C checker and fix every error.
+    code:
+      lang: html
+      text: |
+        <!doctype html>
+        <html lang="en">
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1">
+          <title>Sunrise Dental Clinic - Chennai</title>
+          <meta name="description" content="Family dentistry with online booking.">
+        </head>
+        <body>
+          <header><nav aria-label="Main"><a href="/">Home</a> <a href="/services">Services</a></nav></header>
+          <main>
+            <h1>Gentle dentistry for the whole family</h1>
+            <form action="/api/contact" method="post">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" required autocomplete="email">
+              <button type="submit">Request a call</button>
+            </form>
+          </main>
+          <footer><p>&copy; 2026 Sunrise Dental</p></footer>
+        </body>
+        </html>
+    output: A page with a heading, a labelled email field and a button; zero errors in the W3C validator.
+    verify: Tab through the page with the keyboard - every link and control gets a visible focus; Lighthouse accessibility score at least 90.
+    errors: "Skipping heading levels for styling; `<div>` instead of `<button>`; missing `alt`; placeholder used instead of label; duplicate ids."
+    security: Never build HTML by concatenating untrusted text (XSS). Add `rel="noopener noreferrer"` on `target="_blank"` links.
+    docs: Page templates and component notes in `frontend/README.md`.
+    assignment: Build a one-page business site (header, hero, services list, contact form, footer) using only semantic HTML.
+    assessment: Mentor opens the page with CSS disabled - the content must still read in a sensible order.
+    gate: Zero validator errors; mentor sign-off.
+    refs: [["MDN - HTML", "https://developer.mozilla.org/en-US/docs/Web/HTML"], ["HTML Living Standard", "https://html.spec.whatwg.org/"]]
+
+  - id: L2.2
+    title: CSS3
+    time: 8 h
+    tags: [Essential, Free]
+    definition: "**CSS** (Cascading Style Sheets) controls presentation - colour, type, spacing, layout, animation. Key ideas are the **cascade** and **specificity**, the **box model** (content, padding, border, margin), **custom properties** (`--brand`) and **units** (`rem`, `%`, `vw`)."
+    purpose: Consistent, maintainable CSS makes a client's brand look right on every page and keeps later redesigns cheap.
+    example: One `--brand` colour variable changes the whole site's buttons, links and focus rings in a single edit.
+    prereq: L2.1.
+    tools: VS Code, DevTools Elements/Styles panel, Stylelint (optional).
+    procedure:
+      - Add a reset (`box-sizing:border-box`) and define design tokens as CSS variables.
+      - Style type scale and spacing with `rem` units.
+      - Style components with simple class selectors (avoid deep nesting and `!important`).
+      - Add states - `:hover`, `:focus-visible`, `:disabled`.
+      - Inspect an element and read which rule wins and why.
+    code:
+      lang: css
+      text: |
+        :root { --brand:#14306b; --accent:#c2185b; --space:1rem; --radius:.5rem; }
+        *,*::before,*::after { box-sizing: border-box; }
+        body { margin:0; font:1rem/1.5 system-ui, sans-serif; color:#171c28; }
+        .btn { background:var(--brand); color:#fff; padding:.6rem 1.1rem; border:0; border-radius:var(--radius); }
+        .btn:hover { background:var(--accent); }
+        .btn:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+    output: A navy button that turns magenta on hover and shows a visible outline on keyboard focus.
+    verify: Change `--brand` once and confirm every component updates; contrast checker shows at least 4.5:1 for body text.
+    errors: Over-specific selectors; magic pixel numbers; removing the focus outline; relying on `!important`.
+    security: Avoid loading CSS from untrusted origins; do not inline user-supplied styles.
+    docs: List the design tokens (colours, spacing, type) in `frontend/README.md`.
+    assignment: Style the L2.1 page to match a provided mock-up within a 2 px tolerance.
+    assessment: Timed task - make a given unstyled form look like a design and fix three CSS bugs.
+    gate: Mentor sign-off against the mock-up.
+    refs: [["MDN - CSS", "https://developer.mozilla.org/en-US/docs/Web/CSS"]]
+
+  - id: L2.3
+    title: JavaScript
+    time: 14 h
+    tags: [Essential, Free]
+    definition: "**JavaScript** is the programming language of the browser (and, with Node.js, of servers). Core ideas are variables (`const`, `let`), functions, arrays and objects, the DOM, events, `fetch` and **asynchronous code** (`Promise`, `async/await`)."
+    purpose: JavaScript makes pages interactive - menus, forms, filters, carts - and is the foundation of React, Next.js and Node.
+    example: A booking form fetches free slots from the API when the date changes and shows them without reloading the page.
+    prereq: L2.1, L2.2.
+    tools: VS Code, Node.js LTS, browser console, ESLint + Prettier.
+    procedure:
+      - Learn values, functions, arrays (`map`, `filter`, `reduce`) and objects.
+      - Select elements and respond to events.
+      - Fetch JSON from an API with `async/await` and handle errors.
+      - Update the page safely using `textContent` (not `innerHTML` with user data).
+    code:
+      lang: js
+      text: |
+        const list = document.querySelector('#posts');
+        async function load() {
+          try {
+            const res = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=3');
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const posts = await res.json();
+            list.replaceChildren(...posts.map(p => {
+              const li = document.createElement('li');
+              li.textContent = p.title;           // textContent = safe against XSS
+              return li;
+            }));
+          } catch (err) {
+            list.textContent = 'Could not load posts. Please retry.';
+            console.error(err);
+          }
+        }
+        document.querySelector('#reload').addEventListener('click', load);
+        load();
+    output: Three post titles appear as list items; with the network disabled the friendly error message appears instead.
+    verify: Run ESLint with no errors; test the success and failure paths in DevTools (offline mode).
+    errors: Forgetting `await`; mutating shared state; using `==` instead of `===`; not handling a failed fetch; blocking the page with a long loop.
+    security: "XSS - never insert untrusted data with `innerHTML`; never store tokens in `localStorage` for sensitive apps if httpOnly cookies are possible."
+    docs: JSDoc comments on shared helpers; a short "how it works" note per feature.
+    assignment: Build a task list - add, complete, delete, filter, persist to `localStorage`.
+    assessment: Code review of a 60-line script with seeded bugs; find at least 5.
+    gate: Mentor code review passed; 20-question quiz at least 80%.
+    refs: [["MDN - JavaScript", "https://developer.mozilla.org/en-US/docs/Web/JavaScript"]]
+
+  - id: L2.4
+    title: TypeScript
+    time: 8 h
+    tags: [Essential, Free]
+    definition: "**TypeScript** is JavaScript plus a static type system. Types are checked at build time and erased before the code runs, so the browser still executes plain JavaScript."
+    purpose: Types catch whole classes of bugs before the client sees them, make refactoring safe and document the shape of API data. Our standard for all new projects.
+    example: "A function `price(order: Order)` refuses to compile if someone passes `{ total: '12' }` where a number is required."
+    prereq: L2.3.
+    tools: Node.js LTS, `npm i -D typescript`, VS Code (built-in TS support), `tsc --noEmit`.
+    procedure:
+      - "Run `npx tsc --init`, then enable `\"strict\": true`."
+      - Model API data with `interface`/`type`, unions and optional properties.
+      - Avoid `any`; use `unknown` and narrow with checks.
+      - Share types between frontend and backend or generate them from the API schema.
+    code:
+      lang: ts
+      text: |
+        type Role = 'admin' | 'staff' | 'customer';
+        interface User { id: number; email: string; role: Role; phone?: string }
+
+        function canRefund(user: User): boolean {
+          return user.role === 'admin' || user.role === 'staff';
+        }
+
+        const u: User = { id: 1, email: 'asha@example.com', role: 'customer' };
+        console.log(canRefund(u));          // false
+        // canRefund({ id: 2, email: 'x', role: 'owner' })  -> compile error: 'owner' is not a Role
+    output: "`false` at runtime; the commented line fails with TS2322 when uncommented."
+    verify: "`npx tsc --noEmit` reports zero errors in CI."
+    errors: Silencing errors with `any` or `as`; disabling strict mode; types that do not match the real API response.
+    security: Types do not validate runtime data - validate untrusted input at the boundary (e.g. with Zod/Pydantic) before trusting the types.
+    docs: Document shared types in `docs/api-specification.md`.
+    assignment: Convert the L2.3 task list to TypeScript with strict mode and zero `any`.
+    assessment: Fix 10 compiler errors in a supplied project without using `any`.
+    gate: CI type-check passes; mentor review.
+    refs: [["TypeScript Handbook", "https://www.typescriptlang.org/docs/"]]
+
+  - id: L2.5
+    title: Responsive Layouts - Flexbox and Grid
+    time: 8 h
+    tags: [Essential, Free]
+    definition: "**Flexbox** lays items out along one axis (a row or a column) and distributes spare space. **CSS Grid** lays out in two dimensions - rows and columns - and is ideal for page and card layouts."
+    purpose: These two systems replace floats and tables, and produce layouts that adapt to every screen with very little CSS.
+    example: A header uses Flexbox (logo left, menu right). A product catalogue uses Grid with `auto-fit` so the number of columns adapts to screen width automatically.
+    prereq: L2.2, L1.9.
+    tools: DevTools Flexbox/Grid overlays; Flexbox Froggy and Grid Garden (free games).
+    procedure:
+      - Build a header with `display:flex; justify-content:space-between; align-items:center`.
+      - Build a card grid with `repeat(auto-fit, minmax(240px, 1fr))`.
+      - Add `gap` instead of margins between items.
+      - Test at 360, 768, 1024 and 1440 px.
+    code:
+      lang: css
+      text: |
+        .site-header { display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; }
+        .cards { display:grid; gap:1rem; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); }
+        .card { padding:1rem; border:1px solid #d5dcea; border-radius:.75rem; }
+    output: 1 card per row at 360 px, 2-3 at tablet widths, 4 on wide screens, with no media query.
+    verify: No horizontal scroll at any width from 320 px to 1600 px.
+    errors: Fixed heights that clip text; forgetting `flex-wrap`; nested grids too deep; using Grid for everything or Flexbox for everything.
+    security: None specific.
+    docs: Layout rules recorded in the frontend README (which pattern for which component).
+    assignment: Rebuild a 3-section landing page (hero, features, pricing, footer) that is fully responsive.
+    assessment: Reproduce a given responsive mock-up in 45 minutes.
+    gate: Mentor sign-off at four widths.
+    refs: [["MDN - CSS layout", "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout"]]
+
+  - id: L2.6
+    title: Accessibility
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "**Accessibility (a11y)** means people with disabilities can perceive, operate and understand the site - keyboard-only users, screen-reader users, low-vision and colour-blind users. The standard is **WCAG 2.2** (target level AA)."
+    purpose: Accessibility is a quality requirement, widens the client's audience and, in many markets, a legal expectation. Fixing it late costs far more than building it in.
+    example: A customer who cannot use a mouse can still open the menu, fill the booking form and pay, using only Tab, Enter and Space.
+    prereq: L2.1, L2.2.
+    tools: Lighthouse, axe DevTools extension (free), NVDA (Windows, free) or VoiceOver (macOS), WebAIM contrast checker.
+    procedure:
+      - Use semantic elements first; add ARIA only when HTML cannot express the meaning.
+      - Make every control keyboard reachable with a visible `:focus-visible` style.
+      - Give each image a text alternative (empty `alt=""` for decorative images).
+      - Ensure text contrast of at least 4.5:1 and never use colour alone to convey meaning.
+      - Associate error messages with inputs using `aria-describedby`.
+    code:
+      lang: html
+      text: |
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" inputmode="tel" aria-describedby="phone-err" aria-invalid="true">
+        <p id="phone-err" role="alert">Enter a 10-digit mobile number.</p>
+        <button type="button" aria-expanded="false" aria-controls="menu">Menu</button>
+    output: A screen reader announces "Phone, edit text, invalid entry, Enter a 10-digit mobile number."
+    verify: axe reports zero critical/serious issues; the whole flow works with the keyboard only; NVDA/VoiceOver read the form logically.
+    errors: "Click handlers on `<div>`; removing outlines; vague link text such as \"click here\"; images of text; autoplaying media."
+    security: CAPTCHAs must have accessible alternatives; do not rely on hover for critical actions.
+    docs: Accessibility statement and known issues in `docs/user-guide.md`.
+    assignment: Audit a sample site with axe and manual keyboard test; write a prioritised fix list.
+    assessment: Fix the audit's top 10 issues in a given codebase.
+    gate: Accessibility checklist in QA (Appendix A6) fully passed on your Level 2 project.
+    refs: [["web.dev - Learn Accessibility", "https://web.dev/learn/accessibility/"], ["MDN - Accessibility", "https://developer.mozilla.org/en-US/docs/Web/Accessibility"]]
+
+  - id: L2.7
+    title: Browser Developer Tools
+    time: 4 h
+    tags: [Essential, Free]
+    definition: "**DevTools** are the debugging suite built into the browser - Elements (DOM/CSS), Console, Network, Sources (breakpoints), Application (storage, cookies), Performance and Lighthouse."
+    purpose: DevTools is the fastest way to reproduce and explain a bug to a client or colleague, and the main instrument for performance and accessibility checks.
+    example: "A client says \"the page is slow\". The Network tab shows a 4 MB uncompressed hero image; compressing it to WebP cuts load time by seconds."
+    prereq: L2.1 to L2.3.
+    tools: Chrome or Edge DevTools (F12), Firefox DevTools.
+    procedure:
+      - Elements - change CSS live and copy the working rule back to your code.
+      - Console - read errors; run small experiments.
+      - Network - throttle to "Fast 4G", disable cache, sort by size and time.
+      - Sources - set a breakpoint, step through a function.
+      - Application - inspect cookies and `localStorage`.
+      - Lighthouse - run a mobile audit and read the opportunities.
+    code:
+      lang: js
+      text: |
+        // Paste into the Console to find images that are too large for their display size
+        [...document.images]
+          .filter(i => i.naturalWidth > i.clientWidth * 2)
+          .map(i => ({ src: i.currentSrc, natural: i.naturalWidth, shown: i.clientWidth }));
+    output: An array of image objects (empty if all images are sized well).
+    verify: You can reproduce one bug using only DevTools and record a screenshot of the failing request or console error.
+    errors: Testing with cache enabled; testing only on a fast desktop connection; editing in DevTools and forgetting to copy the change back.
+    security: Do not paste unknown scripts into the console (self-XSS). Never share screenshots or HAR files that contain tokens or cookies.
+    docs: A "debugging notes" file in the training repo showing three bugs and how DevTools found them.
+    assignment: Take a slow public page you do not own (read-only analysis) and write a 1-page performance finding with screenshots.
+    assessment: Mentor plants three bugs - find them using only DevTools in 20 minutes.
+    gate: Mentor sign-off.
+    refs: [["Chrome DevTools docs", "https://developer.chrome.com/docs/devtools"], ["web.dev - Performance", "https://web.dev/learn/performance/"]]
+
+  - id: L2.8
+    title: React
+    time: 24 h
+    tags: [Essential, Free]
+    definition: "**React** is a JavaScript library for building user interfaces from reusable **components**. A component is a function that takes **props** and returns UI; **state** (`useState`) holds data that changes; **hooks** (`useEffect`, custom hooks) share behaviour."
+    purpose: React lets a team build large interactive applications - dashboards, portals, shops - from small, tested, reusable parts, and has the largest ecosystem and hiring pool.
+    example: A `<ProductCard>` component is reused in the catalogue, search results and the "recently viewed" strip; fix its layout once and every place updates.
+    prereq: L2.3, L2.4.
+    tools: Node.js LTS, Vite (`npm create vite@latest`), React DevTools extension, Vitest or Jest, React Testing Library.
+    procedure:
+      - Scaffold with Vite using the React + TypeScript template.
+      - Create a typed component with props and local state.
+      - Fetch data in an effect or a data library and render loading, error and empty states.
+      - Lift state up instead of duplicating it; keep components small.
+      - Write a test with React Testing Library.
+    code:
+      lang: tsx
+      text: |
+        import { useState } from 'react';
+
+        type Props = { name: string; price: number };
+
+        export function ProductCard({ name, price }: Props) {
+          const [qty, setQty] = useState(1);
+          return (
+            <article className="card">
+              <h2>{name}</h2>
+              <p>Rs {(price * qty).toLocaleString('en-IN')}</p>
+              <button onClick={() => setQty(q => q + 1)} aria-label={`Add one more ${name}`}>+</button>
+              <span aria-live="polite">Qty {qty}</span>
+            </article>
+          );
+        }
+    output: A card showing the product name and a total that updates when "+" is pressed; the quantity change is announced to screen readers.
+    verify: "`npm run build` succeeds; component test passes; React DevTools shows the expected props and state."
+    errors: Mutating state directly; missing `key` in lists; effects with missing dependencies; fetching in a loop; giant components.
+    security: React escapes text by default; never use `dangerouslySetInnerHTML` with untrusted content; keep secrets out of the client bundle (only `VITE_`/`NEXT_PUBLIC_` variables are public).
+    docs: Component catalogue (name, props, usage) in `frontend/README.md`; use Storybook where the project justifies it.
+    assignment: Build a product catalogue with search, filter, cart state and a responsive layout.
+    assessment: Code review against the delivery standard (Section 7); mentor adds three change requests to implement in 2 hours.
+    gate: Passed review; tests green; Lighthouse accessibility at least 90.
+    refs: [["React - Learn", "https://react.dev/learn"]]
+
+  - id: L2.9
+    title: Next.js (and when to choose alternatives)
+    time: 16 h
+    tags: [Essential, Free]
+    definition: "**Next.js** is a React framework that adds file-based routing, server rendering (SSR), static generation (SSG), API/route handlers, image optimisation and deployment tooling. Alternatives - **Astro** (content sites), **Remix/React Router**, **Vite + React SPA**, **Nuxt/SvelteKit** (other ecosystems), **WordPress** (CMS-led sites)."
+    purpose: SEO-critical, fast, full-stack React apps need server rendering and good defaults. Choosing the framework per project (not by habit) saves cost and avoids over-engineering.
+    example: A marketing site with a blog uses Astro or Next.js static export on a CDN. A logged-in customer portal uses Next.js with server components and an API.
+    prereq: L2.8.
+    tools: "Node.js LTS, `npx create-next-app@latest`, Vercel / Cloudflare / Docker for deployment."
+    procedure:
+      - Create a project and read the generated folder structure (`app/`, `public/`).
+      - Add a route (`app/services/page.tsx`) and a shared layout.
+      - Fetch data on the server and render it; add `metadata` for SEO.
+      - Add a route handler for a form endpoint and validate input.
+      - Run `npm run build` and `npm start` to test the production build.
+    code:
+      lang: tsx
+      text: |
+        // app/services/page.tsx  (server component by default)
+        export const metadata = { title: 'Services - Sunrise Dental', description: 'Check-ups, whitening, implants.' };
+
+        async function getServices() {
+          const res = await fetch(`${process.env.API_URL}/services`, { next: { revalidate: 300 } });
+          if (!res.ok) throw new Error('Failed to load services');
+          return res.json() as Promise<{ id: number; name: string }[]>;
+        }
+
+        export default async function ServicesPage() {
+          const services = await getServices();
+          return <ul>{services.map(s => <li key={s.id}>{s.name}</li>)}</ul>;
+        }
+    output: "`/services` returns fully rendered HTML (View Source shows the list) and refreshes its cache every 5 minutes."
+    verify: Lighthouse SEO at least 90; View Source contains the content; `npm run build` has no errors.
+    errors: Putting secrets in `NEXT_PUBLIC_` variables; mixing server and client code; fetching the same data repeatedly; skipping `loading`/`error` states.
+    security: Validate every route handler input; add security headers; keep server-only code out of client components; protect authenticated routes on the server.
+    docs: Rendering strategy per page (static, server, client) in `docs/architecture.md`.
+    assignment: Build the multi-page corporate website (Project 2) with SEO metadata, sitemap and optimised images.
+    assessment: Explain, for five pages, which rendering mode you chose and why.
+    gate: Level 2 completion review - modules signed, Project 1 and 2 accepted.
+    refs: [["Next.js docs", "https://nextjs.org/docs"], ["Astro docs", "https://docs.astro.build/"]]

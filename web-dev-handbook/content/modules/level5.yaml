@@ -1,0 +1,418 @@
+modules:
+  - id: L5.1
+    title: Git
+    time: 8 h
+    tags: [Essential, Free]
+    definition: "**Git** is a distributed version-control system. It records snapshots (**commits**) of the project, lets many people work in parallel on **branches**, and can restore any earlier state."
+    purpose: Git is the safety net and the audit trail of every client project - who changed what, why, and how to undo it. No code is delivered without it.
+    example: A developer breaks the checkout page at 5 pm. `git revert` restores the last good behaviour in a minute, and the history shows exactly which change caused it.
+    prereq: Level 2 started.
+    tools: Git (free), VS Code Source Control, `git config` with company email, SSH key (ed25519).
+    procedure:
+      - Install Git and set `user.name` and `user.email`.
+      - Create a repository; make small commits with clear messages.
+      - Create a feature branch, commit, and merge or rebase back.
+      - Resolve a deliberate merge conflict.
+      - Undo safely - `git restore`, `git revert`, and know why `git reset --hard` is dangerous.
+    code:
+      lang: bash
+      text: |
+        git config --global user.name "Your Name"
+        git config --global user.email "you@company.com"
+        git init demo && cd demo
+        echo "# Demo" > README.md && git add README.md && git commit -m "docs: add README"
+        git switch -c feature/contact-form
+        echo "form" > form.html && git add . && git commit -m "feat(form): add contact form markup"
+        git switch main && git merge --no-ff feature/contact-form
+        git log --oneline --graph
+    output: |
+      *   a1b2c3d (HEAD -> main) Merge branch 'feature/contact-form'
+      |\
+      | * 9f8e7d6 feat(form): add contact form markup
+      |/
+      * 3c4d5e6 docs: add README
+    verify: The graph shows your branch and merge; `git status` is clean.
+    errors: Committing secrets or `node_modules`; huge commits mixing unrelated changes; force-pushing shared branches; working directly on `main`.
+    security: Never commit credentials (see `.gitignore` and secret scanning); if a secret is committed, **rotate it immediately** - deleting the commit is not enough.
+    docs: "`CONTRIBUTING.md` explains branch names, commit format and PR rules (Section 6)."
+    assignment: Complete a 20-step Git lab - branch, merge, conflict, revert, tag, cherry-pick.
+    assessment: Live demo - recover a "lost" commit using `git reflog`.
+    gate: Mentor sign-off.
+    refs: [["Pro Git (free book)", "https://git-scm.com/book/en/v2"], ["GitHub Docs", "https://docs.github.com/"]]
+
+  - id: L5.2
+    title: GitHub
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "**GitHub** hosts Git repositories and adds collaboration - **pull requests**, **issues**, **projects**, **Actions** (CI/CD), branch protection, code owners, secret scanning and Dependabot. Plans and limits change - confirm on the GitHub pricing page."
+    purpose: GitHub is where work is reviewed, tracked and automatically tested. The company organisation holds all client code; personal accounts are never used for client work.
+    example: A pull request changes the pricing rule; two checks run (tests, lint), the Tech Lead reviews, and only then can it merge into `main`.
+    prereq: L5.1.
+    tools: GitHub organisation account with 2FA, GitHub CLI `gh`, SSH keys, branch protection rules.
+    procedure:
+      - Enable 2FA and add your SSH key.
+      - Create a repository in the company organisation from the template.
+      - Protect `main` - require pull request, 1 approval, passing checks, no force push.
+      - "Open an issue, branch from it, open a PR that links it (`Closes #12`)."
+      - Enable secret scanning and Dependabot alerts.
+    code:
+      lang: bash
+      text: |
+        ssh-keygen -t ed25519 -C "you@company.com"
+        gh auth login
+        gh repo create vel-org/client-project --private --template vel-org/web-project-template
+        git switch -c feat/12-booking-form
+        git push -u origin feat/12-booking-form
+        gh pr create --fill --reviewer techlead --body "Closes #12"
+    output: "A PR URL is printed; GitHub shows the checks running and the reviewer requested."
+    verify: Pushing directly to `main` is rejected; the PR cannot be merged until the checks pass.
+    errors: Committing as a personal account; no branch protection; giant PRs; ignoring failed checks; using personal tokens in CI.
+    security: Use fine-grained or app tokens; store secrets only in GitHub Secrets/Environments; require signed-off reviews for production workflows.
+    docs: "Repository `README.md`, `CODEOWNERS`, `.github/pull_request_template.md`."
+    assignment: Set up a complete repository with protection rules and a PR template for Project 3.
+    assessment: Review a sample PR with three planted problems.
+    gate: Tech Lead verifies repository settings against the checklist.
+
+  - id: L5.3
+    title: VS Code
+    time: 3 h
+    tags: [Essential, Free]
+    definition: "**Visual Studio Code** is a free, extensible code editor with integrated terminal, debugger, Git and extensions. A shared **workspace configuration** keeps formatting and tools identical across the team."
+    purpose: A consistent editor setup removes "works on my machine" formatting noise, speeds up debugging and enforces standards automatically on save.
+    example: Prettier and ESLint run on save, so every pull request has the same style without review comments about spacing.
+    prereq: None.
+    tools: VS Code; extensions - ESLint, Prettier, GitLens (optional), Docker, REST Client or Thunder Client, Playwright Test, Python, Error Lens.
+    procedure:
+      - Install VS Code and the company extension pack (listed in `.vscode/extensions.json`).
+      - Commit `.vscode/settings.json` with format-on-save.
+      - Learn five shortcuts - command palette, quick open, multi-cursor, go to definition, rename symbol.
+      - Debug a Node or Python program with a breakpoint through `launch.json`.
+    code:
+      lang: json
+      text: |
+        {
+          "editor.formatOnSave": true,
+          "editor.defaultFormatter": "esbenp.prettier-vscode",
+          "editor.codeActionsOnSave": { "source.fixAll.eslint": "explicit" },
+          "files.trimTrailingWhitespace": true,
+          "files.insertFinalNewline": true
+        }
+    output: Saving a messy file reformats it and fixes lint issues automatically.
+    verify: Another team member opens the project and gets identical formatting with no manual setup.
+    errors: Installing unknown extensions (supply-chain risk); committing personal settings; conflicting formatters.
+    security: Install extensions only from verified publishers and the company list; enable Workspace Trust; keep secrets out of editor settings.
+    docs: "Editor setup steps in `README.md` (\"Getting started\")."
+    assignment: Configure a workspace with debug configs for frontend and backend.
+    assessment: Perform five editing tasks within a time limit using shortcuts only.
+    gate: Mentor sign-off.
+    refs: [["VS Code documentation", "https://code.visualstudio.com/docs"]]
+
+  - id: L5.4
+    title: Code Reviews
+    time: 4 h
+    tags: [Essential, Free]
+    definition: "A **code review** is a structured check of a change by another engineer before it merges - for correctness, security, readability, tests and standards."
+    purpose: Reviews catch defects when they are cheapest to fix, spread knowledge and protect the client from one person's mistake. Every production change needs a second person's review.
+    example: The reviewer notices an unvalidated query parameter in a new endpoint and requests a fix before merge - avoiding a possible SQL injection.
+    prereq: L5.1, L5.2.
+    tools: GitHub pull-request review, checklists, linters, CI results.
+    procedure:
+      - Author - keep the PR small (under about 400 changed lines), explain what and why, attach screenshots or test evidence.
+      - Reviewer - read the description, run the checks, review tests first, then code; comment on the code, not the person.
+      - Classify comments - **blocker**, **suggestion**, **question**, **nit**.
+      - Author responds to every comment; reviewer approves only when blockers are resolved.
+      - Merge with squash and a conventional commit message.
+    code:
+      lang: markdown
+      text: |
+        ## What and why
+        Adds server-side date validation to booking creation (Closes #42).
+
+        ## How tested
+        - [x] Unit tests added (12 cases)
+        - [x] Manual test in staging (screenshot attached)
+
+        ## Checklist
+        - [x] No secrets - [x] Migrations reviewed - [x] Docs updated - [x] Accessibility checked
+    output: A completed PR template and a review thread with labelled comments and an approval.
+    verify: "Review checklist (Section 9.4) completed; CI green; no unresolved threads."
+    errors: Rubber-stamp approvals; reviewing 2,000-line PRs; style debates that linters should settle; author merging own PR on production repositories.
+    security: Reviewer checks authentication, authorisation, validation, secrets, logging of personal data and dependency changes.
+    docs: Review checklist in `CONTRIBUTING.md`.
+    assignment: Review three PRs from the sample repository and write constructive comments.
+    assessment: Mentor rates review quality - found at least 5 of 7 planted issues.
+    gate: Mentor sign-off; reviewer rights granted after the gate.
+
+  - id: L5.5
+    title: Testing
+    time: 14 h
+    tags: [Essential, Free]
+    definition: "**Testing** proves the software behaves as required. Layers - **unit** tests (one function), **integration** tests (several parts, e.g. API + database), **end-to-end (E2E)** tests (a real browser, e.g. Playwright), plus **API tests** (Postman/Newman) and manual exploratory testing."
+    purpose: Automated tests let us change code fast without breaking the client's business, and provide evidence at acceptance.
+    example: A Playwright test opens the site on a phone-sized viewport, books a slot and asserts the confirmation text. It runs on every pull request.
+    prereq: L2.3, L3.1.
+    tools: Vitest/Jest, Pytest, Playwright (free), Postman + Newman (free tier), coverage tools (`coverage.py`, `c8`).
+    procedure:
+      - Write unit tests for business rules first (test pyramid - many unit, fewer integration, few E2E).
+      - Write an API integration test with a throw-away database.
+      - Install Playwright and write one critical-path E2E test.
+      - Run all tests in CI; fail the build on failure.
+      - Track coverage as a guide, not a goal (aim for the important rules at 100%).
+    code:
+      lang: ts
+      text: |
+        // tests/booking.spec.ts  -  run with: npx playwright test
+        import { test, expect } from '@playwright/test';
+
+        test('visitor can request a booking on mobile', async ({ page }) => {
+          await page.setViewportSize({ width: 390, height: 844 });
+          await page.goto('/');
+          await page.getByRole('link', { name: 'Book now' }).click();
+          await page.getByLabel('Name').fill('Asha');
+          await page.getByLabel('Email').fill('asha@example.com');
+          await page.getByRole('button', { name: 'Confirm booking' }).click();
+          await expect(page.getByRole('status')).toContainText('Booking confirmed');
+        });
+    output: |
+      Running 1 test using 1 worker
+        1 passed (3.2s)
+      (an HTML report is written to playwright-report/)
+    verify: The test fails when you break the feature on purpose, and passes when fixed (prove the test can fail).
+    errors: Flaky tests using fixed sleeps; tests that depend on each other; testing implementation details; no test data cleanup; only testing the happy path.
+    security: Never run tests against production data; use synthetic data; keep test credentials out of the repository.
+    docs: Test plan and results in `qa/` (see QA checklist, Appendix A6).
+    assignment: Add unit, integration and two E2E tests to Project 3 with a CI run.
+    assessment: Write tests for a given buggy function so that the bug is detected.
+    gate: CI green with the required test layers.
+    refs: [["Playwright docs", "https://playwright.dev/docs/intro"]]
+
+  - id: L5.6
+    title: Docker
+    time: 10 h
+    tags: [Essential, Free]
+    definition: "**Docker** packages an application and everything it needs into an **image** that runs the same everywhere as a **container**. **Docker Compose** runs several containers together (app, database, cache)."
+    purpose: Containers remove "works on my machine", make onboarding a one-command task and give repeatable deployments. Docker Desktop licensing for larger companies is paid - check Docker's current terms; alternatives include Podman and Colima.
+    example: "`docker compose up` starts the API, the PostgreSQL database and Mailpit identical to what staging runs."
+    prereq: L5.1, L3.1, L4.1.
+    tools: Docker Engine / Docker Desktop, Docker Compose v2, a registry (GitHub Container Registry, Docker Hub, ECR).
+    procedure:
+      - Write a Dockerfile - small base image, non-root user, dependencies cached before code.
+      - Add `.dockerignore` (exclude `.git`, `node_modules`, `.env`).
+      - Write `compose.yaml` with the app, `postgres` and a named volume.
+      - Build, run and read logs; use health checks.
+      - Scan the image for vulnerabilities (Trivy, Docker Scout).
+    code:
+      lang: dockerfile
+      text: |
+        # Dockerfile (FastAPI)
+        FROM python:3.12-slim
+        ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+        WORKDIR /app
+        COPY requirements.txt .
+        RUN pip install --no-cache-dir -r requirements.txt
+        COPY src/ ./src/
+        RUN useradd -m appuser
+        USER appuser
+        EXPOSE 8000
+        HEALTHCHECK CMD python -c "import urllib.request as u; u.urlopen('http://localhost:8000/health')"
+        CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    output: |
+      $ docker compose up -d
+      [+] Running 3/3  api  db  mailpit
+      $ curl localhost:8000/health
+      {"status":"ok"}
+    verify: "`docker compose ps` shows all services healthy; destroying and recreating containers keeps database data (volume)."
+    errors: Running as root; secrets baked into images; using `latest` tags; huge images; storing data inside the container filesystem.
+    security: Pin versions, use minimal bases, non-root user, scan images, never mount the Docker socket, keep `.env` out of the image.
+    docs: "`deployment/docker/README.md` - build, run, environment variables, ports."
+    assignment: Containerise Project 4 (app + DB) and make it start with one command.
+    assessment: Explain image vs container vs volume and fix three Dockerfile problems.
+    gate: Tech Lead reviews Dockerfile and compose files.
+    refs: [["Docker docs", "https://docs.docker.com/"]]
+
+  - id: L5.7
+    title: CI/CD with GitHub Actions
+    time: 10 h
+    tags: [Essential, Free]
+    definition: "**Continuous Integration (CI)** automatically builds and tests every change. **Continuous Delivery/Deployment (CD)** automatically releases a tested build to staging, then production after approval. **GitHub Actions** runs workflows defined in `.github/workflows/*.yml`. Included free minutes differ by plan - check GitHub's current limits."
+    purpose: Automation makes releases frequent, boring and safe; it enforces the quality gates for every client project.
+    example: Merging to `main` builds the Docker image, runs tests and deploys to staging. A manual approval promotes the same image to production.
+    prereq: L5.2, L5.5, L5.6.
+    tools: GitHub Actions, environments with required reviewers, GitHub Secrets, OIDC to cloud providers (no long-lived keys), a container registry.
+    procedure:
+      - Create a CI workflow - install, lint, type-check, test, build.
+      - Cache dependencies; run on `pull_request` and `push` to `main`.
+      - Add a security job (dependency audit, secret scan, image scan).
+      - Add a deploy job to staging, then a production job gated by environment approval.
+      - Pin actions to a version and use least-privilege `permissions`.
+    code:
+      lang: yaml
+      text: |
+        # .github/workflows/ci.yml
+        name: CI
+        on:
+          pull_request:
+          push: { branches: [main] }
+        permissions: { contents: read }
+        jobs:
+          test:
+            runs-on: ubuntu-latest
+            steps:
+              - uses: actions/checkout@v4
+              - uses: actions/setup-node@v4
+                with: { node-version: 22, cache: npm }
+              - run: npm ci
+              - run: npm run lint
+              - run: npx tsc --noEmit
+              - run: npm test -- --run
+              - run: npm run build
+    output: "A green check on the pull request; failures show the failing step log."
+    verify: Break a test on purpose - the PR is blocked; fix it - the PR turns green.
+    errors: Secrets echoed in logs; unpinned third-party actions; deploying from forks; no rollback step; tests that pass locally but fail in CI due to hidden state.
+    security: Least-privilege `permissions`, OIDC instead of stored cloud keys, environment protection for production, review changes to workflow files like production code.
+    docs: Pipeline description and rollback procedure in `docs/deployment.md`.
+    assignment: Build a CI + staging CD pipeline for Project 4.
+    assessment: Explain each pipeline stage and show how a rollback is performed.
+    gate: Tech Lead approves pipeline and rollback test.
+    refs: [["GitHub Actions docs", "https://docs.github.com/actions"]]
+
+  - id: L5.8
+    title: Cloud Deployment
+    time: 14 h
+    tags: [Essential, Paid]
+    definition: "**Cloud deployment** runs the application on infrastructure rented from AWS, Azure or Google Cloud (or platforms such as Vercel, Netlify, Cloudflare). Typical building blocks - compute (VM, container service, serverless), managed database, object storage, load balancer, DNS, CDN, secrets manager."
+    purpose: Production needs repeatable, secure, monitored infrastructure with cost controls. The right level of cloud for the project avoids both fragile single servers and expensive over-engineering.
+    example: A small business app runs as one container service + managed PostgreSQL + CDN; an enterprise SaaS uses a load-balanced container cluster, managed database with replicas and WAF.
+    prereq: L5.6, L5.7, L1.5.
+    tools: AWS (App Runner, ECS, EC2, RDS, S3, CloudFront), Azure (App Service, Container Apps, Azure DB), GCP (Cloud Run, Cloud SQL), Cloudflare (DNS, CDN, WAF, Pages), Terraform (infrastructure as code). Always price with the provider's official calculator.
+    procedure:
+      - Choose the provider and service model per the stack decision tree; record an ADR.
+      - Create separate dev, staging and production environments (separate accounts/projects where possible).
+      - Provision with infrastructure as code or a documented checklist; set budgets and cost alerts first.
+      - Deploy through CI/CD; store secrets in the provider's secret manager.
+      - Put the site behind HTTPS and a CDN/WAF; restrict database access to the private network.
+    code:
+      lang: bash
+      text: |
+        # Example: deploy a container to Google Cloud Run (illustrative - verify flags in current docs)
+        gcloud run deploy clinic-api \
+          --image ghcr.io/vel-org/clinic-api:1.4.0 \
+          --region asia-south1 \
+          --set-secrets DATABASE_URL=clinic-db-url:latest \
+          --allow-unauthenticated \
+          --min-instances 0 --max-instances 3
+    output: "Service URL printed; revision `clinic-api-00007` receives 100% of traffic; rollback = route traffic to the previous revision."
+    verify: "Smoke test passes (`/health`), HTTPS valid, logs visible, billing alert exists, rollback tested."
+    errors: Public database; admin keys in the repository; one shared account for everything; no budget alert; manual console changes nobody records.
+    security: Least-privilege IAM, MFA on root/admin, private networking, encryption at rest and in transit, WAF, regular patching, audit logging.
+    docs: Architecture diagram, environment table, access list and cost estimate in `docs/deployment.md`.
+    assignment: Deploy Project 4 to a free/low-cost tier in one provider with HTTPS and a custom domain.
+    assessment: Whiteboard the production design for a medium client and justify cost vs reliability.
+    gate: Deployment checklist (Appendix A7) fully completed.
+    refs: [["AWS Documentation", "https://docs.aws.amazon.com/"], ["Azure Documentation", "https://learn.microsoft.com/azure/"], ["Google Cloud Documentation", "https://cloud.google.com/docs"], ["Cloudflare Docs", "https://developers.cloudflare.com/"]]
+
+  - id: L5.9
+    title: Logging
+    time: 4 h
+    tags: [Essential, Free]
+    definition: "**Logging** records events the application produces - requests, errors, business events. **Structured logs** (JSON with fixed fields) can be searched and aggregated; log levels (DEBUG, INFO, WARNING, ERROR) separate noise from signal."
+    purpose: Logs are the first tool for diagnosing production problems and for audit trails, but they can also leak personal data if careless.
+    example: "A customer says \"my payment failed\". Searching the request id in the logs shows the gateway returned `card_declined` at 14:03."
+    prereq: L3.7.
+    tools: Python `logging`/`structlog`, Node `pino`, Docker logs, cloud log services (CloudWatch, Azure Monitor, Cloud Logging), Loki/Grafana, ELK; Sentry for exceptions.
+    procedure:
+      - Choose log levels and a JSON format with timestamp, level, message, request id, user id (not email).
+      - Log at boundaries - request in/out, external calls, errors, important business events.
+      - Never log passwords, tokens, full card numbers or national IDs.
+      - Send logs to a central place with a retention period.
+      - Create two saved searches - "all errors in 24 h" and "trace one request".
+    code:
+      lang: python
+      text: |
+        import json, logging, sys
+
+        class JsonFormatter(logging.Formatter):
+            def format(self, r: logging.LogRecord) -> str:
+                return json.dumps({"ts": self.formatTime(r), "level": r.levelname, "msg": r.getMessage(),
+                                   "logger": r.name, **getattr(r, "ctx", {})})
+
+        h = logging.StreamHandler(sys.stdout); h.setFormatter(JsonFormatter())
+        log = logging.getLogger("api"); log.addHandler(h); log.setLevel(logging.INFO)
+        log.info("booking created", extra={"ctx": {"rid": "3f9a2c1b", "booking_id": 981, "user_id": 42}})
+    output: '{"ts": "2026-11-04 10:32:11,408", "level": "INFO", "msg": "booking created", "logger": "api", "rid": "3f9a2c1b", "booking_id": 981, "user_id": 42}'
+    verify: A request id from the response header finds every related log line within seconds.
+    errors: "`print` debugging in production; logging whole request bodies; no retention policy; logs only on the server's disk; alert fatigue from noisy logs."
+    security: Mask personal data; restrict log access; define retention (privacy law); treat logs as sensitive.
+    docs: Log format, fields, levels and retention table in `docs/security.md`.
+    assignment: Add structured logging and one saved search to Project 4.
+    assessment: Diagnose a seeded incident from a log file within 15 minutes.
+    gate: Mentor sign-off.
+
+  - id: L5.10
+    title: Monitoring and Alerting
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "**Monitoring** measures the health of a system continuously. The key signals are **latency, traffic, errors and saturation**. **Uptime checks** test the site from outside; **alerts** notify a person when a threshold is crossed; an **SLO** is a target such as 99.9% availability."
+    purpose: We should know about a failure before the client does. Monitoring is also what makes a maintenance contract credible and billable.
+    example: An uptime check on `/health` every minute emails and messages the on-call engineer after two failures; a dashboard shows p95 latency and error rate.
+    prereq: L5.8, L5.9.
+    tools: UptimeRobot/Better Stack/Checkly (free tiers - check limits), Grafana + Prometheus, cloud monitors, Sentry, Lighthouse CI.
+    procedure:
+      - Add a `/health` endpoint that checks the database and critical dependencies.
+      - Configure an external uptime check with SSL-expiry alert.
+      - Create a dashboard - requests, p95 latency, 5xx rate, CPU/memory, disk, DB connections.
+      - Define alerts that need action (not noise) and an escalation path.
+      - Test one alert end to end.
+    code:
+      lang: python
+      text: |
+        @app.get("/health")
+        def health(db=Depends(get_db)):
+            try:
+                db.execute("SELECT 1")
+            except Exception:
+                raise HTTPException(status_code=503, detail="database unavailable")
+            return {"status": "ok", "version": APP_VERSION}
+    output: "`200 {\"status\":\"ok\",\"version\":\"1.4.0\"}` normally; `503` when the database is down, which triggers the alert."
+    verify: Stop the database in staging - an alert reaches the on-call channel within 5 minutes.
+    errors: Alerts nobody owns; monitoring only CPU; health checks that always return 200; no certificate-expiry or backup-failure alerts.
+    security: Keep `/health` free of sensitive details; restrict dashboards; monitor failed-login spikes and unusual traffic.
+    docs: Monitoring plan - checks, thresholds, owners, escalation - in `docs/deployment.md`.
+    assignment: Build monitoring and alerts for the Project 4 deployment.
+    assessment: Explain the difference between an alert, a dashboard and a log, and when each is used.
+    gate: Alert fire-drill passed.
+    refs: [["web.dev - Measure performance", "https://web.dev/"]]
+
+  - id: L5.11
+    title: Web Application Security
+    time: 16 h
+    tags: [Essential, Free]
+    definition: "**Web application security** protects confidentiality, integrity and availability. The reference is the **OWASP Top 10** (broken access control, cryptographic failures, injection, insecure design, misconfiguration, vulnerable components, authentication failures, integrity failures, logging failures, SSRF) and the OWASP **ASVS** checklist."
+    purpose: A breach harms the client's customers and reputation and ends our relationship. Security is designed in, reviewed at every stage and verified before release - but we never claim a system is \"secure\" or \"hack-proof\".
+    example: A pre-release review finds a customer-id parameter that returns other customers' invoices (IDOR); fixed with an ownership check and a regression test.
+    prereq: L3.3 to L3.8, L5.7.
+    tools: OWASP ZAP (free), `npm audit` / `pip-audit`, Dependabot, Semgrep, Gitleaks, Trivy, Mozilla Observatory / securityheaders.com, browser DevTools.
+    procedure:
+      - Threat-model the feature - assets, entry points, abuse cases.
+      - Apply controls - validation, parameterised queries, output encoding, auth and access checks, CSRF protection, rate limiting.
+      - Set security headers (CSP, HSTS, X-Content-Type-Options, frame protections, Referrer-Policy).
+      - Scan - dependencies, secrets, containers and the running app (ZAP baseline).
+      - Triage findings by severity; fix criticals before release; document accepted risks with the client.
+    code:
+      lang: nginx
+      text: |
+        # Nginx security headers (tune the CSP for each project)
+        add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        add_header X-Frame-Options "DENY" always;
+        add_header Content-Security-Policy "default-src 'self'; img-src 'self' data:; frame-ancestors 'none'" always;
+    output: "securityheaders.com shows A or better; ZAP baseline reports no high-severity findings."
+    verify: A written security report lists scans run, findings, fixes and accepted risks, and is attached to the release.
+    errors: "Relying on the frontend for protection; disabling TLS verification \"to make it work\"; default admin passwords; verbose error pages; unpatched dependencies."
+    security: This module is the control framework itself - apply the OWASP ASVS level agreed in the SOW; use the least privilege everywhere; plan for incident response and responsible disclosure.
+    docs: "`docs/security.md` - threat model, controls, scan results, incident contacts."
+    assignment: Run a full security review (manual + ZAP + dependency scan) on Project 4 and fix all high findings.
+    assessment: Attack-and-defend lab - exploit three seeded vulnerabilities, then patch them.
+    gate: Level 5 completion review - all modules signed; Security review signed by Tech Lead.
+    refs: [["OWASP", "https://owasp.org/"], ["OWASP Top 10", "https://owasp.org/www-project-top-ten/"], ["OWASP Cheat Sheet Series", "https://cheatsheetseries.owasp.org/"]]

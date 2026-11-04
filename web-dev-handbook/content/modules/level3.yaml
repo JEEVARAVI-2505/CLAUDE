@@ -1,0 +1,404 @@
+modules:
+  - id: L3.1
+    title: Backend Framework and Your First API
+    time: 12 h
+    tags: [Essential, Free]
+    definition: "A **backend framework** gives routing, request parsing, validation, dependency handling and error responses so we do not rebuild them. Our primary options are **FastAPI** (Python, typed, auto-documented), **Django** (Python, batteries-included with ORM and admin), and **Node.js** with **Express/Fastify/NestJS**."
+    purpose: The framework sets how fast the team builds, how easy the code is to test and how well the API is documented. We pick per project - FastAPI for API-first products, Django when an admin panel and ORM save time, Node when the team is TypeScript end-to-end.
+    example: A booking platform uses FastAPI for the API (automatic OpenAPI docs the frontend team reads) and Next.js for the UI.
+    prereq: Level 2 modules L2.3 and L2.4; Python 3.11+ or Node LTS installed.
+    tools: "Python 3.11+, `pip`/`venv` (or `uv`), `fastapi`, `uvicorn`, `pytest`, `httpx`; Postman. Django alternative - `django`, `djangorestframework`. Node alternative - Fastify or NestJS."
+    procedure:
+      - Create a virtual environment and install `fastapi` and `uvicorn[standard]`.
+      - Write `main.py` with a health endpoint and a create/read endpoint.
+      - Run `uvicorn main:app --reload` and open `/docs` (Swagger UI).
+      - Write a pytest using `TestClient`.
+    code:
+      lang: python
+      text: |
+        # main.py - run with: uvicorn main:app --reload
+        from fastapi import FastAPI, HTTPException
+        from pydantic import BaseModel, Field
+
+        app = FastAPI(title="Clinic API", version="0.1.0")
+
+        class ServiceIn(BaseModel):
+            name: str = Field(min_length=2, max_length=80)
+            price_minor: int = Field(ge=0, description="Price in paise/cents")
+
+        class Service(ServiceIn):
+            id: int
+
+        _db: dict[int, Service] = {}
+
+        @app.get("/health")
+        def health() -> dict[str, str]:
+            return {"status": "ok"}
+
+        @app.post("/api/services", response_model=Service, status_code=201)
+        def create_service(payload: ServiceIn) -> Service:
+            sid = len(_db) + 1
+            _db[sid] = Service(id=sid, **payload.model_dump())
+            return _db[sid]
+
+        @app.get("/api/services/{sid}", response_model=Service)
+        def get_service(sid: int) -> Service:
+            if sid not in _db:
+                raise HTTPException(status_code=404, detail="Service not found")
+            return _db[sid]
+    output: |
+      POST /api/services {"name":"Whitening","price_minor":450000}
+        -> 201 {"name":"Whitening","price_minor":450000,"id":1}
+      GET  /api/services/9 -> 404 {"detail":"Service not found"}
+      POST with name "A"   -> 422 (validation error list)
+    verify: "`pytest -q` passes; `/docs` lists every endpoint with examples."
+    errors: Business logic inside route functions; global mutable state in production; blocking calls inside `async def`; no versioning of the API.
+    security: Disable debug/reload in production; restrict CORS to known origins; never return stack traces to clients.
+    docs: The generated OpenAPI file is exported into `docs/api-specification.md` at each release.
+    assignment: Re-implement the same two endpoints in a second framework (Django REST or Fastify) and write a one-page comparison.
+    assessment: Explain which framework you would pick for three client scenarios and why.
+    gate: Tech Lead reviews the code and comparison.
+    refs: [["FastAPI", "https://fastapi.tiangolo.com/"], ["Django", "https://docs.djangoproject.com/"], ["Node.js docs", "https://nodejs.org/docs/"]]
+
+  - id: L3.2
+    title: REST API Design
+    time: 8 h
+    tags: [Essential, Free]
+    definition: "A **REST API** models business objects as **resources** with predictable URLs, standard HTTP methods and consistent JSON. Good design covers naming, status codes, pagination, filtering, versioning and idempotency."
+    purpose: A predictable API cuts integration time for the frontend, mobile apps and the client's other systems, and keeps maintenance cost low.
+    example: "`GET /api/v1/orders?status=paid&page=2&page_size=20` lists orders; `POST /api/v1/orders` creates one; `PATCH /api/v1/orders/17` changes it; `DELETE` cancels it."
+    prereq: L1.8, L3.1.
+    tools: Postman, OpenAPI/Swagger, FastAPI `/docs`.
+    procedure:
+      - List resources as plural nouns (`/orders`, `/orders/{id}/items`).
+      - Map operations to methods and status codes (201 create, 204 delete, 404 missing, 409 conflict, 422 validation).
+      - Add pagination (`page`, `page_size` with a maximum) and filtering on every list endpoint.
+      - Add an `Idempotency-Key` header for payment-like POST requests.
+      - Version the path (`/api/v1`).
+    code:
+      lang: text
+      text: |
+        GET    /api/v1/orders                 200  list (paginated)
+        POST   /api/v1/orders                 201  create  (Idempotency-Key supported)
+        GET    /api/v1/orders/{id}            200 | 404
+        PATCH  /api/v1/orders/{id}            200 | 404 | 409 | 422
+        DELETE /api/v1/orders/{id}            204 | 404
+
+        List response:
+        { "items": [ ... ], "page": 2, "page_size": 20, "total": 143 }
+    output: A table of endpoints with request/response examples and error cases for one module of the sample project.
+    verify: A teammate can build the frontend screen from the written spec alone, without reading the backend code.
+    errors: "Verbs in URLs (`/getOrders`); returning 200 for errors; unbounded list endpoints; inconsistent field names (`userId` vs `user_id`)."
+    security: Rate-limit auth and expensive endpoints; check ownership on every `{id}` route (prevents IDOR); never expose internal ids/fields you do not need.
+    docs: Complete the endpoint table in `docs/api-specification.md` before coding.
+    assignment: Write the API specification for the booking system (services, slots, bookings, payments).
+    assessment: Peer review another employee's spec using the standard checklist.
+    gate: Spec approved before implementation (this is a mandatory project gate).
+    refs: [["OWASP API Security Top 10", "https://owasp.org/API-Security/"]]
+
+  - id: L3.3
+    title: Authentication
+    time: 12 h
+    tags: [Essential, Free]
+    definition: "**Authentication** proves who the user is. Common approaches are server-side **sessions** in an httpOnly cookie, **JWT** access tokens with short expiry plus refresh tokens, and delegated **OAuth 2.0/OpenID Connect** sign-in (Google, Microsoft). Passwords are stored only as salted slow hashes (**Argon2id** or bcrypt)."
+    purpose: Login is the front door of every portal, dashboard and SaaS product. A mistake here leads directly to account takeover and data breach.
+    example: A customer portal logs users in with email and password, issues a 15-minute access token and a rotating refresh token in httpOnly cookies, and supports "Sign in with Google" for staff.
+    prereq: L3.1, L3.2, L1.3.
+    tools: "`argon2-cffi`, `PyJWT` (Python); `bcrypt`/`jose` (Node); or a managed provider (Auth0, Clerk, Firebase Auth, Cognito, Keycloak) - paid or free by plan, verify current terms."
+    procedure:
+      - Hash passwords with Argon2id; never log or return them.
+      - Verify the password in constant time and return a generic error on failure.
+      - Issue a short-lived token/session; set cookie flags `HttpOnly; Secure; SameSite=Lax`.
+      - Add rate limiting, account lockout/backoff and a password-reset flow with single-use expiring tokens.
+      - Offer MFA for admin accounts.
+    code:
+      lang: python
+      text: |
+        import os, datetime as dt
+        import jwt                                   # PyJWT
+        from argon2 import PasswordHasher
+        from argon2.exceptions import VerifyMismatchError
+
+        ph = PasswordHasher()                        # Argon2id defaults
+        SECRET = os.environ["JWT_SECRET"]            # from environment, never in Git
+
+        stored_hash = ph.hash("S3cure-pass!")
+
+        def login(password: str, user_id: int, role: str) -> str | None:
+            try:
+                ph.verify(stored_hash, password)
+            except VerifyMismatchError:
+                return None                          # same message for wrong user or password
+            now = dt.datetime.now(dt.timezone.utc)
+            claims = {"sub": str(user_id), "role": role, "iat": now, "exp": now + dt.timedelta(minutes=15)}
+            return jwt.encode(claims, SECRET, algorithm="HS256")
+
+        token = login("S3cure-pass!", 42, "customer")
+        print(jwt.decode(token, SECRET, algorithms=["HS256"])["role"])   # customer
+    output: |
+      customer
+      (login with a wrong password returns None; an expired token raises jwt.ExpiredSignatureError)
+    verify: "Tests prove: wrong password rejected, expired token rejected, tampered token rejected, rate limit triggers after N attempts."
+    errors: Storing plain or fast-hash (MD5/SHA-1) passwords; secrets hard-coded; tokens that never expire; different error messages that reveal whether an email exists; `alg` not pinned.
+    security: OWASP ASVS authentication controls; rotate secrets; invalidate sessions on password change; use HTTPS everywhere; protect against CSRF when using cookies.
+    docs: Auth flow diagram and token lifetimes in `docs/security.md`.
+    assignment: Build register, login, logout, refresh and password-reset endpoints with tests (Project 3).
+    assessment: Security review - the Tech Lead attempts five common attacks (credential stuffing, token tampering, brute force, replay, CSRF) against your API.
+    gate: All five attacks fail; Tech Lead signs the security checklist.
+    refs: [["OWASP Cheat Sheets - Authentication", "https://cheatsheetseries.owasp.org/"], ["OWASP ASVS", "https://owasp.org/www-project-application-security-verification-standard/"]]
+
+  - id: L3.4
+    title: Authorisation
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "**Authorisation** decides what an authenticated user may do. Models - **RBAC** (roles such as admin/staff/customer), **ownership checks** (a user may edit only their own records) and **permissions/policies** for finer rules."
+    purpose: "Broken access control is the number-one web risk (OWASP Top 10). One missing check can let a customer read another customer's invoices."
+    example: A customer calls `GET /orders/17`. The API loads the order and returns 404 unless `order.customer_id` equals the caller's id; staff may read any order but not delete it; only admin may delete.
+    prereq: L3.3.
+    tools: Framework dependency/middleware system (FastAPI `Depends`, Django permissions, Nest guards); optional policy engines (Casbin, OPA).
+    procedure:
+      - Write an access matrix - role by action by resource.
+      - Implement authentication once as a dependency; implement role and ownership checks as reusable functions.
+      - Deny by default; require an explicit allow.
+      - Test the matrix - every cell has an automated test.
+    code:
+      lang: python
+      text: |
+        from fastapi import Depends, HTTPException
+
+        def require_role(*allowed: str):
+            def checker(user=Depends(current_user)):          # current_user validates the token
+                if user.role not in allowed:
+                    raise HTTPException(status_code=403, detail="Forbidden")
+                return user
+            return checker
+
+        @app.delete("/api/v1/orders/{oid}", status_code=204)
+        def delete_order(oid: int, user=Depends(require_role("admin"))):
+            ...
+
+        @app.get("/api/v1/orders/{oid}")
+        def get_order(oid: int, user=Depends(current_user)):
+            order = repo.get_order(oid)
+            if order is None or (user.role == "customer" and order.customer_id != user.id):
+                raise HTTPException(status_code=404)           # do not reveal that it exists
+            return order
+    output: |
+      customer reads own order      -> 200
+      customer reads another's      -> 404
+      staff deletes order           -> 403
+      admin deletes order           -> 204
+    verify: The access-matrix test suite passes and is run in CI.
+    errors: Checking permissions only in the frontend; trusting a `role` field sent by the client; forgetting list endpoints (leaking other users' rows through filters).
+    security: Enforce on the server, deny by default, log access-denied events, re-check on every request.
+    docs: Access matrix table in `docs/security.md`.
+    assignment: Add roles and ownership rules to the Project 3 application and write the matrix tests.
+    assessment: Given a codebase with three planted IDOR bugs, find and fix them.
+    gate: Tech Lead review of the access matrix and tests.
+    refs: [["OWASP Top 10", "https://owasp.org/www-project-top-ten/"]]
+
+  - id: L3.5
+    title: Business Logic and Service Layer
+    time: 8 h
+    tags: [Essential, Free]
+    definition: "**Business logic** is the client's rules turned into code - pricing, discounts, stock, availability, approvals. The **service layer** keeps those rules in plain, testable functions separate from HTTP routes and database queries."
+    purpose: Rules change often (offers, tax, policies). When logic is isolated and tested, changes are quick and safe, and the client's money is calculated correctly.
+    example: "`create_booking()` checks the slot is free, applies the member discount, creates the booking and the payment intent in one transaction, and returns the result - routes only translate HTTP to and from this function."
+    prereq: L3.2, L4.1 (concepts).
+    tools: Pytest/Jest unit tests; a clear folder structure (`routes`, `services`, `repositories`).
+    procedure:
+      - Write the rule in plain language with examples.
+      - Implement it as a pure function where possible (inputs in, result out).
+      - Keep money in integer minor units and use `Decimal` for rate maths.
+      - Write unit tests from the examples first, including edge cases (zero, negative, boundaries).
+      - Call the service from the route; keep the route thin.
+    code:
+      lang: python
+      text: |
+        from decimal import Decimal, ROUND_HALF_UP
+
+        def price_with_gst(net_minor: int, gst_percent: Decimal = Decimal("18")) -> dict[str, int]:
+            """Return net, tax and gross in minor units (paise). Rounds half up per line."""
+            tax = (Decimal(net_minor) * gst_percent / Decimal(100)).quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+            return {"net": net_minor, "tax": int(tax), "gross": net_minor + int(tax)}
+
+        assert price_with_gst(100_000) == {"net": 100000, "tax": 18000, "gross": 118000}
+        assert price_with_gst(10_001)["tax"] == 1800   # 1800.18 rounds to 1800
+    output: Both assertions pass silently; a failing rule raises `AssertionError` with the mismatch.
+    verify: Unit tests cover normal, boundary and invalid inputs; mutation of a rule makes a test fail.
+    errors: Rules duplicated in frontend and backend; floating-point money; rounding differences between invoice and ledger; business logic hidden in SQL triggers nobody documents.
+    security: Never trust prices or totals from the client; recompute on the server; log who changed rule configuration.
+    docs: Business rules glossary with examples in `docs/requirements.md`.
+    assignment: Implement discount, coupon and tax rules for the e-commerce prototype with at least 25 unit tests.
+    assessment: Client-style change request - "Add a 10% loyalty discount above Rs 5,000 but not with coupons". Implement and test in 90 minutes.
+    gate: Tests green; Tech Lead reviews rule coverage.
+
+  - id: L3.6
+    title: Input Validation
+    time: 5 h
+    tags: [Essential, Free]
+    definition: "**Validation** ensures every value entering the system has the right type, length, range and format before it is used. Validate at the edge (request models), then enforce again in the database with constraints."
+    purpose: Most injection, corruption and crash bugs start with unvalidated input. Validation also gives users clear, fast error messages.
+    example: "A registration endpoint rejects an email without `@`, a 3-character password, a 5,000-character name and an unknown `role` value - each with a precise message."
+    prereq: L3.1.
+    tools: Pydantic (Python), Zod/Valibot (TypeScript), Django forms/serializers, database CHECK/UNIQUE/NOT NULL.
+    procedure:
+      - Define a request model for every endpoint (no raw dicts).
+      - Set min/max lengths, ranges, patterns and enums; use allow-lists, not block-lists.
+      - Normalise (trim, lowercase email) before validating uniqueness.
+      - Reject unknown fields where mass-assignment is a risk.
+      - Mirror critical rules as database constraints.
+    code:
+      lang: python
+      text: |
+        from pydantic import BaseModel, EmailStr, Field, ConfigDict
+        from typing import Literal
+
+        class RegisterIn(BaseModel):
+            model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+            email: EmailStr
+            password: str = Field(min_length=10, max_length=128)
+            name: str = Field(min_length=2, max_length=80)
+            role: Literal["customer"] = "customer"        # clients can never choose admin
+    output: |
+      422 Unprocessable Entity
+      {"detail":[{"loc":["body","password"],"msg":"String should have at least 10 characters", ...}]}
+    verify: A table-driven test of valid and invalid payloads passes, including very long strings and unexpected fields.
+    errors: Validating only in the browser; accepting any JSON object and saving it; trusting file names or MIME types; regexes that cause catastrophic backtracking.
+    security: Parameterised queries for SQL; output-encode on rendering; validate file uploads (L3.8); apply size limits at the proxy and framework.
+    docs: Validation rules are the single source in the request models and appear in the API spec.
+    assignment: Write validation tests with at least 30 cases for the registration and booking endpoints.
+    assessment: Fuzz your own API with 20 malicious payloads (long strings, SQL fragments, unicode, nulls) and record the results.
+    gate: No 500 errors from any fuzz case; mentor sign-off.
+    refs: [["OWASP Input Validation Cheat Sheet", "https://cheatsheetseries.owasp.org/"]]
+
+  - id: L3.7
+    title: Error Handling and Logging Contracts
+    time: 5 h
+    tags: [Essential, Free]
+    definition: "**Error handling** means every failure produces a safe, consistent response for the user and a detailed log record for the team. Distinguish **client errors** (4xx - fixable by the caller) from **server errors** (5xx - our fault)."
+    purpose: Clients judge a product by how it fails. Clear messages reduce support calls; correlation ids let us find the cause in minutes.
+    example: "A payment timeout returns `502` with `{error:{code:'PAYMENT_UNAVAILABLE', message:'Please try again', request_id:'a1b2'}}` while the log holds the full exception and the gateway response."
+    prereq: L3.1, L3.6.
+    tools: Framework exception handlers, structured logger (`structlog`, `pino`), Sentry (free tier - check current limits).
+    procedure:
+      - Define one error format used by every endpoint.
+      - Add global handlers for validation, not-found, domain and unexpected errors.
+      - Generate a request id per call, return it in the response header and put it in every log line.
+      - Never leak internals - SQL, file paths, stack traces - to the client.
+      - Add retries with limits only for safe, idempotent calls.
+    code:
+      lang: python
+      text: |
+        import logging, uuid
+        from fastapi import Request
+        from fastapi.responses import JSONResponse
+
+        log = logging.getLogger("api")
+
+        @app.middleware("http")
+        async def request_id(request: Request, call_next):
+            request.state.rid = request.headers.get("x-request-id", uuid.uuid4().hex[:12])
+            response = await call_next(request)
+            response.headers["x-request-id"] = request.state.rid
+            return response
+
+        @app.exception_handler(Exception)
+        async def unhandled(request: Request, exc: Exception):
+            log.exception("unhandled error rid=%s path=%s", request.state.rid, request.url.path)
+            return JSONResponse(status_code=500, content={"error": {"code": "INTERNAL", "message": "Something went wrong.", "request_id": request.state.rid}})
+    output: |
+      HTTP/1.1 500
+      x-request-id: 3f9a2c1b7d04
+      {"error":{"code":"INTERNAL","message":"Something went wrong.","request_id":"3f9a2c1b7d04"}}
+    verify: Force an error in a test; the response is safe and the log line carries the same request id.
+    errors: "Swallowing exceptions (`except: pass`); returning 200 with an error; logging secrets or full card/personal data; inconsistent error shapes."
+    security: Error responses must not reveal stack traces, queries or user existence; mask personal data in logs.
+    docs: Error code catalogue in `docs/api-specification.md`.
+    assignment: Add global error handling, request ids and structured logs to the Project 3 API.
+    assessment: Given an incident description and a request id, find the root cause from logs alone.
+    gate: Tech Lead review.
+
+  - id: L3.8
+    title: File Uploads
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "A **file upload** lets users send files (images, PDFs, CSVs) to the server. Safe handling needs size limits, type verification by content, random storage names, private storage and, for large files, direct-to-storage uploads with **pre-signed URLs**."
+    purpose: Upload features (profile pictures, KYC documents, invoices) are a frequent route for malware, storage abuse and data leaks.
+    example: A user uploads a PDF invoice. The API checks size and real file type, stores it in a private bucket under a random key, saves only the key in the database and serves it later through a short-lived signed link.
+    prereq: L3.6.
+    tools: "FastAPI `UploadFile`/`python-multipart`; `python-magic` or `filetype`; S3-compatible object storage (AWS S3, Cloudflare R2, Azure Blob - check current pricing); optional antivirus scanning (ClamAV)."
+    procedure:
+      - Set a maximum size at the proxy (e.g. Nginx `client_max_body_size`) and in the app.
+      - Allow-list extensions and verify the real content type from the file bytes.
+      - Generate a random name; never use the client's file name in a path.
+      - Store outside the web root or in a private bucket; scan if the data is untrusted.
+      - Serve through authenticated, expiring links.
+    code:
+      lang: python
+      text: |
+        import secrets, pathlib
+        from fastapi import UploadFile, HTTPException
+
+        ALLOWED = {"image/jpeg": ".jpg", "image/png": ".png", "application/pdf": ".pdf"}
+        MAX_BYTES = 5 * 1024 * 1024
+        STORE = pathlib.Path("/var/app/uploads")        # private folder, not served by Nginx
+
+        async def save_upload(file: UploadFile) -> str:
+            data = await file.read(MAX_BYTES + 1)
+            if len(data) > MAX_BYTES:
+                raise HTTPException(413, "File too large (max 5 MB)")
+            kind = sniff_mime(data)                      # inspect bytes, e.g. with python-magic
+            if kind not in ALLOWED:
+                raise HTTPException(415, "Unsupported file type")
+            key = secrets.token_hex(16) + ALLOWED[kind]
+            (STORE / key).write_bytes(data)
+            return key
+    output: |
+      5.2 MB file -> 413 File too large
+      renamed .exe -> 415 Unsupported file type
+      valid PDF   -> 201 {"file_key":"9c1e...b7.pdf"}
+    verify: Tests upload an oversized file, a disguised executable, a path-traversal name (`../../x`) and a valid file; only the last succeeds.
+    errors: Trusting `Content-Type` or the extension; saving with the original name; keeping uploads inside the public folder; reading huge files fully into memory.
+    security: OWASP file-upload guidance - allow-list, random names, private storage, scanning, no execution rights on the upload folder, SVG treated as active content.
+    docs: Allowed types, limits and storage location in `docs/security.md`.
+    assignment: Add avatar upload and invoice PDF upload with signed download links to Project 4.
+    assessment: Attack your own upload endpoint with five malicious files and report the results.
+    gate: All malicious uploads rejected; Tech Lead sign-off.
+
+  - id: L3.9
+    title: Email Integration
+    time: 6 h
+    tags: [Essential, Paid]
+    definition: "**Transactional email** is automated mail triggered by an action - verification, receipt, password reset. It is sent through SMTP or a provider API (Amazon SES, SendGrid, Mailgun, Postmark, Resend, Microsoft 365). Deliverability depends on **SPF**, **DKIM** and **DMARC** DNS records."
+    purpose: Password resets, booking confirmations and invoices must reach the inbox. Misconfigured domains send client emails to spam or let attackers spoof the client's brand.
+    example: After booking, the system queues a confirmation email with an `.ics` calendar attachment; a worker sends it and records the provider's message id.
+    prereq: L3.5, L1.4.
+    tools: Provider SDK/SMTP, a template engine (Jinja2, React Email, MJML), a background queue (Celery, RQ, BullMQ) and a local test inbox (Mailpit, free).
+    procedure:
+      - Choose a provider and read its current pricing and limits on the official site.
+      - Verify the sending domain; add the SPF, DKIM and DMARC records it provides.
+      - Build HTML + plain-text templates with variables; never put secrets in links without expiry.
+      - Send through a queue with retries; record status and provider message id.
+      - Test locally with Mailpit before using the real provider.
+    code:
+      lang: python
+      text: |
+        import smtplib
+        from email.message import EmailMessage
+
+        def send_reset(to: str, link: str) -> None:
+            msg = EmailMessage()
+            msg["From"], msg["To"], msg["Subject"] = "no-reply@clientdomain.com", to, "Reset your password"
+            msg.set_content(f"Use this link within 30 minutes:\n{link}\nIf you did not ask, ignore this email.")
+            with smtplib.SMTP("localhost", 1025) as s:     # Mailpit in development
+                s.send_message(msg)
+    output: "The message appears in the Mailpit web UI at `http://localhost:8025`; in production the same call goes to the provider with credentials from environment variables."
+    verify: "An email to a Gmail test account passes SPF, DKIM and DMARC (view message headers: `Authentication-Results`)."
+    errors: Sending from an unverified domain; no plain-text part; long-lived reset links; sending synchronously inside the request; no unsubscribe on marketing mail.
+    security: Reset tokens are random, single-use and expire; do not reveal whether an email is registered; protect provider API keys; follow anti-spam law (consent, unsubscribe).
+    docs: Email types, templates, sender domains and DNS records in `docs/deployment.md`.
+    assignment: Implement verification, reset and booking-confirmation emails with a queue and tests.
+    assessment: Diagnose three failure cases (SPF fail, DKIM missing, link expired) from headers and logs.
+    gate: Level 3 completion review - modules signed; Project 3 authentication app accepted.
+    refs: [["FastAPI", "https://fastapi.tiangolo.com/"], ["OWASP", "https://owasp.org/"]]

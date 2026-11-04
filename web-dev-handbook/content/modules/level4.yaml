@@ -1,0 +1,287 @@
+modules:
+  - id: L4.1
+    title: PostgreSQL and MySQL - Choosing and Installing
+    time: 5 h
+    tags: [Essential, Free]
+    definition: "**PostgreSQL** and **MySQL/MariaDB** are open-source relational database servers. PostgreSQL has the richest feature set (JSONB, advanced indexes, strong standards compliance, row-level security). MySQL/MariaDB is widely supported by hosting panels and WordPress/WooCommerce."
+    purpose: The database engine is hard to change later. We default to PostgreSQL for custom applications and use MySQL/MariaDB when the platform requires it (WordPress, WooCommerce, some legacy systems).
+    example: A custom SaaS platform uses PostgreSQL on a managed service. A WooCommerce shop keeps MySQL because the plugin ecosystem expects it.
+    prereq: L1.7.
+    tools: PostgreSQL (free, open source), MySQL Community Edition / MariaDB (free), Docker, `psql`, DBeaver or pgAdmin (free). Managed services (AWS RDS, Azure Database, Cloud SQL, Supabase, Neon, PlanetScale) are paid or have limited free tiers - check each vendor's current pricing.
+    procedure:
+      - Run PostgreSQL in Docker for development (command below).
+      - Connect with `psql`, create a database and an application user with limited rights.
+      - Repeat for MySQL/MariaDB and list three syntax differences you meet.
+      - Write a one-page decision note - when PostgreSQL, when MySQL, when a managed service.
+    code:
+      lang: bash
+      text: |
+        docker run --name pg-dev -e POSTGRES_PASSWORD=devonly -p 5432:5432 -d postgres:16
+        psql "postgresql://postgres:devonly@localhost:5432/postgres" -c "CREATE DATABASE clinic;"
+        psql "postgresql://postgres:devonly@localhost:5432/clinic" <<'SQL'
+        CREATE ROLE app_user LOGIN PASSWORD 'change-me-dev';
+        GRANT CONNECT ON DATABASE clinic TO app_user;
+        SQL
+    output: |
+      CREATE DATABASE
+      CREATE ROLE
+      GRANT
+    verify: "`psql -c \"SELECT version();\"` prints the server version; `app_user` cannot create or drop databases."
+    errors: Using the `postgres` superuser in the application; exposing port 5432 publicly; confusing `users` (application table) with database roles; default passwords left in place.
+    security: Dedicated least-privilege application role; strong secrets from a secret store; TLS to the database; private network only; automated patching.
+    docs: Database section of `docs/architecture.md` - engine, version, hosting, access method.
+    assignment: Install both engines locally and load the same 3-table schema into each.
+    assessment: Explain three real differences (types, auto-increment/identity, quoting, JSON handling).
+    gate: Mentor sign-off.
+    refs: [["PostgreSQL docs", "https://www.postgresql.org/docs/"], ["MySQL reference", "https://dev.mysql.com/doc/"]]
+
+  - id: L4.2
+    title: Database Design and Normalisation
+    time: 8 h
+    tags: [Essential, Free]
+    definition: "**Database design** turns business information into tables, columns, keys and constraints. **Normalisation** removes duplication - 1NF (atomic values), 2NF (no partial dependency), 3NF (no transitive dependency) - so each fact is stored once."
+    purpose: A good design makes reports accurate, updates safe and growth cheap. A poor one produces duplicate customers, wrong totals and expensive rewrites.
+    example: "Instead of repeating the customer's address on every order row, store the address once in `customers` and reference it by `customer_id`."
+    prereq: L1.7, L4.1.
+    tools: dbdiagram.io, draw.io, pgModeler or DBeaver ER view; SQL DDL.
+    procedure:
+      - Interview the client and list nouns (entities) and verbs (relationships).
+      - Choose primary keys; add natural unique keys (email, SKU) as UNIQUE constraints.
+      - Normalise to 3NF; denormalise only with a measured reason.
+      - Add NOT NULL, CHECK, UNIQUE and FOREIGN KEY constraints.
+      - Add audit columns (`created_at`, `updated_at`) and soft-delete only where required.
+    code:
+      lang: sql
+      text: |
+        CREATE TABLE services (
+          id           BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+          name         VARCHAR(80)  NOT NULL UNIQUE,
+          duration_min INTEGER      NOT NULL CHECK (duration_min BETWEEN 5 AND 480),
+          price_minor  INTEGER      NOT NULL CHECK (price_minor >= 0),
+          active       BOOLEAN      NOT NULL DEFAULT TRUE,
+          created_at   TIMESTAMPTZ  NOT NULL DEFAULT now()
+        );
+    output: "`CREATE TABLE`. Inserting a negative price or a 0-minute service fails with a CHECK-constraint violation."
+    verify: Try to insert invalid rows - the database itself rejects them.
+    errors: "Money as `FLOAT`; no foreign keys \"for speed\"; one giant table; storing lists in a text column; EAV (entity-attribute-value) tables for everything."
+    security: Store only data you need; classify personal data; plan encryption for sensitive columns and retention periods; never store card numbers (use the gateway's tokens).
+    docs: ER diagram + data dictionary (table, column, type, meaning) in `docs/database-design.md`.
+    assignment: Design the schema for the booking system (Project 4) with at least 6 tables and a data dictionary.
+    assessment: Review a flawed schema and list 8 problems with fixes.
+    gate: Design review by Tech Lead - mandatory project gate before implementation.
+
+  - id: L4.3
+    title: Relationships and Keys
+    time: 5 h
+    tags: [Essential, Free]
+    definition: "**Relationships** link tables: **one-to-many** (customer -> orders), **many-to-many** via a **junction table** (students <-> courses) and **one-to-one**. **Foreign keys** make the database enforce them; `ON DELETE` rules define what happens to children."
+    purpose: Correct relationships keep data consistent without relying on every developer to remember a rule.
+    example: "`order_items(order_id, product_id, qty)` links orders to products; deleting an order removes its items (`ON DELETE CASCADE`), but deleting a product that was ever sold is blocked (`RESTRICT`)."
+    prereq: L4.2.
+    tools: psql, DBeaver, ER diagram tool.
+    procedure:
+      - For each relationship decide cardinality and whether the child can exist without the parent.
+      - Create foreign keys with an explicit `ON DELETE` rule.
+      - Create a junction table with a composite primary key for many-to-many.
+      - Index foreign-key columns used in joins.
+    code:
+      lang: sql
+      text: |
+        CREATE TABLE orders (
+          id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+          customer_id BIGINT NOT NULL REFERENCES customers(id) ON DELETE RESTRICT
+        );
+        CREATE TABLE order_items (
+          order_id   BIGINT NOT NULL REFERENCES orders(id)   ON DELETE CASCADE,
+          product_id BIGINT NOT NULL REFERENCES products(id) ON DELETE RESTRICT,
+          qty        INTEGER NOT NULL CHECK (qty > 0),
+          unit_price_minor INTEGER NOT NULL,
+          PRIMARY KEY (order_id, product_id)
+        );
+        CREATE INDEX idx_orders_customer ON orders(customer_id);
+    output: Deleting a customer with orders fails with a foreign-key error; deleting an order also deletes its items.
+    verify: "A script inserts orphan rows and attempts risky deletes - all are blocked or cascade as documented."
+    errors: Missing index on the foreign key; CASCADE chains that delete too much; many-to-many modelled as a comma list.
+    security: "`ON DELETE CASCADE` can erase large volumes - restrict it to true ownership relations and require backups before bulk deletes."
+    docs: Relationship table (parent, child, cardinality, delete rule) in `docs/database-design.md`.
+    assignment: Add junction tables and rules for tags, categories and product variants to the e-commerce schema.
+    assessment: Explain the effect of each `ON DELETE` option with a live demo.
+    gate: Mentor sign-off.
+
+  - id: L4.4
+    title: SQL
+    time: 14 h
+    tags: [Essential, Free]
+    definition: "**SQL** (Structured Query Language) reads and changes relational data - `SELECT`, `INSERT`, `UPDATE`, `DELETE`, `JOIN`, `GROUP BY`, `HAVING`, subqueries and CTEs (`WITH`), and window functions."
+    purpose: Every report, dashboard and data fix depends on SQL. Fluent SQL turns a client's vague question ("who are my best customers?") into an answer in minutes.
+    example: "Top customers by revenue in the last 90 days is one query joining customers, orders and order items."
+    prereq: L4.2, L4.3.
+    tools: psql, DBeaver; sample dataset (pagila / the training schema).
+    procedure:
+      - Practise SELECT with WHERE, ORDER BY, LIMIT.
+      - Practise INNER and LEFT JOIN; explain the difference with row counts.
+      - Aggregate with GROUP BY and HAVING.
+      - Write a CTE and a window function (`RANK() OVER`).
+      - Always use **parameters**, never string concatenation, from application code.
+    code:
+      lang: sql
+      text: |
+        WITH spend AS (
+          SELECT c.id, c.name, SUM(oi.qty * oi.unit_price_minor) AS total_minor
+          FROM customers c
+          JOIN orders o       ON o.customer_id = c.id
+          JOIN order_items oi ON oi.order_id   = o.id
+          WHERE o.created_at >= now() - INTERVAL '90 days'
+          GROUP BY c.id, c.name
+        )
+        SELECT name, total_minor, RANK() OVER (ORDER BY total_minor DESC) AS rnk
+        FROM spend
+        ORDER BY rnk
+        LIMIT 10;
+    output: |
+      name    | total_minor | rnk
+      --------+-------------+-----
+      Asha    |      459000 |   1
+      Karthik |      312500 |   2
+    verify: Compare the query result to a manual total for one customer; run `EXPLAIN` and confirm no unexpected full scans on large tables.
+    errors: "`SELECT *` in production code; missing JOIN condition (cartesian product); `NOT IN` with NULLs; `UPDATE` or `DELETE` without `WHERE`."
+    security: SQL injection is prevented only by parameterised queries; run `UPDATE`/`DELETE` first as `SELECT` to see the rows; use a transaction for data fixes.
+    docs: Keep reusable reporting queries in `database/queries/` with a comment explaining intent.
+    assignment: Answer 20 business questions with SQL against the training database.
+    assessment: Timed SQL test (10 queries in 60 minutes).
+    gate: Score at least 80%.
+    refs: [["PostgreSQL tutorial", "https://www.postgresql.org/docs/current/tutorial.html"]]
+
+  - id: L4.5
+    title: Indexes and Query Performance
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "An **index** is an extra data structure (usually a B-tree) that lets the database find rows without scanning the whole table. `EXPLAIN (ANALYZE)` shows the **query plan** and actual timings."
+    purpose: Indexes are the cheapest performance win - and over-indexing slows writes and wastes storage. Slow queries are a top cause of timeouts under load.
+    example: Searching orders by `customer_id` on a 5-million-row table drops from seconds to milliseconds after adding an index on that column.
+    prereq: L4.4.
+    tools: "`EXPLAIN (ANALYZE, BUFFERS)`, `pg_stat_statements`, pgAdmin/DBeaver."
+    procedure:
+      - Generate a large test table (1 million rows) and run a filtered query.
+      - Read the plan - note `Seq Scan` and its time.
+      - Create an index on the filter column and re-run - note `Index Scan`.
+      - Add a composite index for a common filter + sort and observe the plan.
+      - Drop indexes that are never used.
+    code:
+      lang: sql
+      text: |
+        CREATE TABLE big_orders AS
+        SELECT g AS id, (random()*100000)::int AS customer_id, now() - (g || ' minutes')::interval AS created_at
+        FROM generate_series(1, 1000000) g;
+
+        EXPLAIN (ANALYZE) SELECT * FROM big_orders WHERE customer_id = 4242;
+        CREATE INDEX idx_big_orders_customer ON big_orders (customer_id, created_at DESC);
+        ANALYZE big_orders;
+        EXPLAIN (ANALYZE) SELECT * FROM big_orders WHERE customer_id = 4242 ORDER BY created_at DESC LIMIT 5;
+    output: |
+      Before: Seq Scan on big_orders ... Execution Time: ~60-150 ms (hardware dependent)
+      After : Index Scan using idx_big_orders_customer ... Execution Time: < 1 ms
+    verify: The plan changes from Seq Scan to Index Scan and execution time drops by an order of magnitude.
+    errors: Indexing every column; function on the indexed column in WHERE (`lower(email)` needs an expression index); stale statistics; leading wildcard `LIKE '%x'`.
+    security: Indexes copy data - they inherit the sensitivity of the column; do not index unneeded personal data.
+    docs: Record each non-obvious index and the query it serves in `docs/database-design.md`.
+    assignment: Tune three slow queries provided by the mentor and write before/after evidence.
+    assessment: Explain a given query plan line by line.
+    gate: Evidence reviewed by Tech Lead.
+
+  - id: L4.6
+    title: Transactions and Concurrency
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "A **transaction** groups statements so they all succeed or all fail (**ACID** - atomicity, consistency, isolation, durability). Isolation levels and row locks control what concurrent users see and prevent double-booking."
+    purpose: Payments, stock and bookings must never end half-done or be sold twice. Transactions are how the database guarantees that.
+    example: "Booking the last 10:00 slot: two customers click at the same moment. A transaction with `SELECT ... FOR UPDATE` lets only one succeed."
+    prereq: L4.4.
+    tools: psql with two terminals; the application's DB driver/ORM transaction API.
+    procedure:
+      - Run `BEGIN; ... ROLLBACK;` and `COMMIT;` in psql and observe visibility from a second session.
+      - Reproduce a double-booking race with two sessions.
+      - Fix it with `FOR UPDATE` or a UNIQUE constraint on (slot, resource).
+      - Keep transactions short; never wait for user input or an external API inside one.
+    code:
+      lang: sql
+      text: |
+        BEGIN;
+        SELECT id FROM slots WHERE id = 77 AND booked = FALSE FOR UPDATE;   -- locks the row
+        UPDATE slots SET booked = TRUE WHERE id = 77;
+        INSERT INTO bookings (slot_id, user_id) VALUES (77, 42);
+        COMMIT;
+        -- Safety net: ALTER TABLE bookings ADD CONSTRAINT uq_slot UNIQUE (slot_id);
+    output: "Two sessions run concurrently: one commits, the other either waits and finds `booked = TRUE`, or fails with a unique violation - never both succeed."
+    verify: A concurrency test with 20 parallel requests creates exactly one booking.
+    errors: Auto-commit per statement for multi-step operations; long transactions holding locks; deadlocks from inconsistent lock order; swallowing the error after a failed statement.
+    security: Never leave a transaction open in a failing connection pool; log failed financial transactions for audit.
+    docs: List which operations are transactional in `docs/architecture.md`.
+    assignment: Implement and test race-safe booking and stock decrement.
+    assessment: Explain READ COMMITTED vs REPEATABLE READ with an example each.
+    gate: Concurrency tests green.
+
+  - id: L4.7
+    title: Migrations and Seed Data
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "A **migration** is a versioned, reviewable script that changes the database structure from one state to the next (Alembic, Django migrations, Prisma Migrate, Flyway, Knex). **Seeds** load reference or demo data."
+    purpose: Migrations make every environment identical and reproducible, and let us deploy schema changes safely and roll them back.
+    example: Release 1.3 adds a `phone` column - the migration runs in staging first, then in production, and the same file is in Git history.
+    prereq: L4.2, L5.1 (Git).
+    tools: Alembic (SQLAlchemy), Django migrations, Prisma Migrate or Flyway; `database/migrations/` and `database/seeds/` folders.
+    procedure:
+      - Never edit the schema by hand in staging or production.
+      - Generate a migration, read it, and test `upgrade` and `downgrade` on a copy of production-like data.
+      - Use the expand-contract pattern for risky changes (add nullable column, backfill, switch code, then add NOT NULL).
+      - Run migrations in CI and as a controlled deploy step.
+      - Keep seeds idempotent (safe to run twice) and free of real personal data.
+    code:
+      lang: bash
+      text: |
+        alembic revision --autogenerate -m "add phone to customers"
+        alembic upgrade head          # apply
+        alembic downgrade -1          # prove the rollback works
+        alembic current               # show the version in this environment
+    output: |
+      INFO  Running upgrade 7a1c... -> b92e..., add phone to customers
+      INFO  Running downgrade b92e... -> 7a1c..., add phone to customers
+    verify: A fresh database built only from migrations equals the one in staging (schema diff is empty).
+    errors: Editing an already-applied migration; migrations that lock a big table for minutes; data changes mixed with schema changes; no downgrade plan.
+    security: Migration credentials differ from application credentials; seeds contain no real customers or passwords.
+    docs: Migration policy and the release runbook in `docs/deployment.md`.
+    assignment: Create five migrations for Project 4, including one using expand-contract.
+    assessment: Plan the safest way to rename a column on a live table.
+    gate: Tech Lead reviews migrations.
+
+  - id: L4.8
+    title: Backup and Recovery
+    time: 6 h
+    tags: [Essential, Free]
+    definition: "A **backup** is a restorable copy of data. Key terms - **RPO** (how much data loss is acceptable) and **RTO** (how long recovery may take). Methods include logical dumps (`pg_dump`), physical/base backups with WAL archiving for **point-in-time recovery**, and managed-service snapshots."
+    purpose: A backup that has never been restored is only a hope. Data loss from deletion, ransomware or a bad migration is an existential risk for the client.
+    example: The client's RPO is 15 minutes and RTO is 1 hour. We use managed PITR snapshots plus a nightly dump copied to a separate account, and test a restore every quarter.
+    prereq: L4.1, L4.7.
+    tools: "`pg_dump`, `pg_restore`, `mysqldump`, cloud snapshots, object storage in a separate account/region, cron or scheduler."
+    procedure:
+      - Agree RPO and RTO with the client in writing.
+      - Automate backups; encrypt them and store a copy off the primary account/region.
+      - Restore into a scratch database and run verification queries.
+      - Record the restore time and compare it to the RTO.
+      - Alert when a backup fails or is older than expected.
+    code:
+      lang: bash
+      text: |
+        pg_dump --format=custom --file=clinic_$(date +%F).dump "$DATABASE_URL"
+        createdb clinic_restore_test
+        pg_restore --dbname=clinic_restore_test --no-owner clinic_$(date +%F).dump
+        psql clinic_restore_test -c "SELECT count(*) FROM bookings;"
+    output: "A row count matching production at backup time, and a log line `restore completed in 4m12s`."
+    verify: "A documented restore test exists for every project; the latest is under 90 days old."
+    errors: Backups stored on the same server; never restoring; no encryption; forgetting uploaded files and configuration; assuming the host backs up automatically.
+    security: Backups contain personal data - encrypt, restrict access, set retention and deletion rules; keep one immutable or offline copy.
+    docs: Backup and restore runbook in `docs/deployment.md`; restore-test log in `qa/`.
+    assignment: Write and execute a backup + restore drill for the Project 4 database.
+    assessment: Given a "table dropped by mistake at 14:05" scenario, perform the recovery within the RTO.
+    gate: Level 4 completion review - modules signed; Project 4 CRUD application accepted with restore evidence.
+    refs: [["PostgreSQL - Backup and Restore", "https://www.postgresql.org/docs/current/backup.html"]]

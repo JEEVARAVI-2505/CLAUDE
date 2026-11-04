@@ -1,0 +1,5 @@
+# Replace with real GitHub handles
+* @techlead
+/deployment/ @devops
+/.github/ @techlead @devops
+/database/migrations/ @techlead
