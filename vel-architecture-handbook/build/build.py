@@ -90,10 +90,12 @@ def page_map(pdf, blocks):
     return res, len(r.pages)
 
 # ------------------------------------------------------------------ web handbook
-def web_html(pages_total=None):
+def web_html(artifact=False):
     ch = chapters(handbook_blocks)
     nav = ''.join(f'<a href="#{cid}" data-id="{cid}">{H.escape(lbl)}</a>' for cid, lbl, _ in ch)
     cards = ''.join(f'<a class="tilec" href="#{cid}"><span>{H.escape(lbl)}</span></a>' for cid, lbl, _ in ch[:15])
+    dl = f'<a href="{HB["file"]}.pdf" target="_blank" rel="noopener">Handbook (PDF)</a><a href="Cost-Estimation-Template.xlsx" target="_blank" rel="noopener">Cost estimation (XLSX)</a>' + ''.join(
+        f'<a href="templates/{f}.pdf" target="_blank" rel="noopener">{t}</a>' for f, i, t, _, _ in STANDALONE)
     js = open(os.path.join(ROOT, 'build/app.js')).read()
     css = open(os.path.join(ROOT, 'build/web.css')).read()
     return f'''<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -106,9 +108,8 @@ def web_html(pages_total=None):
 <header class="top"><button id="menu" aria-label="Toggle navigation" aria-expanded="false">☰</button>
 <img src="{LOGO_URI}" alt="VEL Software Solutions" class="lg"><div class="ttl"><strong>VEL Software Solutions</strong><span>Architecture &amp; Consulting Handbook · VEL-SA-001 v{VER}</span></div>
 <div class="sw"><input id="q" type="search" placeholder="Search handbook  ( / )" autocomplete="off" aria-label="Search the handbook"><div id="res" role="listbox" hidden></div></div>
-<a class="btn" href="VEL-Software-Architecture-Handbook.pdf" download>PDF</a><button class="btn" id="print" type="button">Print</button><button class="btn" id="theme" type="button" aria-label="Toggle dark mode">◐</button></header>
-<div class="layout"><nav id="side" aria-label="Chapters"><div class="navh">Contents</div>{nav}<div class="navh">Downloads</div>
-<a href="VEL-Software-Architecture-Handbook.pdf" download>Handbook (PDF)</a><a href="templates/">Templates (PDF + Markdown)</a><a href="Cost-Estimation-Template.xlsx" download>Cost estimation (XLSX)</a></nav>
+<a class="btn" href="VEL-Software-Architecture-Handbook.pdf" target="_blank" rel="noopener">PDF</a>{'' if artifact else '<button class="btn" id="print" type="button">Print</button>'}<button class="btn" id="theme" type="button" aria-label="Toggle dark mode">◐</button></header>
+<div class="layout"><nav id="side" aria-label="Chapters"><div class="navh">Contents</div>{nav}<div class="navh">Downloads (PDF)</div>{dl}</nav>
 <main id="main"><div class="wm"></div>
 <section class="hero"><img src="{LOGO_URI}" alt="VEL Software Solutions logo"><div class="tag">Software Architecture &amp; Consulting Department</div><h1 class="ht">{HB["title"]}</h1><p class="sub">{HB["sub"]}</p>
 <p class="by"><strong>Developed by {CO}</strong> · <a href="mailto:{EMAIL}">{EMAIL}</a><br><small>Document {HB["id"]} · Version {VER} (draft for management approval) · {DATE}</small></p>

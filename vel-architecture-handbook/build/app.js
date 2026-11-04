@@ -2,10 +2,10 @@
 var d=document,$=function(s){return d.querySelector(s)};
 function sg(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}}
 var root=d.documentElement,th=sg('vel-theme');
-if(!th&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)th='dark';
+if(!th&&!root.getAttribute('data-theme')&&window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)th='dark';
 if(th)root.setAttribute('data-theme',th);
 $('#theme').onclick=function(){var n=root.getAttribute('data-theme')==='dark'?'light':'dark';root.setAttribute('data-theme',n);sg('vel-theme',n)};
-$('#print').onclick=function(){root.setAttribute('data-theme','light');window.print()};
+var pb=$('#print');if(pb)pb.onclick=function(){root.setAttribute('data-theme','light');window.print()};
 var side=$('#side'),menu=$('#menu');
 menu.onclick=function(){var o=side.classList.toggle('open');menu.setAttribute('aria-expanded',o)};
 side.addEventListener('click',function(e){if(e.target.tagName==='A')side.classList.remove('open')});
