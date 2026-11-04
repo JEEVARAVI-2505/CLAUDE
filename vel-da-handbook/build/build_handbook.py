@@ -42,15 +42,22 @@ def toc():
                                "from official sources (Part 9 and Part 11.3).", "small")]
 
 
+PARTS = (A.part0, A.part1, A.part2, A.part3, B.part4, B.part5, B.part6, B.part7,
+         C.part8, C.part9, C.part10, C.part11, C.part12, C.part13, C.annexes)
+
+
 def main():
     OUT.parent.mkdir(exist_ok=True)
     doc = Doc(str(OUT))
     story = cover() + toc() + [PageBreak()]
-    for part in (A.part0, A.part1, A.part2, A.part3, B.part4, B.part5, B.part6, B.part7,
-                 C.part8, C.part9, C.part10, C.part11, C.part12, C.part13, C.annexes):
+    for part in PARTS:
         story += part()
     doc.multiBuild(story, canvasmaker=NumberedCanvas)
     print("Built", OUT)
+    from html_export import export
+    hp = OUT.with_suffix(".html")
+    export([p() for p in PARTS], hp)
+    print("Built", hp)
 
 
 if __name__ == "__main__":

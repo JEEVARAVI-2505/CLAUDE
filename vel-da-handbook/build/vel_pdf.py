@@ -225,7 +225,7 @@ def orgchart():
         d.add(Rect(x, y, w, h, rx=4, ry=4, fillColor=fill, strokeColor=NAVY, strokeWidth=0.8))
         for i, ln in enumerate(lines):
             d.add(String(x + w / 2, y + h - 12 - i * 9.5, ln, fontName="Helvetica-Bold" if i == 0 else "Helvetica",
-                         fontSize=7.6, fillColor=NAVY, textAnchor="middle"))
+                         fontSize=7.6 if i == 0 else 6.8, fillColor=NAVY, textAnchor="middle"))
 
     def link(x1, y1, x2, y2):
         d.add(Line(x1, y1, x2, y2, strokeColor=GREY, strokeWidth=0.9))
@@ -235,7 +235,8 @@ def orgchart():
         colors.HexColor("#DCE4F5"))
     box(cx - 80, 138, 160, 34, ["Head of Data & Analytics", "(Technical Lead, Delivery Owner)"])
     link(cx, 190, cx, 172)
-    bw, gap = 112, 8
+    gap = 4
+    bw = (tw - 4 * gap) / 5
     names = [["Data Engineer", "Pipelines, DB, warehouse"], ["BI Developer", "Power BI / Tableau"],
              ["Data Analyst", "Analysis, KPIs, SQL"], ["Data Scientist / ML", "Forecast, churn, anomaly"],
              ["QA & Data Quality", "Reconciliation, tests"]]
