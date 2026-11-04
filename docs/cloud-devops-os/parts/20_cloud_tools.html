@@ -1,0 +1,81 @@
+<h2 id="s3">Cloud Platform Engineering (AWS First)</h2>
+<p><b>Teaching order:</b> master AWS first (Level 5, about 4 weeks). Introduce Azure and GCP afterwards through <i>comparative exercises</i> (&ldquo;build the same 3-tier app on Azure; what is the equivalent of a Security Group?&rdquo;). Do not teach three clouds at once.</p>
+<h3>The 10-question template for every cloud service</h3>
+<p>For each service the trainee writes a one-page sheet answering: <b>1</b> What is it? <b>2</b> Why does it exist? <b>3</b> When to use? <b>4</b> When <u>not</u> to use? <b>5</b> How is it priced? <b>6</b> How to configure? <b>7</b> How to secure? <b>8</b> How to monitor? <b>9</b> How to troubleshoot? <b>10</b> What are the alternatives?</p>
+<h3>Service map and equivalents</h3>
+<table><tr><th>Capability</th><th>AWS (primary)</th><th>Azure</th><th>GCP</th></tr>
+<tr><td>Identity &amp; access</td><td>IAM, Identity Center</td><td>Entra ID, RBAC</td><td>Cloud IAM</td></tr>
+<tr><td>Virtual machines</td><td>EC2</td><td>Virtual Machines</td><td>Compute Engine</td></tr>
+<tr><td>Private network</td><td>VPC, subnets, route tables, IGW, NAT GW</td><td>Virtual Network</td><td>VPC</td></tr>
+<tr><td>Instance firewall</td><td>Security Groups / NACLs</td><td>Network Security Groups</td><td>VPC firewall rules</td></tr>
+<tr><td>Object storage</td><td>S3</td><td>Blob Storage</td><td>Cloud Storage</td></tr>
+<tr><td>Managed SQL</td><td>RDS</td><td>Azure SQL / Database for PostgreSQL</td><td>Cloud SQL</td></tr>
+<tr><td>Load balancing</td><td>ALB / NLB</td><td>Load Balancer, Application Gateway</td><td>Cloud Load Balancing</td></tr>
+<tr><td>Scaling</td><td>Auto Scaling Groups</td><td>VM Scale Sets</td><td>Managed Instance Groups</td></tr>
+<tr><td>DNS &amp; certificates</td><td>Route 53, ACM</td><td>Azure DNS, App Service certs / Key Vault</td><td>Cloud DNS, Certificate Manager</td></tr>
+<tr><td>Containers</td><td>ECR, ECS, EKS</td><td>ACR, AKS</td><td>Artifact Registry, GKE</td></tr>
+<tr><td>Monitoring &amp; audit</td><td>CloudWatch, CloudTrail</td><td>Azure Monitor, Activity Log</td><td>Cloud Monitoring/Logging, Audit Logs</td></tr>
+<tr><td>Secrets</td><td>Secrets Manager, SSM Parameter Store</td><td>Key Vault</td><td>Secret Manager</td></tr>
+<tr><td>Backup</td><td>AWS Backup</td><td>Azure Backup</td><td>Backup and DR / snapshots</td></tr>
+<tr><td>Ops &amp; CI</td><td>Systems Manager, CodePipeline</td><td>Azure DevOps</td><td>Cloud Build</td></tr></table>
+
+<h3>Worked example: reference 3-tier AWS architecture</h3>
+<div class="flow"><span>Users</span><i>&rarr;</i><span>Route 53 DNS</span><i>&rarr;</i><span>ALB + ACM cert (public subnets)</span><i>&rarr;</i><span>App on EC2/ECS (private subnets)</span><i>&rarr;</i><span>RDS (isolated subnets)</span></div>
+<ul><li><b>Network:</b> one VPC, two Availability Zones, public / private-app / private-data subnets, NAT Gateway for outbound updates, S3 gateway endpoint.</li>
+<li><b>Security:</b> ALB SG allows 443 from the internet; app SG allows only from ALB SG; DB SG allows 5432 only from app SG. No public DB IP.</li>
+<li><b>Data:</b> RDS encrypted at rest, automated backups, Multi-AZ if the availability target requires it.</li>
+<li><b>Ops:</b> CloudWatch alarms, CloudTrail enabled, AWS Backup plan, budget alert.</li></ul>
+<div class="box"><b class="t">Cost awareness</b>NAT Gateways, load balancers, Multi-AZ databases, data transfer out and idle resources are common surprise costs. Always use the provider's official pricing calculator and record region, date and assumptions (Stage 05).</div>
+<h4>Per-service quick troubleshooting</h4>
+<table><tr><th>Symptom</th><th>First checks</th></tr>
+<tr><td>Cannot SSH to EC2</td><td>Security group port 22 from your IP; subnet route to IGW; public IP; key pair; instance status checks</td></tr>
+<tr><td>ALB returns 502/503/504</td><td>Target health; app port; health-check path; SG from ALB to app; app logs</td></tr>
+<tr><td>App cannot reach DB</td><td>DB SG source; subnet routing; DB endpoint; credentials from secret store</td></tr>
+<tr><td>S3 AccessDenied</td><td>IAM policy, bucket policy, block-public-access, KMS key permission</td></tr>
+<tr><td>Unexpected bill</td><td>Cost Explorer by service; look for NAT, data transfer, forgotten instances, unattached volumes, snapshots</td></tr></table>
+
+<h2 id="s4">DevOps Toolchain</h2>
+<p>Teach tools in the order a project needs them. <b>Essential</b> tools are required of every employee; <b>optional</b> tools are learned when a client needs them. <b>Do not introduce Kubernetes (or any tool) where a simpler method is sufficient.</b></p>
+<table><tr><th>Category</th><th>Essential</th><th>Optional / situational</th><th>Primary use</th></tr>
+<tr><td>Version control</td><td>Git, GitHub</td><td>&mdash;</td><td>Code, IaC, docs, reviews</td></tr>
+<tr><td>IDE</td><td>VS Code</td><td>&mdash;</td><td>Editing, extensions for Terraform/Docker/YAML</td></tr>
+<tr><td>CI/CD</td><td>GitHub Actions</td><td>GitLab CI/CD, Jenkins</td><td>Build, test, scan, deploy</td></tr>
+<tr><td>Containers</td><td>Docker, Docker Compose</td><td>&mdash;</td><td>Packaging apps</td></tr>
+<tr><td>Orchestration</td><td>&mdash;</td><td>Kubernetes (justified cases only)</td><td>Many services, scaling, self-healing</td></tr>
+<tr><td>IaC</td><td>Terraform <i>or</i> OpenTofu</td><td>The other one</td><td>Repeatable infrastructure</td></tr>
+<tr><td>Config mgmt</td><td>&mdash;</td><td>Ansible</td><td>VM configuration, patching</td></tr>
+<tr><td>Reverse proxy</td><td>Nginx</td><td>&mdash;</td><td>TLS termination, routing</td></tr>
+<tr><td>Monitoring</td><td>CloudWatch / native monitor</td><td>Prometheus, Grafana</td><td>Metrics, dashboards, alerts</td></tr>
+<tr><td>Logging</td><td>Native cloud logging</td><td>Loki, OpenSearch</td><td>Central logs</td></tr>
+<tr><td>Security scanning</td><td>Trivy, Gitleaks</td><td>Semgrep</td><td>Images/dependencies, secrets, code</td></tr>
+<tr><td>Testing</td><td>Pytest</td><td>Postman</td><td>Code and API tests</td></tr>
+<tr><td>Documentation</td><td>Markdown</td><td>Draw.io</td><td>Runbooks, diagrams</td></tr>
+<tr><td>Project mgmt</td><td>GitHub Projects</td><td>Jira</td><td>Tasks and milestones</td></tr></table>
+
+<h3>Tool pack (what every tool lesson must contain)</h3>
+<p>Installation &rarr; setup &rarr; configuration &rarr; commands &rarr; folder structure &rarr; use cases &rarr; assignment &rarr; troubleshooting. Examples of the first and most important:</p>
+<div class="grid">
+<div class="card"><h4>Git &amp; GitHub</h4><pre><code>git config --global user.name "Your Name"
+git config --global user.email "you@company.com"
+git switch -c feature/add-health-check
+git add . &amp;&amp; git commit -m "feat: add /health endpoint"
+git push -u origin feature/add-health-check</code></pre><p>Then open a Pull Request. <b>Troubleshoot:</b> merge conflicts, wrong branch, committed a secret (rotate it immediately; history rewrite is not enough).</p></div>
+<div class="card"><h4>Docker</h4><pre><code>docker build -t app:1.0 .
+docker run -d -p 8080:8080 --name app app:1.0
+docker logs app
+docker ps</code></pre><p><b>Troubleshoot:</b> container exits (check <code>docker logs</code>); port already in use; no space (<code>docker system df</code>).</p></div>
+<div class="card"><h4>Terraform / OpenTofu</h4><pre><code>terraform fmt -recursive
+terraform init
+terraform validate
+terraform plan -out=tfplan
+terraform apply tfplan</code></pre><p><b>Troubleshoot:</b> state lock, drift, provider auth errors. Always read the plan.</p></div>
+<div class="card"><h4>Security scanners</h4><pre><code>gitleaks detect --source .
+trivy fs .
+trivy image app:1.0</code></pre><p>Fail the pipeline on critical findings; triage the rest with owners and dates.</p></div></div>
+
+<h4>When is Kubernetes justified?</h4>
+<table><tr><th>Option</th><th>Choose when</th><th>Operational effort</th></tr>
+<tr><td>Single VM + Docker Compose</td><td>One app, low traffic, small team</td><td>Low</td></tr>
+<tr><td>Managed PaaS / container service (App Service, Cloud Run, ECS Fargate)</td><td>Containers without cluster management</td><td>Low&ndash;Medium</td></tr>
+<tr><td>Auto-scaling VMs behind a load balancer</td><td>Stateless app needing HA</td><td>Medium</td></tr>
+<tr><td>Kubernetes (EKS/AKS/GKE)</td><td>Many services, frequent releases, team with K8s skills, need for portability</td><td><b>High</b></td></tr></table>

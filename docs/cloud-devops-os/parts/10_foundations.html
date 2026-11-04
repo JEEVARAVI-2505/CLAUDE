@@ -1,0 +1,130 @@
+<h2 class="nopb">How to Use This Playbook</h2>
+<p>This document is the single operating manual for the Cloud Engineering &amp; DevOps division. It does two jobs: <b>(1)</b> it trains a beginner from zero to a professional who can join supervised client projects, and <b>(2)</b> it defines the mandatory lifecycle every client project follows, with approval gates, deliverables and acceptance criteria.</p>
+<div class="box gate"><b class="t">Golden rules</b>
+<ol>
+<li>Do not skip stages. Do not start a stage until the previous stage's acceptance criteria are met and its approval gate is signed.</li>
+<li>&ldquo;It runs&rdquo; is not &ldquo;it is production-ready.&rdquo; Production-ready means secure, monitored, backed up, restorable, documented, cost-controlled and handed over.</li>
+<li>Never run destructive commands (<code>rm -rf</code>, <code>terraform destroy</code>, database drops) without understanding the effect and having a verified backup.</li>
+<li>Never put passwords, keys or tokens in Git, chat, documents or the company portal.</li>
+<li>Never promise savings, uptime or security outcomes without evidence.</li>
+<li>Every production change needs a second person's review.</li>
+</ol></div>
+<h3>Reading path for a beginner</h3>
+<div class="flow"><span>Part A: Learn (L1&ndash;L4)</span><i>&rarr;</i><span>Part B: Cloud &amp; tools</span><i>&rarr;</i><span>Part C: Project lifecycle (18 stages)</span><i>&rarr;</i><span>Part D: Business &amp; sales</span><i>&rarr;</i><span>Part E: Practical projects &amp; certification</span></div>
+<h3>Contents</h3>
+<ol class="toc">
+<li><a href="#s1">Company service portfolio</a></li>
+<li><a href="#s2">Learning roadmap: Levels 1&ndash;4</a></li>
+<li><a href="#s3">Cloud platform engineering (AWS first)</a></li>
+<li><a href="#s4">DevOps toolchain</a></li>
+<li><a href="#s5">Client project lifecycle: Stages 01&ndash;18</a></li>
+<li><a href="#s6">Roles and project management</a></li>
+<li><a href="#s7">Internal operations portal</a></li>
+<li><a href="#s8">Pricing and profitability</a></li>
+<li><a href="#s9">Client acquisition and deal closing</a></li>
+<li><a href="#s10">Practical training projects and sign-off</a></li>
+<li><a href="#s11">Appendices: checklists, templates, glossary</a></li>
+</ol>
+
+<h2 id="s1">Company Service Portfolio</h2>
+<p>Five commercially deliverable service lines. Each can be sold alone or combined.</p>
+<table><tr><th>Line</th><th>What we deliver</th><th>Typical client trigger</th></tr>
+<tr><td><b>A. Cloud Infrastructure</b></td><td>Architecture design; AWS / Azure / GCP builds; servers and VMs; storage and databases; networking and firewalls; load balancers and auto-scaling; migration.</td><td>&ldquo;Our server is a single box under someone's desk / hosting is slow, costly, fragile.&rdquo;</td></tr>
+<tr><td><b>B. DevOps Engineering</b></td><td>Git/GitHub workflows; CI/CD; build and release automation; Docker; Kubernetes (only when justified); IaC; configuration management; automated test integration; rollback systems.</td><td>&ldquo;Deployments are manual, risky and slow.&rdquo;</td></tr>
+<tr><td><b>C. Cloud Security</b></td><td>IAM and least privilege; secrets management; network security; encryption; configuration reviews; vulnerability and dependency scanning; security monitoring; backup/DR; compliance readiness support.</td><td>&ldquo;A customer or auditor asked about our security.&rdquo;</td></tr>
+<tr><td><b>D. Monitoring &amp; Reliability</b></td><td>Infrastructure and application monitoring; central logging; alerts; incident management; availability checks; capacity planning; performance tuning; DR testing.</td><td>&ldquo;We find out about outages from customers.&rdquo;</td></tr>
+<tr><td><b>E. Managed Cloud Services</b></td><td>Ongoing maintenance, patching, CI/CD upkeep, backup verification, cost optimisation, alert response, monthly reports, SLA-based support, upgrades.</td><td>&ldquo;We do not have an ops team.&rdquo;</td></tr></table>
+<div class="box warn"><b class="t">Compliance wording</b>We offer &ldquo;compliance readiness support.&rdquo; We never certify a client as compliant and never claim a system is &ldquo;secure&rdquo; or &ldquo;guaranteed.&rdquo; Certification is done by authorised auditors.</div>
+
+<h2 id="s2">Learning Roadmap: Levels 1&ndash;4</h2>
+<p>For <b>every</b> topic the trainee must receive: definition &rarr; why it matters &rarr; real-world example &rarr; practical exercise &rarr; commands and expected output &rarr; common mistakes &rarr; a short assessment. The tables below give that pack for each topic. A level is passed only when all exercises are demonstrated to the Technical Lead.</p>
+
+<h3>Level 1 &mdash; Computer and IT Fundamentals (about 2 weeks)</h3>
+<table><tr><th>Topic</th><th>Simple definition</th><th>Why it matters / example</th><th>Exercise &amp; check</th></tr>
+<tr><td>Hardware &amp; software</td><td>Hardware is physical (CPU, RAM, disk); software is instructions that run on it.</td><td>A slow site may be a RAM shortage, not bad code.</td><td>Identify CPU, RAM, disk on your laptop. Explain which is exhausted when a video editor freezes.</td></tr>
+<tr><td>Operating systems; Windows vs Linux</td><td>The OS manages hardware and programs. Linux runs most servers; Windows is common on desktops.</td><td>~Most cloud servers run Linux: cheaper, scriptable, no GUI needed.</td><td>List three differences (licensing, shell, file paths <code>C:\</code> vs <code>/</code>).</td></tr>
+<tr><td>Files, folders, permissions</td><td>Who may read, write or execute each file.</td><td>Wrong permissions are a top cause of both breakages and breaches.</td><td>Create a file; make it readable only by you; prove another user cannot read it (Level 2).</td></tr>
+<tr><td>Command line &amp; terminal</td><td>Typing commands instead of clicking.</td><td>Automation is only possible with commands.</td><td>Open a terminal; run <code>pwd</code>, <code>ls</code>.</td></tr>
+<tr><td>Processes &amp; services</td><td>A process is a running program; a service is one that runs in the background.</td><td>Web servers and databases are services.</td><td>Find the process using most CPU.</td></tr>
+<tr><td>IP addresses</td><td>The address of a device on a network (e.g. 192.168.1.10).</td><td>Servers are reached by IP; clients use names.</td><td>Find your private and public IP; explain the difference.</td></tr>
+<tr><td>DNS</td><td>The phone book that turns <code>example.com</code> into an IP.</td><td>DNS mistakes make working sites &ldquo;disappear.&rdquo;</td><td><code>nslookup example.com</code> / <code>dig example.com</code>; explain the answer.</td></tr>
+<tr><td>HTTP/HTTPS, ports, protocols</td><td>HTTP is the web's language; HTTPS adds encryption. A port selects the service (80, 443, 22, 5432).</td><td>A firewall blocking 443 = &ldquo;site down.&rdquo;</td><td><code>curl -I https://example.com</code>; name the status code.</td></tr>
+<tr><td>Client-server; public/private networks; firewalls</td><td>Client asks, server answers. Firewalls allow or block traffic by rules.</td><td>Databases must live on private networks.</td><td>Draw client &rarr; internet &rarr; firewall &rarr; web server &rarr; DB.</td></tr>
+<tr><td>Virtualisation; databases; app servers</td><td>One physical machine runs many virtual machines. A database stores data; an app server runs business logic.</td><td>Cloud VMs are virtualisation sold by the hour.</td><td>Install VirtualBox/WSL; run a Linux VM.</td></tr></table>
+<p><b>Common mistakes:</b> confusing public with private IPs; assuming &ldquo;HTTPS&rdquo; means the app is secure; opening all ports &ldquo;to make it work.&rdquo;<br><b>Assessment:</b> 20-question quiz (pass &ge; 80%) + whiteboard the request path for a website.</p>
+
+<h3>Level 2 &mdash; Linux Administration (about 3 weeks)</h3>
+<p>Set up Ubuntu Server (VM first, then a cloud VM). Topics: install, SSH, users/groups, permissions, directories, packages, systemd, processes, disk/memory, logs, firewall, network troubleshooting, cron, shell scripting, hardening.</p>
+<div class="box warn"><b class="t">Safety before commands</b>Practise only on a disposable VM. Before any delete/overwrite: look first (<code>ls</code>), copy a backup, then act. Never run a command you cannot explain.</div>
+<table><tr><th>Command</th><th>What it does</th><th>Example &rarr; expected output</th><th>Risk</th></tr>
+<tr><td><code>pwd</code></td><td>Shows current folder</td><td><code>pwd</code> &rarr; <code>/home/trainee</code></td><td>None</td></tr>
+<tr><td><code>ls -la</code></td><td>Lists files, incl. hidden, with permissions</td><td>Rows like <code>-rw-r--r-- 1 trainee trainee 12 Jan 1 notes.txt</code></td><td>None</td></tr>
+<tr><td><code>cd</code></td><td>Changes folder</td><td><code>cd /var/log</code></td><td>None</td></tr>
+<tr><td><code>mkdir -p</code></td><td>Creates folders</td><td><code>mkdir -p lab/week1</code></td><td>Low</td></tr>
+<tr><td><code>cp -r</code></td><td>Copies</td><td><code>cp notes.txt notes.bak</code></td><td>Can overwrite</td></tr>
+<tr><td><code>mv</code></td><td>Moves/renames</td><td><code>mv a.txt b.txt</code></td><td>Can overwrite</td></tr>
+<tr><td><code>rm</code></td><td>Deletes. <b>No recycle bin.</b></td><td><code>rm notes.bak</code>. Never <code>rm -rf /</code> or on unchecked variables.</td><td><b>High</b></td></tr>
+<tr><td><code>cat</code>, <code>less</code>, <code>nano</code></td><td>Show / page / edit a file</td><td><code>nano hello.sh</code></td><td>Low</td></tr>
+<tr><td><code>grep</code></td><td>Search text</td><td><code>grep -i error app.log</code></td><td>None</td></tr>
+<tr><td><code>find</code></td><td>Find files</td><td><code>find /var/log -name "*.log"</code></td><td>None (unless <code>-delete</code>)</td></tr>
+<tr><td><code>chmod</code> / <code>chown</code></td><td>Change permissions / owner</td><td><code>chmod 640 secret.env</code> (owner rw, group r, others none)</td><td>Medium. <code>chmod -R 777</code> is forbidden.</td></tr>
+<tr><td><code>systemctl</code></td><td>Manage services</td><td><code>systemctl status nginx</code> &rarr; <code>active (running)</code></td><td>Medium</td></tr>
+<tr><td><code>journalctl</code></td><td>Read system logs</td><td><code>journalctl -u nginx --since "1 hour ago"</code></td><td>None</td></tr>
+<tr><td><code>ps</code>, <code>top</code></td><td>Processes, live CPU/RAM</td><td><code>ps aux | grep nginx</code></td><td>None</td></tr>
+<tr><td><code>df -h</code>, <code>free -h</code></td><td>Disk and memory usage</td><td><code>/dev/sda1 20G 6G 14G 30% /</code></td><td>None</td></tr>
+<tr><td><code>ip a</code>, <code>ss -tulpn</code></td><td>Addresses; listening ports</td><td><code>LISTEN 0 511 0.0.0.0:80</code></td><td>None</td></tr>
+<tr><td><code>curl</code></td><td>Make web requests</td><td><code>curl -I http://localhost</code> &rarr; <code>HTTP/1.1 200 OK</code></td><td>None</td></tr>
+<tr><td><code>ssh</code></td><td>Remote login</td><td><code>ssh -i ~/.ssh/id_ed25519 user@203.0.113.10</code></td><td>Medium</td></tr></table>
+<h4>Core exercises</h4>
+<ol><li>Create user <code>deploy</code>, add to group <code>www-data</code>, prove its permissions with <code>id</code>.</li>
+<li>Install Nginx: <code>sudo apt update &amp;&amp; sudo apt install -y nginx</code>; confirm <code>systemctl status nginx</code> and <code>curl localhost</code>.</li>
+<li>Enable the firewall <b>after</b> allowing SSH, so you do not lock yourself out:
+<pre><code>sudo ufw allow OpenSSH
+sudo ufw allow 80,443/tcp
+sudo ufw enable
+sudo ufw status verbose</code></pre></li>
+<li>Write a cron job that records disk usage daily: <code>0 2 * * * /usr/local/bin/disk-report.sh</code>.</li>
+<li>Harden SSH: key-only login, no root login (<code>PasswordAuthentication no</code>, <code>PermitRootLogin no</code>). Test a <b>second</b> session before closing the first.</li></ol>
+<h4>Hardening baseline (checklist)</h4>
+<ul><li>Individual accounts + sudo; no shared logins</li><li>SSH keys, MFA on cloud console, fail2ban or equivalent</li><li>Unattended security updates; patch schedule</li><li>Firewall default-deny inbound</li><li>Time sync, log retention, disk-space alerts</li></ul>
+<p><b>Common mistakes:</b> enabling firewall before allowing SSH; editing <code>sshd_config</code> without a backup and second session; running everything as root.<br><b>Assessment:</b> practical &mdash; provision a clean Ubuntu VM, harden it and host a static page in 60 minutes unaided.</p>
+
+<h3>Level 3 &mdash; Networking Fundamentals (about 2 weeks)</h3>
+<table><tr><th>Concept</th><th>Plain explanation</th><th>Example</th></tr>
+<tr><td>TCP/IP, IPv4/IPv6</td><td>The rules for sending data; IPv4 has 32-bit addresses, IPv6 128-bit.</td><td>192.168.1.5 vs 2001:db8::1</td></tr>
+<tr><td>Public vs private IPs</td><td>Private ranges (10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16) are not routable on the internet.</td><td>Database at 10.0.2.15</td></tr>
+<tr><td>Subnets &amp; CIDR</td><td><code>/24</code> = first 24 bits are network; leaves 256 addresses (cloud reserves some).</td><td>10.0.1.0/24 = 10.0.1.0&ndash;10.0.1.255</td></tr>
+<tr><td>Routing, NAT</td><td>A route table decides where traffic goes; NAT lets private hosts reach out via one public IP.</td><td>Private server updates through NAT Gateway</td></tr>
+<tr><td>DNS records</td><td>A = name&rarr;IPv4; AAAA = IPv6; CNAME = alias; MX = mail; TXT = text/verification.</td><td><code>www CNAME example.com</code></td></tr>
+<tr><td>DHCP</td><td>Automatically hands out IPs.</td><td>Home Wi-Fi</td></tr>
+<tr><td>TLS certificates</td><td>Prove identity and encrypt traffic; they expire and must be renewed.</td><td>Let's Encrypt, ACM</td></tr>
+<tr><td>VPN, reverse proxy, load balancer, segmentation</td><td>Encrypted private tunnel; a front door that forwards to apps; spreading traffic; splitting networks into zones.</td><td>Public ALB &rarr; private app subnet &rarr; private DB subnet</td></tr></table>
+<h4>Practical exercises</h4>
+<ol><li>Build a small local network (two VMs, one subnet) and ping between them.</li>
+<li>Trace DNS: <code>dig +trace example.com</code>; explain each hop.</li>
+<li>Connect to a remote Linux server by SSH key.</li>
+<li>Configure a firewall that allows only 22 (your IP), 80, 443.</li>
+<li>Diagnose a failed connection with this ladder: <code>ping</code> (reachable?) &rarr; <code>dig</code> (name resolves?) &rarr; <code>nc -vz host 443</code> (port open?) &rarr; firewall / security group &rarr; service listening (<code>ss -tulpn</code>) &rarr; app logs.</li>
+<li>Serve a test app over HTTPS with Nginx and a certificate; verify with <code>curl -vI https://host</code>.</li></ol>
+<p><b>Common mistakes:</b> overlapping CIDR ranges that block later VPC peering; forgetting DNS TTL delays; putting a database in a public subnet.</p>
+
+<h3>Level 4 &mdash; Programming and Scripting (about 3 weeks)</h3>
+<p>Minimum viable knowledge, taught through small projects, not theory alone.</p>
+<table><tr><th>Topic</th><th>Mini-project</th></tr>
+<tr><td>Python fundamentals, error handling, logging</td><td>Script that checks a list of URLs, logs status and exits non-zero on failure.</td></tr>
+<tr><td>Bash scripting</td><td>Backup script with <code>set -euo pipefail</code>, dated archive, retention clean-up.</td></tr>
+<tr><td>YAML &amp; JSON</td><td>Convert a config between formats; spot indentation errors.</td></tr>
+<tr><td>Environment variables &amp; secrets</td><td>Read a DB URL from the environment; confirm it is never printed to logs.</td></tr>
+<tr><td>REST APIs</td><td>Call a public API with <code>curl</code> and Python <code>requests</code>; handle 4xx/5xx.</td></tr>
+<tr><td>Basic SQL</td><td><code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>JOIN</code> on a sample database.</td></tr>
+<tr><td>Regular expressions</td><td>Extract error codes from a log file.</td></tr>
+<tr><td>Automation scripts</td><td>Nightly report of disk usage emailed or posted to a channel.</td></tr></table>
+<pre><code>#!/usr/bin/env bash
+# backup.sh - dated archive with 7-day retention. Test on a copy first.
+set -euo pipefail
+SRC="/var/www/app"; DEST="/backups"; STAMP=$(date +%F)
+mkdir -p "$DEST"
+tar -czf "$DEST/app-$STAMP.tar.gz" "$SRC"
+find "$DEST" -name 'app-*.tar.gz' -mtime +7 -print -delete
+echo "backup ok: $DEST/app-$STAMP.tar.gz"</code></pre>
+<p><b>Common mistakes:</b> hard-coding secrets; ignoring exit codes; unquoted variables in <code>rm</code>/<code>find -delete</code>; no logging.</p>
