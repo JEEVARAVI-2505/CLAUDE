@@ -1,0 +1,45 @@
+<section class="page" id="samples">
+<h2><span class="n">6.</span> Design Samples</h2>
+<p>Five reference samples built with the VEL tokens. They are <b>teaching examples with dummy content</b>, not client work and not evidence of results. The employee's first task is to rebuild each one in Figma (Auto Layout, components, variables) and explain every design choice.</p>
+
+<h3>Sample A · Landing page (desktop)</h3>
+<div class="mock"><div class="bar"><i></i><i></i><i></i><span>example.com</span></div>
+<div class="nav"><div><b>Brand</b><span>Services</span><span>Work</span><span>Pricing</span><span>Contact</span></div><span class="btn p" style="margin:0">Book a call</span></div>
+<div class="hero"><h5>One clear promise<br>in two short lines</h5><p>A supporting sentence that says who this is for and what happens next. Placeholder copy.</p><span class="btn p">Primary action</span> &nbsp;<span class="btn s" style="color:#fff;border-color:#fff">Secondary</span></div>
+<div class="feat"><div><b>Benefit one</b><br>Short, concrete description.</div><div><b>Benefit two</b><br>Short, concrete description.</div><div><b>Benefit three</b><br>Short, concrete description.</div></div></div>
+<p class="cap">Why it works: one primary action (magenta/gold on navy), headline larger than everything else, three equal cards on a consistent 8px rhythm, 12-column alignment.</p>
+
+<div class="grid2" style="margin-top:14px">
+<div><h3 style="margin-top:6px">Sample B · Mobile login (3 states)</h3>
+<div class="grid3" style="grid-template-columns:repeat(3,1fr);gap:6px">
+<div class="phone" style="width:100%"><div class="in"><h5>Sign in</h5><div class="field"><label>Email</label><div class="inp">name@company.com</div></div><div class="field"><label>Password</label><div class="inp">••••••••</div></div><span class="btn p" style="display:block;text-align:center">Sign in</span><p style="font-size:7pt;text-align:center;margin-top:8px">Default</p></div></div>
+<div class="phone" style="width:100%"><div class="in"><h5>Sign in</h5><div class="field"><label>Email</label><div class="inp foc">name@company.com</div></div><div class="field"><label>Password</label><div class="inp">&nbsp;</div></div><span class="btn f" style="display:block;text-align:center">Sign in</span><p style="font-size:7pt;text-align:center;margin-top:8px">Focus</p></div></div>
+<div class="phone" style="width:100%"><div class="in"><h5>Sign in</h5><div class="field"><label>Email</label><div class="inp err">name@</div><div class="msg">⚠ Enter a full email address</div></div><div class="field"><label>Password</label><div class="inp">••••••••</div></div><span class="btn p" style="display:block;text-align:center">Sign in</span><p style="font-size:7pt;text-align:center;margin-top:8px">Error</p></div></div></div>
+<p class="cap">Visible labels (not placeholders), error shown with icon + text, focus ring in navy.</p></div>
+<div><h3 style="margin-top:6px">Sample C · Component states</h3>
+<div class="card"><b>Buttons</b><br><br><span class="btn p">Default</span> <span class="btn h">Hover</span> <span class="btn f">Focus</span><br><br><span class="btn l">Loading…</span> <span class="btn d">Disabled</span> <span class="btn s">Secondary</span></div>
+<div class="alert s" style="margin-top:8px"><b>✓ Success</b> · Changes saved.</div>
+<div class="alert w"><b>▲ Warning</b> · Review before sending.</div>
+<div class="alert e"><b>✕ Error</b> · Payment failed. Try again.</div>
+<div class="alert i"><b>ℹ Info</b> · New version available.</div>
+<p class="cap">Every state is designed before handoff: default, hover, focus, active, disabled, loading, error, empty, success.</p></div></div>
+
+<h3>Sample D · SaaS dashboard (dummy data)</h3>
+<div class="mock"><div class="bar"><i></i><i></i><i></i><span>app.example.com/projects</span></div>
+<div class="dash"><div class="side"><b>Product</b><div class="on">Projects</div><div>Clients</div><div>Reports</div><div>Team</div><div>Settings</div></div>
+<div class="main"><div class="kpis"><div class="kpi"><small>Active projects</small><b>12</b></div><div class="kpi"><small>Awaiting approval</small><b>3</b></div><div class="kpi"><small>Open revisions</small><b>7</b></div></div>
+<table class="tbl"><thead><tr><th>Project</th><th>Stage</th><th>Gate</th><th>Status</th></tr></thead><tbody>
+<tr><td>Sample project A</td><td>Wireframing</td><td>G3</td><td><span class="tag w">▲ Awaiting client</span></td></tr>
+<tr><td>Sample project B</td><td>High-fidelity</td><td>G6</td><td><span class="tag ok">✓ Approved</span></td></tr>
+<tr><td>Sample project C</td><td>Design QA</td><td>G8</td><td><span class="tag e">✕ Failed, fixing</span></td></tr></tbody></table></div></div></div>
+<p class="cap">Dark navy navigation with one highlighted item, KPI cards, a table with text + icon status tags. Real tables also need sort, filter, search, pagination, bulk actions, role-aware menus, and empty/loading/error states (Part 7).</p>
+
+<h3>Sample E · AI assistant with sources and human approval</h3>
+<div class="mock" style="max-width:520px"><div class="bar"><i></i><i></i><i></i><span>AI assistant · draft mode</span></div><div class="chat">
+<div class="bub u">Summarise the key risks in the supplier contract.</div>
+<div class="bub a">The contract appears to include an auto-renewal clause <span class="cite">[1] p.4</span> and a liability cap <span class="cite">[2] p.9</span>.
+<div class="warn">▲ AI-generated summary. May contain errors. Check the cited pages before relying on it.</div>
+<div style="margin-top:6px;color:var(--n-600);font-size:7.4pt">Sources: 2 documents · Confidence: not verified</div></div>
+<div style="display:flex;gap:6px;margin-top:6px"><span class="btn p">Approve and save</span><span class="btn s">Edit</span><span class="btn s">Regenerate</span><span class="btn s">👎 Report issue</span></div></div></div>
+<p class="cap">AI rules shown: citations link to the source, uncertainty is stated in words, a human approval step exists before anything is saved or sent, regenerate and feedback are visible. Never show AI output as verified fact.</p>
+</section>

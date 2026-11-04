@@ -1,0 +1,32 @@
+<section class="page" id="repo">
+<h2><span class="n">11.</span> Repository Structure and Approval Records</h2>
+<p>Figma holds the master design. The repository holds documents, approved exports, evidence and tokens. Use this structure for every project (project ID in the repo name, for example <code>vel-ux-2026-001-clientname</code>). Do not copy confidential client assets into the repository unless the contract allows it.</p>
+<pre>ui-ux-project/
+├── README.md  CHANGELOG.md
+├── docs/            project-overview, design-brief, requirements, competitor-research,
+│                    user-personas, user-journey, sitemap, design-decisions,
+│                    accessibility, handoff, qa-report (.md)
+├── research/        references/ competitor-analysis/ user-interviews/ usability-tests/ findings/
+├── design-system/   foundations/ (colours, typography, spacing, grid .md)
+│                    components/ patterns/ design-tokens/
+├── wireframes/      desktop/ tablet/ mobile/
+├── ui-design/       desktop/ tablet/ mobile/ light-theme/ dark-theme/
+├── prototypes/
+├── assets/          images/ icons/ illustrations/ exports/
+├── testing/         usability/ accessibility/ visual-qa/
+├── handoff/         specifications/ assets/ developer-notes/
+└── delivery/        final-approval.md  delivery-checklist.md</pre>
+<h3>Git conventions</h3>
+<ul><li>Branches: <code>main</code> (approved only), <code>draft/&lt;topic&gt;</code> for work in progress. Never commit passwords, API keys or client personal data.</li>
+<li>Commit messages: <code>G3: add mobile wireframes v02</code> (gate or stage, then what).</li>
+<li>Update <code>CHANGELOG.md</code> with every approved version; tag releases <code>v1.0-G6</code>.</li></ul>
+<h3>Approval log template (<code>delivery/approval-log.md</code>)</h3>
+<table><thead><tr><th>Gate</th><th>Version / link</th><th>Submitted</th><th>Approved by (name, role)</th><th>Evidence (file or email)</th><th>Date</th></tr></thead><tbody>
+<tr><td>G1</td><td>Brief v03</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+<tr><td>G2</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></tbody></table>
+<h3>Design decision record (<code>docs/design-decisions.md</code>)</h3>
+<pre>## DD-014 · Primary button colour
+Decision: Magenta-600 (#CA1360) with white label.
+Reason: 5.57:1 contrast on white (calculated); brand accent; user test noted it was found first.
+Alternatives rejected: Gold-600 (3.41:1, fails for text). Decided by: Lead. Date: YYYY-MM-DD.</pre>
+</section>

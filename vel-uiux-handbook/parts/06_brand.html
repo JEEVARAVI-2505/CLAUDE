@@ -1,0 +1,29 @@
+<section class="page" id="brand">
+<h2><span class="n">5.</span> VEL Design Standards</h2>
+<p>These standards style VEL's own documents, portal and pitch material, and are the practice template for training projects. Client projects use <i>the client's</i> brand; use this file to learn how a system is structured. Colours were sampled from the VEL logo and the existing Cloud &amp; DevOps Playbook; the token file is <code>design-tokens/tokens.json</code>.</p>
+<h3>Colour palette</h3>
+{{SWATCHES}}
+<h3>Contrast check (calculated, WCAG 2.2 SC 1.4.3 and 1.4.11)</h3>
+<p>Ratios are computed from the exact hex values using the WCAG relative-luminance formula. Normal text needs <b>4.5 : 1</b>; large text (18pt+, or 14pt bold) and UI component borders/icons need <b>3 : 1</b>.</p>
+{{CONTRAST}}
+<div class="box red"><b class="t">Colour rules that follow from the numbers</b><ul>
+<li>Gold-600, magenta-400 and emerald-500 <b>fail</b> for text on white. Use them for decoration or large graphics only, or switch to the 700 shade.</li>
+<li>Gold-500 is a highlight on navy backgrounds only (navy text on it passes).</li>
+<li>Never convey meaning by colour alone: status always carries an icon or a text label as well.</li>
+<li>Primary action is always Lotus Magenta-600 with a white label. One primary button per view.</li></ul></div>
+<h3>Typography</h3>
+<div class="type-row"><small>Display · 44px</small><span style="font-family:var(--f-head);font-weight:700;font-size:30pt;color:var(--navy-800)">Design with purpose</span></div>
+<div class="type-row"><small>H1 · 32px serif bold</small><span style="font-family:var(--f-head);font-weight:700;font-size:22pt;color:var(--navy-800)">Project overview</span></div>
+<div class="type-row"><small>H2 · 24px serif bold</small><span style="font-family:var(--f-head);font-weight:700;font-size:17pt;color:var(--navy-800)">Research findings</span></div>
+<div class="type-row"><small>H3 · 18px Inter 600</small><span style="font-weight:600;font-size:13pt;color:var(--navy-800)">User journey stage</span></div>
+<div class="type-row"><small>Body · 16px / 1.5</small><span style="font-size:11.5pt">Body text is Inter regular with a 1.5 line-height for readable paragraphs.</span></div>
+<div class="type-row"><small>Small · 14px</small><span style="font-size:10.4pt">Helper text, table cells and captions.</span></div>
+<div class="type-row"><small>Caption · 12px (min.)</small><span style="font-size:9pt;color:var(--n-600)">Never smaller than 12px on screen.</span></div>
+<div class="type-row"><small>Mono · code</small><span style="font-family:var(--f-mono);font-size:10pt">--color-primary: #CA1360;</span></div>
+<h3>Spacing, radius, shadow, grid</h3>
+<div class="grid2"><div><b>Spacing scale (4px base)</b>{{SPACING}}</div>
+<div><b>Radius</b><br>sm 4 · md 8 · lg 12 · pill 999 px<br><br><b>Shadow</b><br>sm <code>0 1px 2px</code> · md <code>0 4px 12px</code> · lg <code>0 12px 32px</code> (navy at 8-14 % opacity)<br><br><b>Grid</b><br>Desktop 12 columns, 24px gutter, 1280px max · Tablet 8 columns, 16px gutter · Mobile 4 columns, 16px margin<br><br><b>Breakpoints</b><br>360 · 768 · 1280 px<br><br><b>Touch targets</b><br>WCAG 2.2 minimum 24×24 CSS px (SC 2.5.8); VEL standard 44×44 px.</div></div>
+<h3>Starter token file (excerpt)</h3>
+<pre>{{TOKENS}}</pre>
+<p class="footer-note">Full file: <code>design-tokens/tokens.json</code>. In Figma, create these as Variables (collections: Primitives, Semantic) so Dev Mode shows names, not hex codes.</p>
+</section>
