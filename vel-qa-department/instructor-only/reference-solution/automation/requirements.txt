@@ -1,0 +1,7 @@
+# Versions verified from PyPI metadata on 2026-11-04 (see THIRD_PARTY.md)
+pytest==9.2.0
+pytest-playwright==0.10.0
+playwright==1.64.1
+requests==2.34.2
+jsonschema==4.26.0
+pytest-xdist==3.8.0

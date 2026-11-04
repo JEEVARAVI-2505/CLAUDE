@@ -1,0 +1,91 @@
+"""Employee roles."""
+from lib import *  # noqa: F401,F403
+
+ROLES = [
+    ("Junior QA Tester", "Execute test cases, record evidence and report defects accurately under supervision.",
+     ["Execute assigned test cases and exploratory sessions; record Pass / Fail / Blocked with evidence.",
+      "Log defects with reproducible steps; retest fixes.",
+      "Prepare and maintain synthetic test data; update traceability rows.",
+      "Write the daily learning journal; follow the 90-day plan."],
+     "Level 1–2 knowledge; careful, honest, observant; reads requirements; basic Git; clear written English.",
+     "Executed cases with evidence; defect reports; daily status line.", "Manual QA Engineer after Levels 1–3 + two supervised projects."),
+    ("Manual QA Engineer", "Design and execute risk-based manual tests independently across web, mobile and desktop.",
+     ["Analyse requirements; raise questions; design cases with EP, BVA, decision tables, state transitions.",
+      "Run smoke, regression, exploratory and UAT-support sessions.",
+      "Review juniors' cases and defects; maintain the RTM.",
+      "Run cross-browser, responsive and first-line accessibility checks."],
+     "Levels 1–3; strong technique knowledge; developer tools; SQL basics; coaching skills.",
+     "Test cases, RTM, execution reports, exploratory notes.", "Automation QA Engineer, API Tester or QA Lead."),
+    ("Automation QA Engineer", "Build and maintain reliable UI and API automation integrated with CI.",
+     ["Select automation candidates by ROI; build frameworks (POM, fixtures, data factories).",
+      "Write and review Playwright/Selenium/Cypress and pytest code; keep flaky rate low.",
+      "Maintain CI pipelines and reports; publish automation coverage.",
+      "Mentor testers in automation practices."],
+     "Level 5; one programming language well; Git, CI/CD; debugging; clean-code habits.",
+     "Automation code, CI workflows, automation coverage report, flaky register.", "QA Lead or Test Architect."),
+    ("API Tester", "Validate service interfaces, integrations, data exchange, authentication and errors.",
+     ["Build Postman/pytest suites with schema validation and negative testing.",
+      "Verify integration scenarios, retries, timeouts, idempotency.",
+      "Validate data in the test database with read-only queries.",
+      "Hand security-relevant observations to the security coordinator."],
+     "Level 4; HTTP, JSON, OAuth/JWT basics; SQL; scripting.",
+     "API collections/tests, integration report, schemas.", "Automation QA Engineer or Performance Tester."),
+    ("Performance Tester", "Plan and run controlled performance, load and stress tests and analyse bottlenecks.",
+     ["Agree workload models and thresholds in writing.",
+      "Script and execute k6/JMeter/Locust tests in authorised environments.",
+      "Collect client and server metrics; analyse percentiles, errors and saturation.",
+      "Write the performance test report with limitations."],
+     "Level 6; statistics basics; Linux and monitoring; networking; scripting.",
+     "Workload model, scripts, performance report.", "QA Lead or Performance Architect."),
+    ("QA Lead", "Own the quality approach and delivery of QA on projects; coach the team; sign recommendations.",
+     ["Write strategy and plan; estimate effort; assign work.",
+      "Review test design, automation and reports; run triage.",
+      "Sign the QA release recommendation (second reviewer: Test Manager).",
+      "Coach and assess trainees at level gates; keep the team honest on metrics."],
+     "All levels; technical depth plus communication, estimation, risk thinking and leadership.",
+     "Strategy, plan, reports, approvals, coaching notes.", "Test Manager."),
+    ("Test Manager", "Own QA commercial and delivery governance across projects: scope, budget, staffing, quality of reporting.",
+     ["Qualify clients and approve proposals, quotes and change requests.",
+      "Allocate people and budget; manage margin, utilisation and break-even.",
+      "Approve strategies/plans; act as independent reviewer of release recommendations.",
+      "Handle escalations; own client relationships and department improvement."],
+     "Management and commercial skills; strong QA background; contracts and risk.",
+     "Quotes, portfolio dashboard, approvals, improvement plan.", "Head of Delivery / Quality."),
+    ("Release Coordinator", "Coordinate release readiness, sign-off paperwork and production smoke testing with the client.",
+     ["Maintain the release calendar and checklists; chase approvals.",
+      "Organise production smoke tests and rollback decision points with the client.",
+      "Collect evidence and file the QA sign-off package.",
+      "Communicate status to all stakeholders clearly and on time."],
+     "Process discipline; communication; basic testing knowledge; configuration/release management concepts.",
+     "Release checklist, sign-off package, production smoke report.", "Test Manager or Delivery Manager."),
+]
+
+
+def roles() -> str:
+    cards = "".join(
+        topic(name, [["Purpose", purpose], ["Core responsibilities", resp], ["Skills required", skills],
+                     ["Typical deliverables", deliv], ["Next step in career", nxt]])
+        for name, purpose, resp, skills, deliv, nxt in ROLES)
+    return join(
+        h1("Employee Roles",
+           "Eight roles define who does what. A person may hold more than one role on a small project, but the reviewer of any "
+           "work product must never be its author."),
+        pills(["Junior QA Tester", "Manual QA Engineer", "Automation QA / API Tester / Performance Tester", "QA Lead", "Test Manager"]),
+        table(["Role", "One-line purpose", "Primary level gate"], [
+            ["Junior QA Tester", "Execute and report under supervision.", "Levels 1–2"],
+            ["Manual QA Engineer", "Design and run risk-based manual tests.", "Levels 1–3"],
+            ["Automation QA Engineer", "Build maintainable automation and CI.", "Levels 1–5"],
+            ["API Tester", "Validate interfaces and integrations.", "Levels 1–4"],
+            ["Performance Tester", "Run controlled performance campaigns.", "Levels 1–6"],
+            ["QA Lead", "Own quality approach and technical sign-off.", "All levels + leadership assessment"],
+            ["Test Manager", "Own governance, budget and client trust.", "Management assessment"],
+            ["Release Coordinator", "Coordinate release readiness and sign-off.", "Levels 1–2 + release process assessment"],
+        ], widths=["26%", "50%", "24%"], first_bold=True),
+        callout("gold", "Separation of duties",
+                "Author ≠ reviewer. The tester who ran a test does not approve its sign-off; the QA Lead who wrote the recommendation does "
+                "not approve it alone; the person who prepared a quote does not approve it. This is the department's main protection against "
+                "errors and against pressure to “make the numbers look good”."),
+        h2("Role cards"),
+        cards,
+        end_chapter(),
+    )

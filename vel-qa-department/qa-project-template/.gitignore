@@ -1,0 +1,17 @@
+# secrets and local configuration
+.env
+*.pem
+*.key
+secrets/
+# generated output
+automation/reports/
+playwright-report/
+test-results/
+performance/results/
+*.har
+# environments and dependencies
+.venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+.DS_Store

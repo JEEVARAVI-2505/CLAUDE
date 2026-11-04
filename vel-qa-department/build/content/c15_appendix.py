@@ -1,0 +1,110 @@
+"""Appendix: official learning sources, licence register, glossary, daily checklists, credits."""
+from lib import *  # noqa: F401,F403
+
+SOURCES = [
+    ("ISTQB", "https://www.istqb.org/", "Syllabi, glossary and certification path (Foundation Level first).", "Terminology and syllabus in this handbook follow ISTQB concepts; read the current Foundation syllabus."),
+    ("Playwright", "https://playwright.dev/docs/intro", "Installation, locators, assertions, tracing, CI.", "Check the current API names before copying code."),
+    ("Selenium", "https://www.selenium.dev/documentation/", "WebDriver, Grid, language bindings.", "Selenium Manager handles drivers in current versions."),
+    ("Cypress", "https://docs.cypress.io/", "Runner, commands, component testing, Cypress Cloud.", "Check which features are paid."),
+    ("Postman Learning Center", "https://learning.postman.com/", "Collections, tests, environments, Newman, monitors.", "Plan limits change; check current terms."),
+    ("pytest", "https://docs.pytest.org/", "Fixtures, parametrisation, markers, plugins.", "Check plugin compatibility with your pytest version."),
+    ("k6", "https://k6.io/docs/", "Scripting, thresholds, scenarios, results output.", "The k6 documentation may redirect to Grafana's site; confirm the licence terms there."),
+    ("Apache JMeter", "https://jmeter.apache.org/usermanual/", "Test plan elements, non-GUI mode, reports.", "Requires a supported Java version."),
+    ("W3C WAI", "https://www.w3.org/WAI/", "WCAG, ARIA, evaluation methods.", "Confirm which WCAG version and level the contract demands."),
+    ("GitHub Docs", "https://docs.github.com/", "Repositories, Actions, secrets, branch protection.", "Free-tier limits change; check before quoting."),
+]
+TOOLS = [
+    ("Playwright (npm / PyPI)", "1.64.1", "Apache-2.0"), ("Selenium (selenium-webdriver / selenium)", "4.52.0", "Apache-2.0"),
+    ("Cypress", "16.2.1", "MIT"), ("pytest", "9.2.0", "MIT"), ("requests", "2.34.2", "Apache-2.0"), ("jsonschema", "4.26.0", "MIT"),
+    ("pytest-playwright", "0.10.0", "Apache-2.0"), ("pytest-html", "4.2.0", "MPL-2.0"), ("pytest-xdist", "3.8.0", "MIT"),
+    ("Locust", "2.47.0", "MIT"), ("Newman", "6.2.3", "Apache-2.0"), ("axe-core / @axe-core/playwright", "4.14.0", "MPL-2.0"),
+    ("Lighthouse", "13.6.0", "Apache-2.0"), ("Lighthouse CI (@lhci/cli)", "0.16.0", "Apache-2.0"), ("Appium", "3.9.0", "Apache-2.0"),
+    ("WebdriverIO", "10.1.0", "MIT"), ("Pa11y", "10.0.0", "LGPL-3.0-only"), ("Allure Commandline", "2.46.1", "Apache-2.0"),
+    ("@sonar/scan (SonarQube scanner)", "5.0.2", "LGPL-3.0-only"),
+]
+GLOSSARY = [
+    ("Acceptance criteria", "Conditions a feature must satisfy to be accepted by the client."),
+    ("Boundary-value analysis (BVA)", "Technique testing values at and next to the edges of valid ranges."),
+    ("Build", "A specific compiled/packaged version of the software under test."),
+    ("CI/CD", "Continuous integration / delivery: automated build, test and deployment on every change."),
+    ("Defect (bug)", "A flaw in a work product that can cause a failure."),
+    ("Defect leakage", "Share of defects that escape QA and are found after release."),
+    ("Entry / exit criteria", "Conditions to start / finish a test activity."),
+    ("Equivalence partitioning (EP)", "Technique that groups inputs treated the same and tests one value per group."),
+    ("Exploratory testing", "Simultaneous learning, test design and execution guided by a charter."),
+    ("Failure", "Observable deviation of actual from expected behaviour."),
+    ("Fixture", "Reusable setup/teardown code supplied to tests."),
+    ("Flaky test", "A test that passes and fails on the same code without changes."),
+    ("Idempotent", "Repeating the operation leaves the system in the same state."),
+    ("JSON Schema", "A standard vocabulary for describing and validating JSON structure."),
+    ("Page Object Model", "Design pattern that wraps page locators and actions in classes."),
+    ("Percentile (p95)", "Value below which the stated percentage of measurements fall."),
+    ("Regression testing", "Re-testing to ensure changes did not break existing functionality."),
+    ("Requirements Traceability Matrix", "Table mapping requirements to tests, results and defects."),
+    ("Risk-based testing", "Choosing and prioritising tests by the likelihood and impact of failure."),
+    ("Sanity testing", "Narrow check that a specific change or fix works."),
+    ("Severity / priority", "Technical impact of a defect / business urgency to fix it."),
+    ("Smoke testing", "Broad, shallow check that a build is stable enough to test."),
+    ("SLA", "Service-level agreement: measurable service commitments."),
+    ("Test case / scenario / suite", "A precise verification / a high-level condition / a collection of cases."),
+    ("Test environment", "Hardware, software, data and configuration in which tests run."),
+    ("Throughput", "Requests or transactions processed per unit time."),
+    ("UAT", "User acceptance testing by the client's business users."),
+    ("Virtual user (VU)", "A simulated user in a load test."),
+    ("WCAG", "Web Content Accessibility Guidelines published by the W3C."),
+    ("xfail", "pytest marker for a test expected to fail because of a known defect."),
+]
+
+
+def appendix() -> str:
+    return join(
+        h1("Appendices",
+           "Official learning sources, the licence register, a glossary, daily checklists and credits."),
+        h2("A. Official learning sources"),
+        callout("info", "Verification status",
+                "These addresses were supplied by management. During the build of this handbook the environment's network policy blocked access to these websites, "
+                "so **page content was not cross-checked against live documentation**. Package licences and versions were verified from the npm and PyPI "
+                "registries (see section B). Before teaching or quoting, open each source and confirm current instructions, licences and prices."),
+        table(["Source", "Address", "Use it for", "Note"], [[a, f"[{b}]({b})", c, d] for a, b, c, d in SOURCES], widths=["15%", "30%", "28%", "27%"], first_bold=True),
+        p("Supplementary references for awareness: OWASP Top 10 and ASVS (application security), the WCAG quick-reference and Understanding documents from W3C WAI, "
+          "and the ISTQB glossary."),
+        h2("B. Licence register (registry-verified on 4 November 2026)"),
+        p("Versions are the latest at the time of checking and will move on. Record the exact versions you use in each project's `THIRD_PARTY.md`."),
+        table(["Package", "Version", "Licence"], [[a, b, c] for a, b, c in TOOLS], widths=["54%", "18%", "28%"], first_bold=True),
+        p("**Not verified from registries (check the vendor's official page):** k6 (believed AGPL-3.0), Apache JMeter (believed Apache-2.0), SonarQube Community Build, "
+          "Postman application and plans, Jira, TestRail, Git, GitHub and GitHub Actions allowances, NVDA, Kiwi TCMS, device-cloud services."),
+        h2("C. Daily tester checklist"),
+        checklist(["Read yesterday's journal entry and today's plan; confirm the build number.",
+                   "Smoke test passed before deeper execution.", "Every executed case has a result and evidence.",
+                   "Every failure reproduced twice and logged before end of day.", "No secrets or personal data in evidence or messages.",
+                   "Blockers raised in stand-up, not at the end of the week.", "Journal entry written and committed."]),
+        h2("D. Pre-submission checklist for any deliverable"),
+        checklist(["Header block complete: ID, version, status, author, reviewer, date.", "All numbers re-computed from raw data by me and by a reviewer.",
+                   "Every claim has evidence or is marked as an assumption.", "Gaps and untested areas stated plainly.",
+                   "Spelling and terminology consistent with the glossary.", "Saved at the correct repository path and committed with a clear message."]),
+        h2("E. Glossary"),
+        table(["Term", "Meaning"], [[a, b] for a, b in GLOSSARY], widths=["30%", "70%"], first_bold=True),
+        h2("G. Companion source files and what was verified"),
+        table(["Path (in the `vel-qa-department` repository)", "Contents"], [
+            ["`dist/`", "This handbook (PDF + standalone HTML), 90-day training plan, templates pack, practical workbook, assessment framework (PDFs)."],
+            ["`build/`", "Document build system: content modules (Python), theme CSS, web layer, PDF renderer, font subsetting. `python3 build/build.py` rebuilds every deliverable."],
+            ["`qa-project-template/`", "The professional QA repository skeleton, controlled templates (Markdown/CSV), starter automation, CI workflow, k6 and Locust scripts."],
+            ["`qa-project-template/practice-app/`, `practice-api/`", "VEL Practice Shop and Practice API: runnable training targets with deliberate defects and written specifications."],
+            ["`instructor-only/`", "Answer key and reference solution. Not for trainees."],
+        ], widths=["38%", "62%"], first_bold=False),
+        table(["Item", "Status in the build environment"], [
+            ["Practice Shop, Practice API", "**Executed.** Seeded defects confirmed by automated tests (strict `xfail`)."],
+            ["Starter and reference pytest + Playwright suites", "**Executed** on Chromium against both practice targets, builds 1.0 and 1.1."],
+            ["axe-core accessibility scan", "**Executed** on the practice app."],
+            ["Locust load script", "**Executed** (10 virtual users, 15 s, local practice API): 0 failures."],
+            ["k6 script", "Syntax-checked only; k6 is not installed in the build environment."],
+            ["JMeter, SonarQube, Postman, Jira, TestRail, Selenium and Cypress examples", "Described and illustrated; **not executed** here."],
+            ["GitHub Actions workflow", "YAML parsed and validated; **not run** on GitHub."],
+            ["Firefox / WebKit runs", "Not executed (only Chromium was available)."],
+            ["Official documentation websites", "Not reachable from the build environment; content not cross-checked online (see section A)."],
+        ], widths=["40%", "60%"], first_bold=True),
+        h2("F. Credits and font licences"),
+        p("Typography: Inter (SIL Open Font License 1.1) and Liberation Serif/Mono (SIL Open Font License 1.1), embedded as subsets. "
+          "The VEL Software Solutions logo is the property of VEL Software Solutions and is used as cover branding and a subtle watermark without distortion."),
+        end_chapter(),
+    )

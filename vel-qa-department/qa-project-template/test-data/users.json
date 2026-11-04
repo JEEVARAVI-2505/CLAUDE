@@ -1,0 +1,6 @@
+[
+  {"purpose": "valid user, typical age", "name": "Asha Rao", "email": "asha.rao+tc001@example.test", "age": 35},
+  {"purpose": "age lower boundary", "name": "Lower Bound", "email": "lower.bound+tc002@example.test", "age": 18},
+  {"purpose": "age upper boundary", "name": "Upper Bound", "email": "upper.bound+tc003@example.test", "age": 60},
+  {"purpose": "name with Unicode characters", "name": "Zoë Müller", "email": "zoe.muller+tc004@example.test", "age": 29}
+]

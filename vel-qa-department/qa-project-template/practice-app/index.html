@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VEL Practice Shop</title>
+<!-- VEL Software Solutions - QA training target. This application contains DELIBERATE defects. Do not deploy. -->
+<style>
+  :root{--navy:#14306b;--mag:#c2185b;--line:#d5dbe8;--bg:#f6f8fc}
+  *{box-sizing:border-box}
+  body{margin:0;font:16px/1.5 system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:#101826}
+  header{background:var(--navy);color:#fff;padding:12px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+  header b{font-size:18px}
+  nav a{color:#fff;margin-right:14px}
+  main{max-width:880px;margin:20px auto;padding:0 16px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:16px}
+  label{display:block;font-weight:600;margin-top:12px}
+  input[type=text],input[type=password],input[type=email]{width:100%;padding:9px;border:1px solid #8a94a8;border-radius:6px;font:inherit}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  button{background:var(--navy);color:#fff;border:0;border-radius:6px;padding:10px 16px;font:inherit;cursor:pointer;margin-top:14px}
+  button.link{background:none;color:var(--navy);text-decoration:underline;padding:0;margin:0}
+  .err{color:#b00020;font-size:14px;margin-top:4px}
+  .ok{background:#e6f4ea;border-left:4px solid #2e7d32;padding:10px;margin-bottom:12px}
+  .bad{background:#fde8e8;border-left:4px solid #c62828;padding:10px;margin-bottom:12px}
+  table{width:100%;border-collapse:collapse}th,td{text-align:left;padding:8px;border-bottom:1px solid var(--line)}
+  .qty{width:70px}
+  footer{text-align:center;color:#56606f;font-size:13px;padding:20px}
+  /* SEEDED DEFECT D15: fixed minimum width causes horizontal scrolling on phones (REQ-013) */
+  #view-register.card{min-width:420px}
+  /* SEEDED DEFECT D16c: visible focus indicator removed (REQ-014) */
+  button:focus,input:focus{outline:none}
+</style>
+</head>
+<body>
+<header><b>VEL Practice Shop</b><nav aria-label="Main" id="nav"></nav></header>
+<main id="app"></main>
+<footer>VEL QA Training Target · <span id="build"></span> · contains deliberate defects</footer>
+<script>
+"use strict";
+const Q = new URLSearchParams(location.search);
+const BUILD = Q.get("build") || "1.0";                 // 1.0 = baseline, 1.1 = fixes + regressions (Project 6)
+const IDLE_SECONDS = Number(Q.get("idle")) || 90;      // testing aid: ?idle=10 shortens the REQ-011 timeout
+const LOCK_SECONDS = Number(Q.get("lock")) || 30;      // testing aid: ?lock=5 shortens the REQ-009 lock
+document.getElementById("build").textContent = "Build " + BUILD;
+
+const PRODUCTS = [
+  { id: 1, name: "Notebook", price: 10.10 }, { id: 2, name: "Pen", price: 5.50 },
+  { id: 3, name: "Backpack", price: 49.99 }, { id: 4, name: "Desk Lamp", price: 24.00 },
+];
+const store = {
+  users: () => JSON.parse(localStorage.getItem("vel_users") || "[]"),        // D18: stores plain-text passwords (security observation)
+  save: (u) => localStorage.setItem("vel_users", JSON.stringify(u)),
+};
+let session = JSON.parse(sessionStorage.getItem("vel_session") || "null");
+let cart = {}, failures = {}, lockedUntil = {}, idleTimer = null, flash = null;
+
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function err(id, msg) {                                  // alerts exist in the DOM only while an error is shown
+  const old = document.getElementById("err-" + id); if (old) old.remove();
+  if (!msg) return;
+  const d = document.createElement("div"); d.className = "err"; d.id = "err-" + id; d.setAttribute("role", "alert"); d.textContent = msg;
+  document.getElementById(id).insertAdjacentElement("afterend", d);
+}
+function go(h) { location.hash = h; }
+
+function renderNav() {
+  $("#nav").innerHTML = session
+    ? `<a href="#/shop">Shop</a><a href="#/logout">Log out</a>`
+    : `<a href="#/login">Login</a><a href="#/register">Register</a>`;
+}
+
+function viewLogin() {
+  const msg = flash; flash = null;
+  const box = msg ? `<div class="${msg.kind}" role="${msg.kind === "ok" ? "status" : "alert"}">${esc(msg.text)}</div>` : "";
+  $("#app").innerHTML = `<section id="view-login" class="card"><h1>Log in</h1>${box}
+    <!-- D16a: no <label> for the email field, placeholder only (REQ-014) -->
+    <input type="text" id="login-email" placeholder="Email" autocomplete="username">
+    <label for="login-password">Password</label>
+    <!-- D19: password is shown in clear text while typing -->
+    <input type="text" id="login-password" autocomplete="current-password">
+    <div id="login-msg"></div>
+    <button id="login-btn" type="button">Log in</button>
+    <p>No account? <a href="#/register">Create account</a></p></section>`;
+  $("#login-btn").onclick = doLogin;
+}
+
+function doLogin() {
+  const email = $("#login-email").value.trim().toLowerCase(), pw = $("#login-password").value;
+  const now = Date.now(), show = (t) => { $("#login-msg").innerHTML = `<div class="bad" role="alert">${esc(t)}</div>`; };
+  if ((lockedUntil[email] || 0) > now) return show("Account locked. Try again in 30 seconds.");
+  const u = store.users().find((x) => x.email === email);
+  if (!u) return show("Email not registered");           // D8: differs from wrong-password message (REQ-008 requires one generic message)
+  if (u.password !== pw) {
+    failures[email] = (failures[email] || 0) + 1;
+    if (failures[email] >= 4) {                          // D9: locks on the 4th failure; REQ-009 says the 3rd
+      lockedUntil[email] = now + LOCK_SECONDS * 1000; failures[email] = 0;
+      return show("Account locked. Try again in 30 seconds.");
+    }
+    return show("Invalid email or password");
+  }
+  failures[email] = 0;
+  session = { name: u.name, email: u.email };
+  sessionStorage.setItem("vel_session", JSON.stringify(session));
+  localStorage.setItem("vel_last_user", u.email);        // D14: remembered after logout and used by the shop route guard
+  startIdle(); go("#/shop");
+}
+
+function viewRegister() {
+  $("#app").innerHTML = `<section id="view-register" class="card"><h1>Create account</h1>
+    <label for="reg-name">Full name</label><input type="text" id="reg-name" autocomplete="name">
+    <label for="reg-email">Email</label><input type="text" id="reg-email" autocomplete="email">
+    <label for="reg-age">Age</label><input type="text" inputmode="numeric" id="reg-age">
+    <label for="reg-password">Password</label><input type="password" id="reg-password" autocomplete="new-password">
+    <label for="reg-confirm">Confirm password</label><input type="password" id="reg-confirm" autocomplete="new-password">
+    <label class="row" style="font-weight:400"><input type="checkbox" id="reg-terms"> I accept the terms</label>
+    <button id="reg-btn" type="button">Register</button></section>`;
+  $("#reg-btn").onclick = doRegister;
+}
+
+function doRegister() {
+  const v = (id) => $("#" + id).value;
+  const name = v("reg-name"), email = v("reg-email").trim().toLowerCase(), ageRaw = v("reg-age").trim();
+  const pw = v("reg-password"), conf = v("reg-confirm"), terms = $("#reg-terms").checked;
+  let bad = false; const fail = (id, m) => { err(id, m); bad = true; };
+  ["reg-name", "reg-email", "reg-age", "reg-password", "reg-confirm", "reg-terms"].forEach((id) => err(id, ""));
+  if (name.length < 2 || name.length > 40) fail("reg-name", "Name must be 2 to 40 characters");   // D6: spaces are not trimmed first (REQ-001)
+  if (!/^\S+@\S+$/.test(email)) fail("reg-email", "Enter a valid email address");                   // D3: accepts "a@b" (REQ-002)
+  const age = Number(ageRaw);
+  const lowerOk = BUILD === "1.1" ? age >= 18 : age > 18;                                           // D1 (fixed in 1.1): rejects 18
+  if (ageRaw === "" || !/^\d+$/.test(ageRaw) || !lowerOk || age > 61) fail("reg-age", "Age must be a whole number from 18 to 60");   // D2: accepts 61
+  if (pw.length < 8 || pw.length > 20 || !/\d/.test(pw)) fail("reg-password", "Password must be 8-20 characters with a digit and an uppercase letter"); // D4: uppercase not checked
+  const mismatch = BUILD === "1.1" ? false : pw.toLowerCase() !== conf.toLowerCase();               // D5: case-insensitive; 1.1 REGRESSION R1: never checks
+  if (mismatch) fail("reg-confirm", "Passwords do not match");
+  if (BUILD === "1.1" && !terms) fail("reg-terms", "You must accept the terms");                    // D7 (fixed in 1.1): 1.0 never checks
+  if (bad) return;
+  const users = store.users();
+  if (users.some((u) => u.email === email)) return fail("reg-email", "This email is already registered");
+  users.push({ name, email, age, password: pw }); store.save(users);
+  flash = { kind: "ok", text: "Registration successful" }; go("#/login");
+}
+
+function money(n) { return String(n); }                  // D10: no rounding / 2-decimals formatting (REQ-010)
+function viewShop() {
+  if (!session && !localStorage.getItem("vel_last_user")) return go("#/login");   // D14: should depend on the session only (REQ-012)
+  const who = session ? session.name : localStorage.getItem("vel_last_user");
+  $("#app").innerHTML = `<section id="view-shop" class="card"><h1>Welcome, ${esc(who)}</h1><table><thead><tr><th>Item</th><th></th><th>Price</th><th>Quantity</th><th></th></tr></thead><tbody>
+    ${PRODUCTS.map((p) => `<tr><td>${p.name}</td><td><img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32'%3E%3Crect width='32' height='32' fill='%2314306b'/%3E%3C/svg%3E" width="32" height="32"></td>
+    <td>${p.price.toFixed(2)}</td><td><input class="qty" type="text" inputmode="numeric" id="qty-${p.id}" value="1" aria-label="Quantity for ${p.name}"></td>
+    <td><button type="button" data-add="${p.id}">Add ${p.name}</button></td></tr>`).join("")}</tbody></table>
+    <h2>Cart</h2><div id="cart"></div></section>`;     // D16b: product images have no alt text
+  document.querySelectorAll("[data-add]").forEach((b) => (b.onclick = () => addToCart(Number(b.dataset.add))));
+  renderCart();
+}
+function addToCart(id) {
+  const raw = $("#qty-" + id).value.trim(), q = Number(raw), max = BUILD === "1.1" ? 5 : 11;       // D12: 1.0 accepts 0 and 11; 1.1 REGRESSION R2 caps at 5 (spec: 1-10)
+  err("qty-" + id, "");
+  if (!/^-?\d+$/.test(raw) || q < 0 || q > max) return err("qty-" + id, "Quantity must be 1 to 10");
+  cart[id] = q; renderCart();
+}
+function renderCart() {
+  const lines = Object.entries(cart).map(([id, q]) => ({ p: PRODUCTS.find((x) => x.id === Number(id)), q: Number(q) }));
+  if (!lines.length) { $("#cart").innerHTML = "<p>Your cart is empty.</p>"; return; }
+  const total = lines.reduce((s, l) => s + l.p.price * l.q, 0);
+  const gst = Math.floor(total * 0.18 * 100) / 100;     // D11: floors instead of rounding (REQ-010)
+  $("#cart").innerHTML = `<ul>${lines.map((l) => `<li>${l.p.name} × ${l.q}</li>`).join("")}</ul>
+    <p id="cart-total"><strong>Totl:</strong> ${money(total)}</p><p id="cart-gst">GST (18%): ${money(gst)}</p>`;   // D17: label typo "Totl"
+}
+
+function startIdle() {                                   // D13: timer starts at login and is never reset by activity (REQ-011)
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => { endSession(); flash = { kind: "bad", text: "Session expired. Please log in again." }; if (location.hash === "#/login") route(); else go("#/login"); }, IDLE_SECONDS * 1000);
+}
+function endSession() { session = null; sessionStorage.removeItem("vel_session"); clearTimeout(idleTimer); }  // D14: vel_last_user is not cleared
+
+function route() {
+  renderNav();
+  const h = location.hash || "#/login";
+  if (h === "#/logout") { endSession(); cart = {}; return location.replace("#/login"); }   // replace: Back returns to #/shop (D14)
+  if (h === "#/register") return viewRegister();
+  if (h === "#/shop") return viewShop();
+  return viewLogin();
+}
+window.addEventListener("hashchange", route);
+if (session) startIdle();
+route();
+</script>
+</body>
+</html>

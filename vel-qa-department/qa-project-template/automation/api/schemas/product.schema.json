@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Product",
+  "type": "object",
+  "required": ["id", "name", "price", "stock"],
+  "properties": {
+    "id":    { "type": "integer", "minimum": 1 },
+    "name":  { "type": "string", "minLength": 1, "maxLength": 60 },
+    "price": { "type": "number", "exclusiveMinimum": 0 },
+    "stock": { "type": "integer", "minimum": 0 }
+  },
+  "additionalProperties": false
+}
